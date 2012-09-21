@@ -15,7 +15,7 @@
 #define HOSTNAMEMAX 100
 
 /* --- use the /proc filesystem to obtain the hostname --- */
-char *gethostname(char *hostname)
+char *gethostname(char *hostname, size_t size)
 {
   FILE *hostnamefile;
   char hname[HOSTNAMEMAX];
@@ -25,9 +25,10 @@ char *gethostname(char *hostname)
   
   while (fgets(line, HOSTNAMEMAX, hostnamefile))
   {
-    if(sscanf(line, "%s", hname)) hostname = hname;
+    if(sscanf(line, "%s", hname))
+	snprintf(hostname, size, "%s@%s", getenv("USER"), hname);
   }
-
+  
   return hostname;
 }
 
@@ -47,14 +48,12 @@ int main(int argc, char* argv[]) {
   char hostname[HOSTNAMEMAX];
   int terminate = 0;
   Shellcmd shellcmd;
-  
-  char *newhostname;
 
-  if (newhostname = gethostname(hostname)) {
+  if (gethostname(hostname, sizeof(hostname))) {
 
     /* parse commands until exit or ctrl-c */
     while (!terminate) {
-      printf("%s", newhostname);
+      printf("%s", hostname);
       if (cmdline = readline(":# ")) {
 	if(*cmdline) {
 	  add_history(cmdline);
