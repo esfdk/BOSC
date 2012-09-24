@@ -17,56 +17,63 @@
 /* --- use the /proc filesystem to obtain the hostname --- */
 char *gethostname(char *hostname, size_t size)
 {
-  FILE *hostnamefile;
-  char hname[HOSTNAMEMAX];
-  char line[HOSTNAMEMAX];
+	FILE *hostnamefile;
+	char hname[HOSTNAMEMAX];
+	char line[HOSTNAMEMAX];
+	
+	hostnamefile = fopen ("/proc/sys/kernel/hostname", "r");
 
-  hostnamefile = fopen ("/proc/sys/kernel/hostname", "r");
+	while (fgets(line, HOSTNAMEMAX, hostnamefile))
+	{
+		if(sscanf(line, "%s", hname))
+		snprintf(hostname, size, "%s@%s", getenv("USER"), hname);
+	}
   
-  while (fgets(line, HOSTNAMEMAX, hostnamefile))
-  {
-    if(sscanf(line, "%s", hname))
-	snprintf(hostname, size, "%s@%s", getenv("USER"), hname);
-  }
-  
-  return hostname;
+	return hostname;
 }
 
 /* --- execute a shell command --- */
 int executeshellcmd (Shellcmd *shellcmd)
 {
-  printshellcmd(shellcmd);
+	printshellcmd(shellcmd);
 
-  return 0;
+	return 0;
 }
 
 /* --- main loop of the simple shell --- */
 int main(int argc, char* argv[]) {
 
-  /* initialize the shell */
-  char *cmdline;
-  char hostname[HOSTNAMEMAX];
-  int terminate = 0;
-  Shellcmd shellcmd;
+	/* initialize the shell */
+	char *cmdline;
+	char hostname[HOSTNAMEMAX];
+	int terminate = 0;
+	Shellcmd shellcmd;
 
-  if (gethostname(hostname, sizeof(hostname))) {
+	if (gethostname(hostname, sizeof(hostname))) 
+	{
 
     /* parse commands until exit or ctrl-c */
-    while (!terminate) {
-      printf("%s", hostname);
-      if (cmdline = readline(":# ")) {
-	if(*cmdline) {
-	  add_history(cmdline);
-	  if (parsecommand(cmdline, &shellcmd)) {
-	    terminate = executeshellcmd(&shellcmd);
-	  }
-	}
-	free(cmdline);
-      } else terminate = 1;
-    }
-    printf("Exiting bosh.\n");
-  }    
+		while (!terminate) 
+		{
+			printf("%s", hostname);
+			if (cmdline = readline(":# ")) 
+			{
+				if(*cmdline) 
+				{
+					add_history(cmdline);
+					if (parsecommand(cmdline, &shellcmd)) 
+					{
+						terminate = executeshellcmd(&shellcmd);
+					}
+				}
+			
+			free(cmdline);
+			} 
+			else terminate = 1;
+		}
+		
+		printf("Exiting bosh.\n");
+	}    
     
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
-
