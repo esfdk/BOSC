@@ -56,20 +56,28 @@ int executeshellcmd (Shellcmd *shellcmd)
 		int i = 0;
 	
 		Cmd *cmnds = cmdlist;
-		
+		char print[100];		
+
+
 		while (cmnds != NULL)
 		{
 			i++;
+			*print = printf("%d", i);
+			puts(print);
+			if(cmnds->next == NULL) puts("The next command is null");
 			cmnds = cmnds->next;
 		}
 	
 		char *commands[i+1];
 	
 		i = 0;
-		
+
 		while (cmdlist != NULL)
 		{
-			commands[i++] = *cmdlist->cmd;
+			commands[i] = *cmdlist->cmd;
+			i = i + 1;
+			*print = printf("%d", i);
+			puts(print);
 			cmdlist = cmdlist->next;
 		}
 		
@@ -79,7 +87,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 		
 		for(a = 0; a < i; a++)
 		{
-			printf("%s ", commands[a]);
+			puts(commands[a]);
 		}
 		
 		if(execvp(commands[0], commands))
