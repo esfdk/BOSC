@@ -54,9 +54,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 	
 	if (pid)
 	{
-        printf("Waiting for child (%d)\n", pid);
         pid = wait(ret_status);
-        printf("Child (%d) finished\n", pid);
 	}
 	else
 	{/*
