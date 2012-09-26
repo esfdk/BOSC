@@ -63,7 +63,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 			cmnds = cmnds->next;
 		}
 	
-		char *commands[i];
+		char *commands[i+1];
 	
 		i = 0;
 		
@@ -72,6 +72,8 @@ int executeshellcmd (Shellcmd *shellcmd)
 			commands[i++] = *cmdlist->cmd;
 			cmdlist = cmdlist->next;
 		}
+		
+		commands[i+1] = NULL;
 		
 		if(execvp(commands[0], commands))
 		{
