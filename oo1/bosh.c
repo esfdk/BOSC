@@ -37,12 +37,35 @@ char *gethostname(char *hostname, size_t size)
 int executeshellcmd (Shellcmd *shellcmd)
 {
 	printshellcmd(shellcmd);
+	pid_t pid;
+	int *ret_status;
+	char *commands[100];
 	
-	char ls[] = "ls";
-	char *command = *shellcmd->the_cmds->cmd;
-	if(strcmp(ls, command) == 0)
+	if (!strcmp(args[0], "exit" )) exit(0);
+	Cmd *cmdlist = shellcmd->the_cmds;
+	
+	pid = fork();
+	if (pid)
 	{
-		runcmdls();
+        printf("Waiting for child (%d)\n", pid);
+        pid = wait(ret_status);
+        printf("Child (%d) finished\n", pid);
+	}
+	else
+	{
+		while (cmdlist != NULL)
+		{
+			char **cmd = cmdlist->cmd;
+			cmdlist = cmdlist->next;
+			commands++ = cmd;
+		}
+		
+		commands++ = NULL;
+		
+		if(execvp(command, commands))
+		{
+			
+		}
 	}
 	
 	return 0;

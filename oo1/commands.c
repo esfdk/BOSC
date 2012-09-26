@@ -16,9 +16,7 @@ void runcmdls()
 		while(ep = readdir (dp))
 		{
 			strcat(filelist, ep->d_name);
-			strcat(filelist, "   ");
-			//snprintf(filelist, sizeof(filelist), )
-			//puts(ep->d_name);
+			strcat(filelist, "  ");
 		}
 		
 		puts(filelist);
