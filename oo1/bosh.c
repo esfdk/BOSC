@@ -85,7 +85,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 			puts(commands[a]);
 		}
 		
-		if(execvp(commands[0], commands))
+		if(execvp(commands[0], commands[0]))
 		{
 			
 		}
