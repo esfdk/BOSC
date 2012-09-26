@@ -55,7 +55,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 	{	
 		int i = 0;
 	
-		Cmd *cmnds = cmdlist
+		Cmd *cmnds = cmdlist;
 		
 		while (cmnds != NULL)
 		{
@@ -69,7 +69,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 		
 		while (cmdlist != NULL)
 		{
-			commands[i++] = cmdlist->cmd;
+			commands[i++] = *cmdlist->cmd;
 			cmdlist = cmdlist->next;
 		}
 		
