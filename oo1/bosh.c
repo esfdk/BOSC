@@ -64,7 +64,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 			cmdlist = cmdlist->next;
 		}*/
 		
-		if(execvp("ls", commands))
+		if(execvp(*cmdlist->cmd, commands))
 		{
 			
 		}
