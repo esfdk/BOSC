@@ -43,7 +43,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 	Cmd *cmdlist = shellcmd->the_cmds;
 	
 	
-	if (!strcmp(cmdlist->cmd, "exit" )){
+	if (!strcmp(*cmdlist->cmd, "exit" )){
 		exit(0);
 	}
 	
