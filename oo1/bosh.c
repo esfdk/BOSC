@@ -48,7 +48,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 	}
 	
 	char args[1];
-	args[1] = NULL;
+	*args[1] = NULL;
 	
 	execvp("ls", args);
 	/*
