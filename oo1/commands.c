@@ -19,7 +19,7 @@ void runcmdls()
 			//puts(ep->d_name);
 		}
 		
-		puts(filelist)
+		puts(filelist);
 		
 		closedir (dp);
 	}
