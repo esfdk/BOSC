@@ -39,20 +39,16 @@ int executeshellcmd (Shellcmd *shellcmd)
 	printshellcmd(shellcmd);
 	pid_t pid;
 	int *ret_status;
-	char *commands[100];
 	Cmd *cmdlist = shellcmd->the_cmds;
 	
+	char *commands[100];
+	int i;
+	for(i = 0; i < 100; i++) commands[i] = null;
 	
 	if (!strcmp(*cmdlist->cmd, "exit" )){
 		exit(0);
 	}
 	
-	char *args[2];
-	args[0] = "ls";
-	args[1] = NULL;
-	
-	execvp(args[0], args[1]);
-	/*
 	pid = fork();
 	
 	if (pid)
@@ -63,25 +59,18 @@ int executeshellcmd (Shellcmd *shellcmd)
 	}
 	else
 	{
-		/*
-		*commandcopy = commands;
 		while (cmdlist != NULL)
 		{
 			char **cmd = cmdlist->cmd;
 			cmdlist = cmdlist->next;
-			*commandcopy++ = cmd;
+			commands = cmd;
 		}
 		
-		commandcopy++ = NULL;
-		
-		char *arguments[0];
-		
-		if(execvp(commands, /*commands++ arguments))
+		if(execvp(commands[0], commands[1]))
 		{
 			
 		}
 	}
-	*/
 	
 	return 0;
 }
