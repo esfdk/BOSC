@@ -8,13 +8,18 @@ void runcmdls()
 	DIR *dp;
 	struct dirent *ep;
 	dp = opendir ("./");
+	char filelist[2048];
 	
 	if(dp != NULL)
 	{
 		while(ep = readdir (dp))
 		{
-			puts(ep->d_name);
+			strcat(filelist, ep->d_name);
+			//snprintf(filelist, sizeof(filelist), )
+			//puts(ep->d_name);
 		}
+		
+		puts(filelist)
 		
 		closedir (dp);
 	}
