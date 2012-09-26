@@ -47,10 +47,11 @@ int executeshellcmd (Shellcmd *shellcmd)
 		exit(0);
 	}
 	
-	char *args[1];
-	args[0] = NULL;
+	char *args[2];
+	args[0] = "ls";
+	args[1] = NULL;
 	
-	execvp("ls", args);
+	execvp(args[0], args[1]);
 	/*
 	pid = fork();
 	
