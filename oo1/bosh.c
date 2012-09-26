@@ -10,6 +10,7 @@
 #include <readline/history.h>
 #include "parser.h"
 #include "print.h"
+#include "commands.h"
 
 /* --- symbolic constants --- */
 #define HOSTNAMEMAX 100
@@ -36,7 +37,13 @@ char *gethostname(char *hostname, size_t size)
 int executeshellcmd (Shellcmd *shellcmd)
 {
 	printshellcmd(shellcmd);
-
+	char ls[] = "ls";
+	char command = *shellcmd->the_cmds->cmd;
+	if(strcmp(ls, command) == 0)
+	{
+		runcmdls();
+	}
+	
 	return 0;
 }
 
