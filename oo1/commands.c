@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <string.h>
 #include "commands.h"
 
 void runcmdls()
