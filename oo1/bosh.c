@@ -63,7 +63,10 @@ int executeshellcmd (Shellcmd *shellcmd)
 			char **cmd = cmdlist->cmd;
 			cmdlist = cmdlist->next;
 		}*/
-		
+		if(cmdlist->next->cmd != NULL)
+		{
+			commands[0] = **cmdlist->next->cmd;
+		}
 		if(execvp(*cmdlist->cmd, commands))
 		{
 			
