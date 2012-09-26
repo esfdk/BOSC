@@ -9,7 +9,7 @@ void runcmdls()
 	DIR *dp;
 	struct dirent *ep;
 	dp = opendir ("./");
-	char filelist[2048];
+	char filelist[2048] = "";
 	
 	if(dp != NULL)
 	{
