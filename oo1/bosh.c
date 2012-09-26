@@ -70,11 +70,17 @@ int executeshellcmd (Shellcmd *shellcmd)
 		while (cmdlist != NULL)
 		{
 			commands[i++] = *cmdlist->cmd;
-			printf("%s", *cmdlist->cmd);
 			cmdlist = cmdlist->next;
 		}
 		
 		commands[i] = NULL;
+		
+		int a;
+		
+		for(a = 0; a < i; a++)
+		{
+			printf("%s ", commands[a]);
+		}
 		
 		if(execvp(commands[0], commands))
 		{
