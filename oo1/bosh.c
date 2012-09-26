@@ -39,7 +39,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 	printshellcmd(shellcmd);
 	
 	char ls[] = "ls";
-	char command = *shellcmd->the_cmds->cmd;
+	char *command = *shellcmd->the_cmds->cmd;
 	if(strcmp(ls, command) == 0)
 	{
 		printf("Entered comparator");
