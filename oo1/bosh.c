@@ -43,7 +43,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 	
 	char *commands[100];
 	int i;
-	for(i = 0; i < 100; i++) commands[i] = null;
+	for(i = 0; i < 100; i++) commands[i] = NULL;
 	
 	if (!strcmp(*cmdlist->cmd, "exit" )){
 		exit(0);
