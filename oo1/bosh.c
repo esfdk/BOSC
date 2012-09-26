@@ -40,10 +40,10 @@ int executeshellcmd (Shellcmd *shellcmd)
 	pid_t pid;
 	int *ret_status;
 	char *commands[100];
-	
-	if (!strcmp(args[0], "exit" )) exit(0);
 	Cmd *cmdlist = shellcmd->the_cmds;
 	
+	
+	if (!strcmp(cmdlist->cmd, "exit" )) exit(0);
 	pid = fork();
 	if (pid)
 	{
@@ -57,12 +57,12 @@ int executeshellcmd (Shellcmd *shellcmd)
 		{
 			char **cmd = cmdlist->cmd;
 			cmdlist = cmdlist->next;
-			commands++ = cmd;
+			++commands = cmd;
 		}
 		
-		commands++ = NULL;
+		++commands = NULL;
 		
-		if(execvp(command, commands))
+		if(execvp(command, commands[0]))
 		{
 			
 		}
