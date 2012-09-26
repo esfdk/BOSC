@@ -53,8 +53,11 @@ int executeshellcmd (Shellcmd *shellcmd)
 	}
 	else
 	{	
+		char **cmd = cmdlist->cmd;
+		char **cmdwithargs = cmd;
 		
-		if(execvp())
+		
+		if(execvp(*cmd[0], cmdwithargs))
 		{
 			
 		}
