@@ -37,10 +37,12 @@ char *gethostname(char *hostname, size_t size)
 int executeshellcmd (Shellcmd *shellcmd)
 {
 	printshellcmd(shellcmd);
+	
 	char ls[] = "ls";
 	char command = *shellcmd->the_cmds->cmd;
 	if(strcmp(ls, command) == 0)
 	{
+		printf("Entered comparator");
 		runcmdls();
 	}
 	
