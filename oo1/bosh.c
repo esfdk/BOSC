@@ -43,8 +43,12 @@ int executeshellcmd (Shellcmd *shellcmd)
 	Cmd *cmdlist = shellcmd->the_cmds;
 	
 	
-	if (!strcmp(cmdlist->cmd, "exit" )) exit(0);
+	if (!strcmp(cmdlist->cmd, "exit" )){
+		exit(0);
+	}
+	
 	pid = fork();
+	
 	if (pid)
 	{
         printf("Waiting for child (%d)\n", pid);
@@ -53,16 +57,20 @@ int executeshellcmd (Shellcmd *shellcmd)
 	}
 	else
 	{
+		/*
+		*commandcopy = commands;
 		while (cmdlist != NULL)
 		{
 			char **cmd = cmdlist->cmd;
 			cmdlist = cmdlist->next;
-			++commands = cmd;
+			*commandcopy++ = cmd;
 		}
 		
-		++commands = NULL;
+		commandcopy++ = NULL;
+		*/
+		char *arguments[0];
 		
-		if(execvp(command, commands[0]))
+		if(execvp(commands, /*commands++*/ arguments))
 		{
 			
 		}
