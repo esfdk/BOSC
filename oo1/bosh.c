@@ -47,6 +47,10 @@ int executeshellcmd (Shellcmd *shellcmd)
 		exit(0);
 	}
 	
+	char args[0];
+	
+	execvp("ls", args);
+	/*
 	pid = fork();
 	
 	if (pid)
@@ -67,14 +71,15 @@ int executeshellcmd (Shellcmd *shellcmd)
 		}
 		
 		commandcopy++ = NULL;
-		*/
+		
 		char *arguments[0];
 		
-		if(execvp(commands, /*commands++*/ arguments))
+		if(execvp(commands, /*commands++ arguments))
 		{
 			
 		}
 	}
+	*/
 	
 	return 0;
 }
