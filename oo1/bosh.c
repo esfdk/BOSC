@@ -42,11 +42,9 @@ int executeshellcmd (Shellcmd *shellcmd)
 	Cmd *cmdlist = shellcmd->the_cmds;
 	
 	char *commands[100];
-	char *commandptr;
 	int i;
 	
 	for(i = 0; i < 100; i++) commands[i] = NULL;
-	commandptr = &commands[0];
 	
 	if (!strcmp(*cmdlist->cmd, "exit" )){
 		exit(0);
@@ -61,15 +59,14 @@ int executeshellcmd (Shellcmd *shellcmd)
         printf("Child (%d) finished\n", pid);
 	}
 	else
-	{
+	{/*
 		while (cmdlist != NULL)
 		{
-			*commandptr = cmdlist->cmd;
+			char **cmd = cmdlist->cmd;
 			cmdlist = cmdlist->next;
-			commandptr = commandptr + 1;
-		}
+		}*/
 		
-		if(execvp(commands[0], commands[1]))
+		if(execvp("ls", commands))
 		{
 			
 		}
