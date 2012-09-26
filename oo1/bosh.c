@@ -56,12 +56,10 @@ int executeshellcmd (Shellcmd *shellcmd)
 		int i = 0;
 	
 		Cmd *cmnds = cmdlist;
-		char print[100];		
-
-
 		while (cmnds != NULL)
 		{
 			i++;
+			puts(*cmnds->cmd);
 			cmnds = cmnds->next;
 		}
 	
@@ -78,14 +76,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 		
 		commands[i] = NULL;
 		
-		int a;
-		
-		for(a = 0; a < i; a++)
-		{
-			puts(commands[a]);
-		}
-		
-		if(execvp(commands[0], commands[0]))
+		if(execvp(commands[0], commands))
 		{
 			
 		}
