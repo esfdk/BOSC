@@ -42,8 +42,11 @@ int executeshellcmd (Shellcmd *shellcmd)
 	Cmd *cmdlist = shellcmd->the_cmds;
 	
 	char *commands[100];
+	char *commandptr;
 	int i;
+	
 	for(i = 0; i < 100; i++) commands[i] = NULL;
+	commandptr = &commands[0];
 	
 	if (!strcmp(*cmdlist->cmd, "exit" )){
 		exit(0);
@@ -61,9 +64,9 @@ int executeshellcmd (Shellcmd *shellcmd)
 	{
 		while (cmdlist != NULL)
 		{
-			char **cmd = cmdlist->cmd;
+			*commandptr = cmdlist->cmd;
 			cmdlist = cmdlist->next;
-			*commands = cmd;
+			commandptr = commandptr + 1;
 		}
 		
 		if(execvp(commands[0], commands[1]))
