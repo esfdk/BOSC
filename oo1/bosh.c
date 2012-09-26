@@ -42,7 +42,6 @@ int executeshellcmd (Shellcmd *shellcmd)
 	char *command = *shellcmd->the_cmds->cmd;
 	if(strcmp(ls, command) == 0)
 	{
-		printf("Entered comparator");
 		runcmdls();
 	}
 	
