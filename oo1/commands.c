@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <string.h>
 #include "commands.h"
 
 void runcmdls()
@@ -19,7 +20,7 @@ void runcmdls()
 			//puts(ep->d_name);
 		}
 		
-		puts(filelist)
+		puts(filelist);
 		
 		closedir (dp);
 	}
