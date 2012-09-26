@@ -72,7 +72,6 @@ int executeshellcmd (Shellcmd *shellcmd)
 			commands[i++] = *cmdlist->cmd;
 			printf("%s", *cmdlist->cmd);
 			cmdlist = cmdlist->next;
-			printf();
 		}
 		
 		commands[i] = NULL;
