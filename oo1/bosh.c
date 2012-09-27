@@ -49,7 +49,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 {
 	printshellcmd(shellcmd); /* Prints the shell command(s). Should be removed at some point. */
 	
-	if (!strcmp(shellcmd->the_cmds->cmd, "exit")){
+	if (!strcmp(*shellcmd->the_cmds->cmd, "exit")){
 		exit(0);
 	}
 	
@@ -75,7 +75,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 	return 0;
 }
 
-int shell_cmd_with_pipes(Shellcmd *shellcmd, int pipe)
+int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 {
 	int fd[2];
 	char **cmd = shellcmd->the_cmds->cmd;
@@ -104,10 +104,10 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int pipe)
 			dup(fileno(fopen(shellcmd->rd_stdin, "r")));
 		}
 		
-		if(pipe > 0)
+		if(write_pipe > 0)
 		{
 			close(fileno(stdout));
-			dup(pipe);
+			dup(write_pipe);
 		} else if(shellcmd->rd_stdout)
 		{
 			close(fileno(stdout));
@@ -119,9 +119,9 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int pipe)
 		free(cmd);
 	}
 	
-	if (pipe > 0) 
+	if (write_pipe > 0) 
 	{
-		close(pipe);
+		close(write_pipe);
 	}
 	
 	if(shellcmd->the_cmds != NULL)
