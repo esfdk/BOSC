@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "parser.h"
@@ -14,7 +15,7 @@
 #define HOSTNAMEMAX 100
 
 /* --- use the /proc filesystem to obtain the hostname --- */
-char *gethostname(char *hostname, size_t size)
+char *getuserandhostname(char *hostname, size_t size)
 {
 	FILE *hostnamefile;
 	char hname[HOSTNAMEMAX];
@@ -90,14 +91,14 @@ int main(int argc, char* argv[]) {
 	int terminate = 0;
 	Shellcmd shellcmd;
 
-	if (gethostname(hostname, sizeof(hostname))) 
+	if (getuserandhostname(hostname, sizeof(hostname))) 
 	{
 		/* parse commands until exit or ctrl-c */
 		while (!terminate) 
 		{
-			printf("%s", hostname);
-			printf("%s", getcurrentdir(currentdir, sizeof(currentdir));
-			if (cmdline = readline(":# ")) 
+			printf("%s:", hostname);
+			printf("%s", getcurrentdir(currentdir, sizeof(currentdir)));
+			if (cmdline = readline("# ")) 
 			{
 				if(*cmdline) 
 				{
