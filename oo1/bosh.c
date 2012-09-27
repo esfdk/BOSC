@@ -9,6 +9,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <errno.h>
+#include <signal.h>
 #include "parser.h"
 #include "print.h"
 
@@ -124,7 +125,6 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		
 		execvp(cmd[0], cmd);
 		printf("Could not find command: %s \n", cmd[0]);
-		free(cmd);
 	}
 	
 	if (write_pipe > 0) 
@@ -139,11 +139,17 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 	}
 	
 	int exit_code;
-	waitpid(proc_pid, &exit_code, 0);
+	if(!shellcmd->background)
+	{
+		waitpid(proc_pid, &exit_code, 0);
+	}
 }
 
 /* --- main loop of the simple shell --- */
 int main(int argc, char* argv[]) {
+
+	/* Handles Cntrl+c input */
+	signal(SIGINT, int_handler);
 
 	/* initialize the shell */
 	char *cmdline;
@@ -179,4 +185,14 @@ int main(int argc, char* argv[]) {
 	}    
     
 	return EXIT_SUCCESS;
+}
+
+void int_handler(int sig) {
+	sig = 0;
+
+	if (!shell_handle_terminal_interrupt(s)) 
+	{
+		printf("\n");
+		longjmp(buf, 0);
+	}
 }
