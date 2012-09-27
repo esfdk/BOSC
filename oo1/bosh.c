@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <errno.h>
 #include "parser.h"
 #include "print.h"
 
@@ -54,9 +55,11 @@ int executeshellcmd (Shellcmd *shellcmd)
 		exit(0);
 	}
 	
-	if (strcmp(*cmdlist->cmd, "cd") == 0 && *cmdlist->cmd[1] != NULL)
+	char **cd_command = cmdlist->cmd;
+	
+	if (strcmp(cd_command[0], "cd") == 0 && cd_command[1] != NULL)
 	{
-		const char *newdir = *cmdlist->cmd[1];
+		const char *newdir = cd_command[1];
 		int error = chdir(newdir);
 		
 			switch (error) 
@@ -67,7 +70,6 @@ int executeshellcmd (Shellcmd *shellcmd)
 				case ENOTDIR: printf("%s: not a directory.\n", newdir); break;
 				default: printf("%s: error %i\n", newdir, error); break;
 			}
-		return;
 	}
 	
 	pid_t pid;
