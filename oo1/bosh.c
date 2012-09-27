@@ -49,13 +49,11 @@ int executeshellcmd (Shellcmd *shellcmd)
 {
 	printshellcmd(shellcmd); /* Prints the shell command(s). Should be removed at some point. */
 	
-	Cmd *cmdlist = shellcmd->the_cmds;
-	
-	if (!strcmp(*cmdlist->cmd, "exit")){
+	if (!strcmp(shellcmd->the_cmds->cmd, "exit")){
 		exit(0);
 	}
 	
-	char **cd_command = cmdlist->cmd;
+	char **cd_command = shellcmd->the_cmds->cmd;
 	
 	if (strcmp(cd_command[0], "cd") == 0 && cd_command[1] != NULL)
 	{
@@ -72,29 +70,68 @@ int executeshellcmd (Shellcmd *shellcmd)
 			}
 	}
 	
-	pid_t pid;
-	int *ret_status;
-	
-	
-	
-	
-	pid = fork();
-	
-	if (pid)
-	{
-        pid = wait(ret_status);
-	}
-	else
-	{	
-		char** args = cmdlist->cmd;
-		
-		if(execvp(args[0], args))
-		{
-			
-		}
-	}
+	shell_cmd_with_pipes(shellcmd, 0);
 	
 	return 0;
+}
+
+int shell_cmd_with_pipes(Shellcmd *shellcmd, int pipe)
+{
+	int fd[2];
+	char **cmd = shellcmd->the_cmds->cmd;
+    int proc_pid;
+	
+	if(shellcmd->the_cmds->next != NULL)
+	{
+		shellcmd->the_cmds = shellcmd->the_cmds->next;
+		pipe(fd);
+	}
+	
+	if(!(proc_pid = fork()))
+	{
+		if(shellcmd->the_cmds != NULL)
+		{
+			close(fd[1]);
+		}
+		
+		if(shellcmd->the_cmds)
+		{
+			close(fileno(stdin));
+			dup(fd[0]);
+		} else if(shellcmd->rd_stdin)
+		{
+			close(fileno(stdin));
+			dup(fileno(fopen(shellcmd->rd_stdin, "r")));
+		}
+		
+		if(pipe > 0)
+		{
+			close(fileno(stdout));
+			dup(pipe);
+		} else if(shellcmd->rd_stdout)
+		{
+			close(fileno(stdout));
+			dup(fileno(fopen(shellcmd->rd_stdout, "w")));
+		}
+		
+		execvp(cmd[0], cmd);
+		printf("Could not find command: %s \n", cmd[0]);
+		free(cmd);
+	}
+	
+	if (pipe > 0) 
+	{
+		close(pipe);
+	}
+	
+	if(shellcmd->the_cmds != NULL)
+	{
+		close(fd[0]);
+		shell_cmd_with_pipes(shellcmd, fd[1]);
+	}
+	
+	int exit_code;
+	waitpid(proc_pid, &exit_code, 0);
 }
 
 /* --- main loop of the simple shell --- */
