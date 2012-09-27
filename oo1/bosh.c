@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <sys/utsname.h> // For the uname() function
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "parser.h"
@@ -27,7 +26,10 @@ char *gethostname(char *hostname, size_t size)
 	while (fgets(line, HOSTNAMEMAX, hostnamefile))
 	{
 		if(sscanf(line, "%s", hname))
-		snprintf(hostname, size, "%s@%s", getenv("USER"), hname);
+		{
+			/* Writes the user and host name to hostname. */
+			snprintf(hostname, size, "%s@%s", getenv("USER"), hname); 
+		}
 	}
   
 	return hostname;
@@ -36,12 +38,13 @@ char *gethostname(char *hostname, size_t size)
 /* --- execute a shell command --- */
 int executeshellcmd (Shellcmd *shellcmd)
 {
-	printshellcmd(shellcmd);
+	printshellcmd(shellcmd); /* Prints the shell command(s). Should be removed at some point. */
+	
 	pid_t pid;
 	int *ret_status;
 	Cmd *cmdlist = shellcmd->the_cmds;
 	
-	if (!strcmp(*cmdlist->cmd, "exit" )){
+	if (!strcmp(*cmdlist->cmd, "exit")){
 		exit(0);
 	}
 	
