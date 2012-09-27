@@ -60,14 +60,14 @@ int executeshellcmd (Shellcmd *shellcmd)
 		const char *newdir = cd_command[1];
 		int error = chdir(newdir);
 		
-			switch (error) 
-			{
-				case 0: break;
-				case EACCES: printf("%s: access denied.\n", newdir); break;
-				case ENOENT: printf("%s: no such file or directory.\n", newdir); break;
-				case ENOTDIR: printf("%s: not a directory.\n", newdir); break;
-				default: printf("%s: error %i\n", newdir, error); break;
-			}
+		switch (error) 
+		{
+			case 0: break;
+			case EACCES: printf("%s: access denied.\n", newdir); break;
+			case ENOENT: printf("%s: no such file or directory.\n", newdir); break;
+			case ENOTDIR: printf("%s: not a directory.\n", newdir); break;
+			default: printf("%s: error %i\n", newdir, error); break;
+		}
 	}
 	
 	shell_cmd_with_pipes(shellcmd, 0);
@@ -79,11 +79,11 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 {
 	int fd[2];
 	char **cmd = shellcmd->the_cmds->cmd;
+	shellcmd->the_cmds = shellcmd->the_cmds->next;
     int proc_pid;
 	
-	if(shellcmd->the_cmds->next != NULL)
+	if(shellcmd->the_cmds != NULL)
 	{
-		shellcmd->the_cmds = shellcmd->the_cmds->next;
 		pipe(fd);
 	}
 	
@@ -111,13 +111,13 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		} else if(shellcmd->rd_stdout)
 		{
 			close(fileno(stdout));
-			dup(fileno(fopen(shellcmd->rd_stdout, "w")));
+			dup(fileno(fopen(shellcmd->rd_stdout, "w+")));
 		}
 		
 		if(shellcmd->rd_stderr)
 		{
 			close(fileno(stderr));
-			dup(fileno(fopen(rd_stderr, "w")));
+			dup(fileno(fopen(rd_stderr, "w+")));
 		}
 		
 		execvp(cmd[0], cmd);
