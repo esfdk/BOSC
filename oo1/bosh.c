@@ -35,18 +35,32 @@ char *gethostname(char *hostname, size_t size)
 	return hostname;
 }
 
+char *getcurrentdir(char *dir, size_t size)
+{
+	char cur_path_buffer[1024];
+	char *cur_path = getcwd(cur_path_buffer, sizeof(cur_path_buffer));
+	snprintf(dir, size, "%s", cur_path);
+	return dir;
+}
+
 /* --- execute a shell command --- */
 int executeshellcmd (Shellcmd *shellcmd)
 {
 	printshellcmd(shellcmd); /* Prints the shell command(s). Should be removed at some point. */
 	
-	pid_t pid;
-	int *ret_status;
 	Cmd *cmdlist = shellcmd->the_cmds;
 	
 	if (!strcmp(*cmdlist->cmd, "exit")){
 		exit(0);
 	}
+	
+	
+	
+	pid_t pid;
+	int *ret_status;
+	
+	
+	
 	
 	pid = fork();
 	
@@ -73,16 +87,17 @@ int main(int argc, char* argv[]) {
 	/* initialize the shell */
 	char *cmdline;
 	char hostname[HOSTNAMEMAX];
+	char currentdir[1024];
 	int terminate = 0;
 	Shellcmd shellcmd;
 
 	if (gethostname(hostname, sizeof(hostname))) 
 	{
-
-    /* parse commands until exit or ctrl-c */
+		/* parse commands until exit or ctrl-c */
 		while (!terminate) 
 		{
 			printf("%s", hostname);
+			printf("%s", getcurrentdir(currentdir, sizeof(currentdir));
 			if (cmdline = readline(":# ")) 
 			{
 				if(*cmdline) 
@@ -94,7 +109,7 @@ int main(int argc, char* argv[]) {
 					}
 				}
 			
-			free(cmdline);
+				free(cmdline);
 			} 
 			else terminate = 1;
 		}
