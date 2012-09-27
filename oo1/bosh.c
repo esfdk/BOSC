@@ -15,6 +15,11 @@
 
 /* --- symbolic constants --- */
 #define HOSTNAMEMAX 100
+#define SHELL_MAX_PROCESSES 50
+
+static void int_handler(int sig);
+
+pid_t running_processes[SHELL_MAX_PROCESSES];
 
 /* --- use the /proc filesystem to obtain the hostname --- */
 char *getuserandhostname(char *hostname, size_t size)
@@ -127,6 +132,8 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		printf("Could not find command: %s \n", cmd[0]);
 	}
 	
+	add_process(proc_pid);
+	
 	if (write_pipe > 0) 
 	{
 		close(write_pipe);
@@ -143,6 +150,19 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 	{
 		waitpid(proc_pid, &exit_code, 0);
 	}
+}
+
+int add_process(pid_t process)
+{
+	int i = 0;
+	pid_t *proc;
+	while(*(proc = &(running_processes[i])) > 0 && i < SHELL_MAX_PROCESSES) i++;
+	
+	/* TODO: Should introduce handling too many processes */
+	
+	*proc = process;
+	
+	return 0;
 }
 
 /* --- main loop of the simple shell --- */
@@ -189,10 +209,12 @@ int main(int argc, char* argv[]) {
 
 void int_handler(int sig) {
 	sig = 0;
-
-	if (!shell_handle_terminal_interrupt(s)) 
+	int i;
+	pid_t *process;
+	
+	for (i = 0; *(process = &running_processes[i]) > 0 && i < SHELL_MAX_PROCESSES; i++) 
 	{
-		printf("\n");
-		longjmp(buf, 0);
+		kill(*process, SIGINT);
+		*process = 0;
 	}
 }
