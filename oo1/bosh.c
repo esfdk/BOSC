@@ -68,6 +68,8 @@ int executeshellcmd (Shellcmd *shellcmd)
 			case ENOTDIR: printf("%s: not a directory.\n", newdir); break;
 			default: printf("%s: error %i\n", newdir, error); break;
 		}
+		
+		return 0;
 	}
 	
 	shell_cmd_with_pipes(shellcmd, 0);
