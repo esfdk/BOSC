@@ -119,7 +119,7 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		if(shellcmd->rd_stderr)
 		{
 			close(fileno(stderr));
-			dup(fileno(fopen(rd_stderr, "w+")));
+			dup(fileno(fopen(shellcmd->rd_stderr, "w+")));
 		}
 		
 		execvp(cmd[0], cmd);
