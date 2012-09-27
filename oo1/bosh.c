@@ -124,7 +124,6 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		
 		execvp(cmd[0], cmd);
 		printf("Could not find command: %s \n", cmd[0]);
-		free(cmd);
 	}
 	
 	if (write_pipe > 0) 
