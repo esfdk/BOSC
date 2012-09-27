@@ -54,7 +54,21 @@ int executeshellcmd (Shellcmd *shellcmd)
 		exit(0);
 	}
 	
-	
+	if (strcmp(*cmdlist->cmd, "cd") == 0 && *cmdlist->cmd[1] != NULL)
+	{
+		const char *newdir = *cmdlist->cmd[1];
+		int error = chdir(newdir);
+		
+			switch (error) 
+			{
+				case 0: break;
+				case EACCES: printf("%s: access denied.\n", newdir); break;
+				case ENOENT: printf("%s: no such file or directory.\n", newdir); break;
+				case ENOTDIR: printf("%s: not a directory.\n", newdir); break;
+				default: printf("%s: error %i\n", newdir, error); break;
+			}
+		return;
+	}
 	
 	pid_t pid;
 	int *ret_status;
