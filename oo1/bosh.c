@@ -9,7 +9,6 @@
 #include <readline/history.h>
 #include "parser.h"
 #include "print.h"
-#include "commands.h"
 
 /* --- symbolic constants --- */
 #define HOSTNAMEMAX 100
