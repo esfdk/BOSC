@@ -114,6 +114,12 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 			dup(fileno(fopen(shellcmd->rd_stdout, "w")));
 		}
 		
+		if(shellcmd->rd_stderr)
+		{
+			close(fileno(stderr));
+			dup(fileno(fopen(rd_stderr, "w")));
+		}
+		
 		execvp(cmd[0], cmd);
 		printf("Could not find command: %s \n", cmd[0]);
 		free(cmd);
