@@ -1,3 +1,8 @@
 bosh
 *.o
 *.swp
+*.out
+*.aux
+*.toc
+*.synctex.gz
+*.log
