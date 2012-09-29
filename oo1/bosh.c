@@ -149,6 +149,7 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 	if(!shellcmd->background)
 	{
 		waitpid(proc_pid, &exit_code, 0);
+		/* TODO: Ask Ulrik about zombie processes - Melnyk forgot what he said about it */
 	}
 }
 
