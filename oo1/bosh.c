@@ -11,7 +11,6 @@
 #include <errno.h>
 #include <signal.h>
 #include "parser.h"
-#include "print.h"
 
 /* --- symbolic constants --- */
 #define HOSTNAMEMAX 100
@@ -19,7 +18,8 @@
 
 static void int_handler(int sig);
 
-pid_t running_processes[SHELL_MAX_PROCESSES];
+pid_t running_foreground_processes[SHELL_MAX_PROCESSES];
+pid_t running_background_processes[SHELL_MAX_PROCESSES];
 
 /* --- use the /proc filesystem to obtain the hostname --- */
 char *getuserandhostname(char *hostname, size_t size)
@@ -52,9 +52,7 @@ char *getcurrentdir(char *dir, size_t size)
 
 /* --- execute a shell command --- */
 int executeshellcmd (Shellcmd *shellcmd)
-{
-	printshellcmd(shellcmd); /* Prints the shell command(s). Should be removed at some point. */
-	
+{	
 	if (!strcmp(*shellcmd->the_cmds->cmd, "exit")){
 		exit(0);
 	}
@@ -131,8 +129,15 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		execvp(cmd[0], cmd);
 		printf("Could not find command: %s \n", cmd[0]);
 	}
-	
-	add_process(proc_pid);
+
+	if(shellcmd->background)
+	{
+		add_background_process(proc_pid);
+	}
+	else
+	{
+		add_foreground_process(proc_pid);
+	}
 	
 	if (write_pipe > 0) 
 	{
@@ -153,11 +158,24 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 	}
 }
 
-int add_process(pid_t process)
+int add_foreground_process(pid_t process)
 {
 	int i = 0;
 	pid_t *proc;
-	while(*(proc = &(running_processes[i])) > 0 && i < SHELL_MAX_PROCESSES) i++;
+	while(*(proc = &(running_foreground_processes[i])) > 0 && i < SHELL_MAX_PROCESSES) i++;
+	
+	/* TODO: Should introduce handling too many processes */
+	
+	*proc = process;
+	
+	return 0;
+}
+
+int add_background_process(pid_t process)
+{
+	int i = 0;
+	pid_t *proc;
+	while(*(proc = &(running_background_processes[i])) > 0 && i < SHELL_MAX_PROCESSES) i++;
 	
 	/* TODO: Should introduce handling too many processes */
 	
@@ -171,6 +189,7 @@ int main(int argc, char* argv[]) {
 
 	/* Handles Cntrl+c input */
 	signal(SIGINT, int_handler);
+	signal(SIGCHLD, SIG_IGN);
 
 	/* initialize the shell */
 	char *cmdline;
@@ -208,12 +227,13 @@ int main(int argc, char* argv[]) {
 	return EXIT_SUCCESS;
 }
 
-void int_handler(int sig) {
+void int_handler(int sig) 
+{
 	sig = 0;
 	int i;
 	pid_t *process;
 	
-	for (i = 0; *(process = &running_processes[i]) > 0 && i < SHELL_MAX_PROCESSES; i++) 
+	for (i = 0; *(process = &running_foreground_processes[i]) > 0 && i < SHELL_MAX_PROCESSES; i++) 
 	{
 		kill(*process, SIGINT);
 		*process = 0;
