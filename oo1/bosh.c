@@ -16,13 +16,15 @@
 #define HOSTNAMEMAX 100
 #define SHELL_MAX_PROCESSES 50
 
+/* Interupt handler */
 static void int_handler(int sig);
 
+/* pid's for the running processes */
 pid_t running_foreground_processes[SHELL_MAX_PROCESSES];
 pid_t running_background_processes[SHELL_MAX_PROCESSES];
 
-/* --- use the /proc filesystem to obtain the hostname --- */
-char *getuserandhostname(char *hostname, size_t size)
+/* Gets user and hostnames and inserts them into a string with the format "user@hostname". */
+char *get_user_and_hostname(char *hostname, size_t size)
 {
 	FILE *hostnamefile;
 	char hname[HOSTNAMEMAX];
@@ -34,7 +36,6 @@ char *getuserandhostname(char *hostname, size_t size)
 	{
 		if(sscanf(line, "%s", hname))
 		{
-			/* Writes the user and host name to hostname. */
 			snprintf(hostname, size, "%s@%s", getenv("USER"), hname); 
 		}
 	}
@@ -42,6 +43,7 @@ char *getuserandhostname(char *hostname, size_t size)
 	return hostname;
 }
 
+/* Sets dir to be the current working directory. */
 char *getcurrentdir(char *dir, size_t size)
 {
 	char cur_path_buffer[1024];
@@ -50,7 +52,7 @@ char *getcurrentdir(char *dir, size_t size)
 	return dir;
 }
 
-/* --- execute a shell command --- */
+/* Executes a shell command. */
 int executeshellcmd (Shellcmd *shellcmd)
 {	
 	if (!strcmp(*shellcmd->the_cmds->cmd, "exit")){
@@ -81,6 +83,7 @@ int executeshellcmd (Shellcmd *shellcmd)
 	return 0;
 }
 
+/* Main function for executing shell commands. */
 int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 {
 	int fd[2];
@@ -88,11 +91,13 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 	shellcmd->the_cmds = shellcmd->the_cmds->next;
     int proc_pid;
 	
+	/* Pipes if the shellcommand has more than one command. */
 	if(shellcmd->the_cmds != NULL)
 	{
 		pipe(fd);
 	}
 	
+	/* Fork process - if parent, just continue. If child, run if.*/
 	if(!(proc_pid = fork()))
 	{
 		if(shellcmd->the_cmds != NULL)
@@ -100,6 +105,9 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 			close(fd[1]);
 		}
 		
+		/* If any commands are left, close stdin and dup pipe.
+		   Else if stdin is redirected, close stdin and dup the 
+		   stdin file.											*/
 		if(shellcmd->the_cmds)
 		{
 			close(fileno(stdin));
@@ -110,6 +118,9 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 			dup(fileno(fopen(shellcmd->rd_stdin, "r")));
 		}
 		
+		/* If write_pipe is more than 0, close stdin and dup write_pipe.
+		   Else if stdout is redirected, close stdout and dup the stdout
+		   file.														*/
 		if(write_pipe > 0)
 		{
 			close(fileno(stdout));
@@ -120,6 +131,7 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 			dup(fileno(fopen(shellcmd->rd_stdout, "w+")));
 		}
 		
+		/* If stderr is redirected, close stderr and dup redirected stderr.*/
 		if(shellcmd->rd_stderr)
 		{
 			close(fileno(stderr));
@@ -130,6 +142,8 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		printf("Could not find command: %s \n", cmd[0]);
 	}
 
+	/* If background process, add proc_pid to list of background
+	   processes, else add to foreground processes. 			*/
 	if(shellcmd->background)
 	{
 		add_background_process(proc_pid);
@@ -139,11 +153,13 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		add_foreground_process(proc_pid);
 	}
 	
+	/* Close write_pipe if it is more than zero. */
 	if (write_pipe > 0) 
 	{
 		close(write_pipe);
 	}
 	
+	/* If more commands are left, close read and run recursively. */
 	if(shellcmd->the_cmds != NULL)
 	{
 		close(fd[0]);
@@ -151,33 +167,36 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 	}
 	
 	int exit_code;
+	/* If shell command is not marked as background, wait for pid. Else
+	   do not wait.													*/
 	if(!shellcmd->background)
 	{
 		waitpid(proc_pid, &exit_code, 0);
-		/* TODO: Ask Ulrik about zombie processes - Melnyk forgot what he said about it */
 	}
 }
 
+/* Adds a process to list of foreground processes. */
 int add_foreground_process(pid_t process)
 {
 	int i = 0;
 	pid_t *proc;
 	while(*(proc = &(running_foreground_processes[i])) > 0 && i < SHELL_MAX_PROCESSES) i++;
 	
-	/* TODO: Should introduce handling too many processes */
+	/* TODO: Should introduce handling too many processes. */
 	
 	*proc = process;
 	
 	return 0;
 }
 
+/* Adds a process to list of background processes. */
 int add_background_process(pid_t process)
 {
 	int i = 0;
 	pid_t *proc;
 	while(*(proc = &(running_background_processes[i])) > 0 && i < SHELL_MAX_PROCESSES) i++;
 	
-	/* TODO: Should introduce handling too many processes */
+	/* TODO: Should introduce handling too many processes. */
 	
 	*proc = process;
 	
@@ -187,8 +206,10 @@ int add_background_process(pid_t process)
 /* --- main loop of the simple shell --- */
 int main(int argc, char* argv[]) {
 
-	/* Handles Cntrl+c input */
+	/* Handles Cntrl+c input. */
 	signal(SIGINT, int_handler);
+	
+	/* Handles zombie processes. */
 	signal(SIGCHLD, SIG_IGN);
 
 	/* initialize the shell */
@@ -198,7 +219,7 @@ int main(int argc, char* argv[]) {
 	int terminate = 0;
 	Shellcmd shellcmd;
 
-	if (getuserandhostname(hostname, sizeof(hostname))) 
+	if (get_user_and_hostname(hostname, sizeof(hostname))) 
 	{
 		/* parse commands until exit or ctrl-c */
 		while (!terminate) 
@@ -227,6 +248,7 @@ int main(int argc, char* argv[]) {
 	return EXIT_SUCCESS;
 }
 
+/* Interupt handler. Closes all running foreground processes. */
 void int_handler(int sig) 
 {
 	sig = 0;

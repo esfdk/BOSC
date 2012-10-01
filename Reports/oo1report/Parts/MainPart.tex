@@ -16,34 +16,55 @@ Krav til funktionalitet:
 
 Ekstra funktionalitet, vi har valgt at lave:
 \begin{my_enumerate}
-\item Display af brugernavn.
 \item Display af "current working directory".
 \item Mulighed for at kalde "cd" for at skifte directory.
 \end{my_enumerate}
 
 \section{Beskrivelse af implementation}
 \subsection{Delopgave 1}
+Vi kalder ikke system() i vores kode. De mest relevante systemkald, vi laver, er pipe(), dup(), fork(), waitpid() og execvp(). Desuden har vi fileno(), close() og fopen() kald.
 \subsubsection{Tests}
+
 \subsection{Delopgave 2}
+Vi ændrede 'gethostname' i bosh.c til 'get\_user\_and\_hostname'. Metoden tager en char pointer og sætter den til at pege på en string med formatet "user@hostname". Vi tager 'user' via getenv og vi finder hostname i "/proc/sys/kernel/hostname".
+\\Se linje ?? i bosh.c.
 \subsubsection{Tests}
+
 \subsection{Delopgave 3}
+Vi bruger execvp() til at køre programmer i vores shell. execvp() leder efter et program i \$PATH. Hvis den finder det, bliver programmet kørt og resten af det program, som execvp blev kørt fra, bliver termineret. 
+\\Se linje ?? i bosh.c.
+
 \subsubsection{Tests}
+
 \subsection{Delopgave 4}
+Hvis et program bliver kørt som en baggrundprocess, bliver processen tilføjet til vores array af baggrundsprocessid'er. Desuden kalder vi ikke 'waitpid()' på det processid. 
+\\Se linje ?? i bosh.c.
+\\Vi undgår zombieprocesser ved at kalde 'signal(SIGCHLD, SIG\_IGN)'.
 \subsubsection{Tests}
+
 \subsection{Delopgave 5}
+Hvis der i shellcmd bliver redirected stdin, stdout og/eller stderr, så kalder vi close() på dem, som bliver redirected. Derefter åbner vi filen, som er blevet redirected til. Vi kalder så dup() på den fil.
+\\Se fx linje ?? i bosh.c.
 \subsubsection{Tests}
+
 \subsection{Delopgave 6}
+Hvis der er mere end en enkelt command i 'shellcmd', når vi modtager den som argumentet til funktionen 'shell\_cmd\_with\_pipes', piper vi vores fd. (Linje ?? i bosh.c).
+\\Vi kalder så close() på write delen af vores pipe (linje ??) og dup() read. Hvis 'write\_pipe' er mere end 0, lukker vi stdout og kalder dup på vores 'write\_pipe'.
+\\Hvis vores 'write\_pipe' er 0 udenfor vores fork, så kalder vi close() på 'write\_pipe'. Hvis der er flere kommandoer tilbage i vores 'shellcmd', kalder vi 'shell\_cmd\_with\_pipes' med fd[1] (write delen af vores pipe) som parameter 'write\_pipe'.
 \subsubsection{Tests}
+
 \subsection{Delopgave 7}
+'executeshellcmd' checker om den sidste kommando er "exit". Hvis den er, kalder vi 'exit(0)' i shellen. 
+\\Se linje ?? i bosh.c.
 \subsubsection{Tests}
+
 \subsection{Delopgave 8}
+I begyndelsen af vores main-metode, kalder vi 'signal(SIGINT, int\_handler)'. Dette betyder, at 'int\_handler' bliver kørt, hver gang bosh programmet modtager en interupt. 'int\_handler' er vores interupt handler, som lukker alle forgrundsprocesser. 
+\\Se linje ?? i bosh.c.
 \subsubsection{Tests}
 
-\subsection{}
-\subsubsection{Tests}
-\subsection{}
-\subsubsection{Tests}
-\subsection{}
-\subsubsection{Tests}
 
-\section{}
+\subsection{Ekstra funktionalitet 1}
+\subsubsection{Tests}
+\subsection{Ekstra funktionalitet 2}
+\subsubsection{Tests}
