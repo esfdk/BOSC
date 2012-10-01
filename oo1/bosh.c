@@ -56,7 +56,7 @@ char *getcurrentdir(char *dir, size_t size)
 int executeshellcmd (Shellcmd *shellcmd)
 {	
 	if (!strcmp(*shellcmd->the_cmds->cmd, "exit")){
-		exit(0);
+		return 1;
 	}
 	
 	char **cd_command = shellcmd->the_cmds->cmd;
