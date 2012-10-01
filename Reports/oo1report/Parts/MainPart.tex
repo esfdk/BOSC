@@ -29,42 +29,85 @@ Vi kalder ikke system() i vores kode. De mest relevante systemkald, vi laver, er
 Vi ændrede 'gethostname' i bosh.c til 'get\_user\_and\_hostname'. Metoden tager en char pointer og sætter den til at pege på en string med formatet "user@hostname". Vi tager 'user' via getenv og vi finder hostname i "/proc/sys/kernel/hostname".
 \\Se linje ?? i bosh.c.
 \subsubsection{Tests}
+Vi tjekker om vores shell viser det samme navn som terminalen gør
+Forventet resultat: se billed \ref{TestOfPart2.jpg} på side \pageref{Test2}
+Faktisk resultat: se billed \ref{TestOfPart2.jpg} på side \pageref{Test2}
 
 \subsection{Delopgave 3}
 Vi bruger execvp() til at køre programmer i vores shell. execvp() leder efter et program i \$PATH. Hvis den finder det, bliver programmet kørt og resten af det program, som execvp blev kørt fra, bliver termineret. 
 \\Se linje ?? i bosh.c.
 
 \subsubsection{Tests}
+\paragraf{Test3.1}
+Vi kører kommandoen ls i den normale shell, og derefter i vores egen shell til sammmenligning
+Forventet resultat: se billed \ref{TestOfPart3_1.jpg} på side \pageref{Test3}
+Faktisk resultat: se billed \ref{TestOfPart3_1.jpg} på side \pageref{Test3}
+
+\paragraf{Test3.2}
+Vi kører kommandoen cat i den normale shell, og derefter i vores egen shell til sammenligning
+Forventet resultat: se billed \ref{TestOfPart3_2.jpg} på side \pageref{Test3}
+Faktisk resultat: se billed \ref{TestOfPart3_2.jpg} på side \pageref{Test3} 
+
+\paragraf{Test3.3}
+Vi kører kommandoen ws i den normale shell, og derefter i vores egen shell til sammenligning
+Forventet resultat: se billed \ref{TestOfPart3_3.jpg} på side \pageref{Test3}
+Faktisk resultat: se billed \ref{TestOfPart3_3.jpg} på side \pageref{Test3} 
+
+\paragraf{Test3.4}
+Vi kører kommandoen 42 i den normale shell, og derefter i vores egen shell til sammenligning
+Forventet resultat: se billed \ref{TestOfPart3_4.jpg} på side \pageref{Test3}
+Faktisk resultat: se billed \ref{TestOfPart3_4.jpg} på side \pageref{Test3} 
 
 \subsection{Delopgave 4}
 Hvis et program bliver kørt som en baggrundprocess, bliver processen tilføjet til vores array af baggrundsprocessid'er. Desuden kalder vi ikke 'waitpid()' på det processid. 
 \\Se linje ?? i bosh.c.
 \\Vi undgår zombieprocesser ved at kalde 'signal(SIGCHLD, SIG\_IGN)'.
 \subsubsection{Tests}
+Vi kører 'sleep 100 \&' og derefter kommandoen date for at vise at sleep kører i baggrunden
+Forventet resultat: Date viser den korrekte dato og tid
+Faktisk resultat: se billed \ref{TestOfPart4.jpg} på side \pageref{Test4} 
 
 \subsection{Delopgave 5}
 Hvis der i shellcmd bliver redirected stdin, stdout og/eller stderr, så kalder vi close() på dem, som bliver redirected. Derefter åbner vi filen, som er blevet redirected til. Vi kalder så dup() på den fil.
 \\Se fx linje ?? i bosh.c.
 \subsubsection{Tests}
+Vi kører kommandoen 'wc -l \lhd /etc/passwd \rhd antalkontoer' i den normale shell, og derefter i vores egen shell til sammenligning
+Forventet resultat: se billed \ref{TestOfPart5.jpg} på side \pageref{Test5}
+Faktisk resultat: se billed \ref{TestOfPart5.jpg} på side \pageref{Test5} 
 
 \subsection{Delopgave 6}
 Hvis der er mere end en enkelt command i 'shellcmd', når vi modtager den som argumentet til funktionen 'shell\_cmd\_with\_pipes', piper vi vores fd. (Linje ?? i bosh.c).
 \\Vi kalder så close() på write delen af vores pipe (linje ??) og dup() read. Hvis 'write\_pipe' er mere end 0, lukker vi stdout og kalder dup på vores 'write\_pipe'.
 \\Hvis vores 'write\_pipe' er 0 udenfor vores fork, så kalder vi close() på 'write\_pipe'. Hvis der er flere kommandoer tilbage i vores 'shellcmd', kalder vi 'shell\_cmd\_with\_pipes' med fd[1] (write delen af vores pipe) som parameter 'write\_pipe'.
 \subsubsection{Tests}
+Vi kører kommandoen ls i den normale shell, og derefter i vores egen shell til sammenligning
+Forventet resultat: se billed \ref{TestOfPart6.jpg} på side \pageref{Test6}
+Faktisk resultat: se billed \ref{TestOfPart6.jpg} på side \pageref{Test6} 
 
 \subsection{Delopgave 7}
 'executeshellcmd' checker om den sidste kommando er "exit". Hvis den er, kalder vi 'exit(0)' i shellen. 
 \\Se linje ?? i bosh.c.
 \subsubsection{Tests}
+Vi starter shellen og kører exit
+Forventet resultat: shellen afsluttes
+Faktisk resultat: se billed \ref{TestOfPart7.jpg} på side \pageref{Test7}
 
 \subsection{Delopgave 8}
 I begyndelsen af vores main-metode, kalder vi 'signal(SIGINT, int\_handler)'. Dette betyder, at 'int\_handler' bliver kørt, hver gang bosh programmet modtager en interupt. 'int\_handler' er vores interupt handler, som lukker alle forgrundsprocesser. 
 \\Se linje ?? i bosh.c.
 \subsubsection{Tests}
-
+Vi kører kommandoen ws uden parameter og trykker ctrl-c for at se om processen afsluttes
+Forventet resultat: ws stoppes efter ctrl-c er blevet tastet
+Faktisk resultat: se billed \ref{TestOfPart8.jpg} på side \pageref{Test8} 
 
 \subsection{Ekstra funktionalitet 1}
 \subsubsection{Tests}
+Vi starter shellen for at se om der visses det dictory der i øjeblikket arbejdes i
+Forventet resultat: se billed \ref{TestOfPart9.jpg} på side \pageref{Test9}
+Faktisk resultat: se billed \ref{TestOfPart9.jpg} på side \pageref{Test9}
+
 \subsection{Ekstra funktionalitet 2}
 \subsubsection{Tests}
+Vi går ind i vores shell og prøver derefter at skifte til andet dictory end det der arbejdes i.
+Forventet resultat: se billed \ref{TestOfPart10.jpg} på side \pageref{Test10}
+Faktisk resultat: se billed \ref{TestOfPart10.jpg} på side \pageref{Test10}
