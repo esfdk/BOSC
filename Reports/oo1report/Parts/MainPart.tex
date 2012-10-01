@@ -21,50 +21,55 @@ Ekstra funktionalitet, vi har valgt at lave:
 \end{my_enumerate}
 
 \section{Beskrivelse af implementation}
-\subsection{Delopgave 1}
+\subsection{Delopgave 1: Køre uafhængigt}
 Vi kalder ikke system() i vores kode. De mest relevante systemkald, vi laver, er pipe(), dup(), fork(), waitpid() og execvp(). Desuden har vi fileno(), close() og fopen() kald.
 \subsubsection{Tests}
-
-\subsection{Delopgave 2}
+Vi har ikke lavet nogen decideret test af dette, 
+\subsection{Delopgave 2: Display hostname}
 Vi ændrede 'gethostname' i bosh.c til 'get\_user\_and\_hostname'. Metoden tager en char pointer og sætter den til at pege på en string med formatet "user@hostname". Vi tager 'user' via getenv og vi finder hostname i "/proc/sys/kernel/hostname".
-\\Se linje ?? i bosh.c.
+\\Se linje 27 - 43 same 222-227 i bosh.c.
 \subsubsection{Tests}
 
-\subsection{Delopgave 3}
+\subsection{Delopgave 3: Kør programmer}
 Vi bruger execvp() til at køre programmer i vores shell. execvp() leder efter et program i \$PATH. Hvis den finder det, bliver programmet kørt og resten af det program, som execvp blev kørt fra, bliver termineret. 
-\\Se linje ?? i bosh.c.
+\\Se linje 141 i bosh.c.
 
 \subsubsection{Tests}
 
-\subsection{Delopgave 4}
+\subsection{Delopgave 4: Baggrundsprocess}
 Hvis et program bliver kørt som en baggrundprocess, bliver processen tilføjet til vores array af baggrundsprocessid'er. Desuden kalder vi ikke 'waitpid()' på det processid. 
-\\Se linje ?? i bosh.c.
-\\Vi undgår zombieprocesser ved at kalde 'signal(SIGCHLD, SIG\_IGN)'.
+\\Se linje 172-175 samt 193-204 i bosh.c.
+\\Vi undgår zombieprocesser ved at kalde 'signal(SIGCHLD, SIG\_IGN)' (linje 213).
 \subsubsection{Tests}
 
-\subsection{Delopgave 5}
+\subsection{Delopgave 5: Redirect af stdin/out}
 Hvis der i shellcmd bliver redirected stdin, stdout og/eller stderr, så kalder vi close() på dem, som bliver redirected. Derefter åbner vi filen, som er blevet redirected til. Vi kalder så dup() på den fil.
-\\Se fx linje ?? i bosh.c.
+\\Se fx linje 118 i bosh.c.
 \subsubsection{Tests}
 
-\subsection{Delopgave 6}
-Hvis der er mere end en enkelt command i 'shellcmd', når vi modtager den som argumentet til funktionen 'shell\_cmd\_with\_pipes', piper vi vores fd. (Linje ?? i bosh.c).
-\\Vi kalder så close() på write delen af vores pipe (linje ??) og dup() read. Hvis 'write\_pipe' er mere end 0, lukker vi stdout og kalder dup på vores 'write\_pipe'.
+\subsection{Delopgave 6: Pipes}
+Hvis der er mere end en enkelt command i 'shellcmd', når vi modtager den som argumentet til funktionen 'shell\_cmd\_with\_pipes', piper vi vores fd. (Linje 97 i bosh.c).
+\\Vi kalder så close() på write delen af vores pipe (linje 105). Hvis der er flere commands i shellcmd, lukker vi stdin og dup() read delen af pipe. Hvis 'write\_pipe' er mere end 0, lukker vi stdout og kalder dup på vores 'write\_pipe'.
 \\Hvis vores 'write\_pipe' er 0 udenfor vores fork, så kalder vi close() på 'write\_pipe'. Hvis der er flere kommandoer tilbage i vores 'shellcmd', kalder vi 'shell\_cmd\_with\_pipes' med fd[1] (write delen af vores pipe) som parameter 'write\_pipe'.
 \subsubsection{Tests}
 
-\subsection{Delopgave 7}
-'executeshellcmd' checker om den sidste kommando er "exit". Hvis den er, kalder vi 'exit(0)' i shellen. 
-\\Se linje ?? i bosh.c.
+\subsection{Delopgave 7: Exit}
+'executeshellcmd' checker om den sidste kommando er "exit". Hvis den er, returner vi 1 til main-funktionen, som så afslutter.
+\\Se linje 58 i bosh.c.
 \subsubsection{Tests}
 
-\subsection{Delopgave 8}
+\subsection{Delopgave 8: Ctrl+C}
 I begyndelsen af vores main-metode, kalder vi 'signal(SIGINT, int\_handler)'. Dette betyder, at 'int\_handler' bliver kørt, hver gang bosh programmet modtager en interupt. 'int\_handler' er vores interupt handler, som lukker alle forgrundsprocesser. 
-\\Se linje ?? i bosh.c.
+\\Se linje 210 samt 252-263 i bosh.c.
 \subsubsection{Tests}
 
 
-\subsection{Ekstra funktionalitet 1}
+\subsection{Ekstra funktionalitet 1: Display current working directory}
+Vi bruger en funktion 'getcwd' til at finde current working directory. Dette har vi implementeret i 'getcurrentdir'.
+\\Se linje (47-53) i bosh.c.
 \subsubsection{Tests}
-\subsection{Ekstra funktionalitet 2}
+
+\subsection{Ekstra funktionalitet 2: Change directory}
+I vores 'executeshellcmd' tjekker vi om kommandoen er "cd" om den har mere end et argument. I så fald så kalder vi chdir på det første argument til "cd" kommandoen. Hvis det giver en error, printer vi det og returner 0.
+\\Se linje 62-79 i bosh.c.
 \subsubsection{Tests}

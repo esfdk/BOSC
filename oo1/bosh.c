@@ -89,7 +89,7 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 	int fd[2];
 	char **cmd = shellcmd->the_cmds->cmd;
 	shellcmd->the_cmds = shellcmd->the_cmds->next;
-    int proc_pid;
+	int proc_pid;
 	
 	/* Pipes if the shellcommand has more than one command. */
 	if(shellcmd->the_cmds != NULL)
