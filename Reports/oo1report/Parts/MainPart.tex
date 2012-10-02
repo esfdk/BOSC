@@ -1,5 +1,15 @@
 \chapter{Opgavebesvarelse}
 \section{Forord}
+I denne rapport dokumenterer vi vores valg i forhold til implementation af BOSC shell (bosh). 
+\\Vores implementation kan findes i "Source Code/bosh.c". Vi har bygget videre på den implementation, som blev lagt op på bloggen\footnote{https://blog.itu.dk/BOSC-E2012/files/2012/09/oo1.zip}. Vi har dog erstattet "parser.c" med v2 af  "parser.c"\footnote{ https://blog.itu.dk/BOSC-E2012/files/2012/09/parserc.zip}.
+
+Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}. Vores git repository kan findes på https://github.com/esfdk/BOSC .
+Når vi tilbage på processen, føler vi, at der er et par ting, vi kunne have gjort anderledes.
+Hvad ville vi have gjort anderledes / yderligere funktionalitet?
+
+Del om Ulrik?
+
+Parser håndtering af mellemrum i argumenter
 
 \section{Funktionalitet}
 Krav til funktionalitet:
@@ -22,12 +32,15 @@ Ekstra funktionalitet, vi har valgt at lave:
 
 \section{Beskrivelse af implementation}
 \subsection{Delopgave 1: Køre uafhængigt}
+\label{D1}
 Vi kalder ikke system() i vores kode. De mest relevante systemkald, vi laver, er pipe(), dup(), fork(), waitpid() og execvp(). Desuden har vi fileno(), close() og fopen() kald.
 \subsubsection{Tests}
 Vi har ikke lavet nogen decideret test af dette.
 
 \subsection{Delopgave 2: Display hostname}
-Vi ændrede 'gethostname' i bosh.c til 'get\_user\_and\_hostname'. Metoden tager en char pointer og sætter den til at pege på en string med formatet "user@hostname". Vi tager 'user' via getenv og vi finder hostname i "/proc/sys/kernel/hostname".
+\label{D2}
+Vi har valgt at vise både user og hostname i shell'en, da vi havde ønske om, at vores shell skulle ligne Bash shell så meget som muligt.
+\\Vi ændrede 'gethostname' i bosh.c til 'get\_user\_and\_hostname'. Metoden tager en char pointer og sætter den til at pege på en string med formatet "user@hostname". Vi tager 'user' via getenv og vi finder hostname i "/proc/sys/kernel/hostname".
 \\Se linje 27 - 43 same 222-227 i bosh.c.
 \subsubsection{Tests}
 Vi tjekker om vores shell viser det samme navn, som terminalen gør.
@@ -35,6 +48,7 @@ Vi tjekker om vores shell viser det samme navn, som terminalen gør.
 \\Faktisk resultat: Se billede \ref{Test2} på side \pageref{Test2}.
 
 \subsection{Delopgave 3: Kør programmer}
+\label{D3}
 Vi bruger execvp() til at køre programmer i vores shell. execvp() leder efter et program i \$PATH. Hvis den finder det, bliver programmet kørt og resten af det program, som execvp blev kørt fra, bliver termineret. 
 \\Se linje 141 i bosh.c.
 \subsubsection{Tests}
@@ -59,6 +73,7 @@ Vi kører kommandoen "42" i den normale shell, og derefter i vores egen shell ti
 \\Faktisk resultat: Se billede \ref{Test3_4} på side \pageref{Test3_4}.
 
 \subsection{Delopgave 4: Baggrundsprocess}
+\label{D4}
 Hvis et program bliver kørt som en baggrundprocess, bliver processen tilføjet til vores array af baggrundsprocessid'er. Desuden kalder vi ikke 'waitpid()' på det processid. 
 \\Se linje 172-175 samt 193-204 i bosh.c.
 \\Vi undgår zombieprocesser ved at kalde 'signal(SIGCHLD, SIG\_IGN)' (linje 213).
@@ -68,6 +83,7 @@ Vi kører 'sleep 100 \&' og derefter kommandoen date for at vise at sleep kører
 \\Faktisk resultat: Se billede \ref{Test4} på side \pageref{Test4}.
 
 \subsection{Delopgave 5: Redirect af stdin/out}
+\label{D5}
 Hvis der i shellcmd bliver redirected stdin, stdout og/eller stderr, så kalder vi close() på dem, som bliver redirected. Derefter åbner vi filen, som er blevet redirected til. Vi kalder så dup() på den fil.
 \\Se fx linje 118 i bosh.c.
 \subsubsection{Tests}
@@ -76,6 +92,7 @@ Vi kører kommandoen 'wc -l \textless /etc/passwd \textgreater antalkontoer' i d
 \\Faktisk resultat: Se billede \ref{Test5} på side \pageref{Test5}.
  
 \subsection{Delopgave 6: Pipes}
+\label{D6}
 Hvis der er mere end en enkelt command i 'shellcmd', når vi modtager den som argumentet til funktionen 'shell\_cmd\_with\_pipes', piper vi vores fd. (Linje 97 i bosh.c).
 \\Vi kalder så close() på write delen af vores pipe (linje 105). Hvis der er flere commands i shellcmd, lukker vi stdin og dup() read delen af pipe. Hvis 'write\_pipe' er mere end 0, lukker vi stdout og kalder dup på vores 'write\_pipe'.
 \\Hvis vores 'write\_pipe' er 0 udenfor vores fork, så kalder vi close() på 'write\_pipe'. Hvis der er flere kommandoer tilbage i vores 'shellcmd', kalder vi 'shell\_cmd\_with\_pipes' med fd[1] (write delen af vores pipe) som parameter 'write\_pipe'.
@@ -85,7 +102,9 @@ Test: Vi starter med at køre kommandoen ls i shellen, og derefter prøver vi at
 \\Faktisk resultat: Se billede \ref{Test6} på side \pageref{Test6}.
 
 \subsection{Delopgave 7: Exit}
-'executeshellcmd' checker om den sidste kommando er "exit". Hvis den er, returner vi 1 til main-funktionen, som så afslutter.
+\label{D7}
+Første iteration af denne delopgave terminerede bare bosh (med exit(0)), men dette ændrede vi, da følte det gav bedre mening, hvis vi lod main-funktionen afslutte.
+\\'executeshellcmd' checker om den sidste kommando er "exit". Hvis den er, returner vi 1 til main-funktionen, som så afslutter.
 \\Se linje 58 i bosh.c.
 \subsubsection{Tests}
 Vi starter shellen og kører exit kommandoen.
@@ -93,7 +112,9 @@ Vi starter shellen og kører exit kommandoen.
 \\Faktisk resultat: Se billede \ref{Test7} på side \pageref{Test7}.
 
 \subsection{Delopgave 8: Ctrl+C}
-I begyndelsen af vores main-metode, kalder vi 'signal(SIGINT, int\_handler)'. Dette betyder, at 'int\_handler' bliver kørt, hver gang bosh programmet modtager en interupt. 'int\_handler' er vores interupt handler, som lukker alle forgrundsprocesser. 
+\label{D8}
+Vores første implementation af Ctrl+C funktionaliteten stoppede alle processer (både forgrunds- og baggrundsprocesser). Dette lavede vi dog om, så det matchede måden, som Bash håndterer Cntrl+C signals. Vi har ikke implementeret en mulighed for at hente baggrundsprocesser frem i forgrunden, hvilket gør, at vi ikke kan afslutte baggrundsprocesser, medmindre de selv terminerer. Sådan funktionalitet bør være højt på dagsordenen, hvis man udvider funktionaliteten af BoSh.
+\\I begyndelsen af vores main-metode, kalder vi 'signal(SIGINT, int\_handler)'. Dette betyder, at 'int\_handler' bliver kørt, hver gang bosh programmet modtager en interupt. 'int\_handler' er vores interupt handler, som lukker alle forgrundsprocesser. 
 \\Se linje 210 samt 252-263 i bosh.c.
 \subsubsection{Tests}
 Vi kører kommandoen wc uden parameter og trykker ctrl-c for at se om processen afsluttes.
@@ -101,7 +122,9 @@ Vi kører kommandoen wc uden parameter og trykker ctrl-c for at se om processen 
 \\Faktisk resultat: Se billede \ref{Test8} på side \pageref{Test8}.
 
 \subsection{Ekstra funktionalitet 1: Display current working directory}
-Vi bruger en funktion 'getcwd' til at finde current working directory. Dette har vi implementeret i 'getcurrentdir'.
+\label{E1}
+Som nævnt i \textbf{\ref{D2}} har vi haft et ønske om at få vores shell til at ligne Bash, så deres ville vi gøre det muligt at både se og skifte directory.
+\\Vi bruger en funktion 'getcwd' til at finde current working directory. Dette har vi implementeret i 'getcurrentdir'.
 \\Se linje (47-53) i bosh.c.
 \subsubsection{Tests}
 Vi starter shellen for at se om der vises det directory der i øjeblikket arbejdes i.
@@ -109,7 +132,9 @@ Vi starter shellen for at se om der vises det directory der i øjeblikket arbejd
 \\Faktisk resultat: Se billede \ref{Test9} på side \pageref{Test9}.
 
 \subsection{Ekstra funktionalitet 2: Change directory}
-I vores 'executeshellcmd' tjekker vi om kommandoen er "cd" om den har mere end et argument. I så fald så kalder vi chdir på det første argument til "cd" kommandoen. Hvis det giver en error, printer vi det og returner 0.
+\label{E2}
+Som nævnt i \textbf{\ref{E1}}, så ville vi gøre det muligt at både se og skifte directory, hvilket var grundlaget for at implementere dette.
+\\I vores 'executeshellcmd' tjekker vi om kommandoen er "cd" om den har mere end et argument. I så fald så kalder vi chdir på det første argument til "cd" kommandoen. Hvis det giver en error, printer vi det og returner 0.
 \\Se linje 62-79 i bosh.c.
 \subsubsection{Tests}
 Vi går ind i vores shell og prøver derefter at skifte til andet directory end det der arbejdes i.
