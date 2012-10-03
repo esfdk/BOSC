@@ -69,10 +69,18 @@ int executeshellcmd (Shellcmd *shellcmd)
 		switch (error) 
 		{
 			case 0: break;
-			case EACCES: printf("%s: access denied.\n", newdir); break;
-			case ENOENT: printf("%s: no such file or directory.\n", newdir); break;
-			case ENOTDIR: printf("%s: not a directory.\n", newdir); break;
-			default: printf("%s: error %i\n", newdir, error); break;
+			case EACCES: 
+				printf("%s: access denied.\n", newdir); 
+				break;
+			case ENOENT: 
+				printf("%s: no such file or directory.\n", newdir); 
+				break;
+			case ENOTDIR: 
+				printf("%s: not a directory.\n", newdir); 
+				break;
+			default: 
+				printf("%s: error %i\n", newdir, error); 
+				break;
 		}
 		
 		return 0;
@@ -107,7 +115,7 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		
 		/* If any commands are left, close stdin and dup pipe.
 		   Else if stdin is redirected, close stdin and dup the 
-		   stdin file.											*/
+		   stdin file.						*/
 		if(shellcmd->the_cmds)
 		{
 			close(fileno(stdin));
@@ -120,7 +128,7 @@ int shell_cmd_with_pipes(Shellcmd *shellcmd, int write_pipe)
 		
 		/* If write_pipe is more than 0, close stdin and dup write_pipe.
 		   Else if stdout is redirected, close stdout and dup the stdout
-		   file.														*/
+		   file.									*/
 		if(write_pipe > 0)
 		{
 			close(fileno(stdout));
@@ -180,7 +188,8 @@ int add_foreground_process(pid_t process)
 {
 	int i = 0;
 	pid_t *proc;
-	while(*(proc = &(running_foreground_processes[i])) > 0 && i < SHELL_MAX_PROCESSES) i++;
+	while(*(proc = &(running_foreground_processes[i])) > 0 
+		&& i < SHELL_MAX_PROCESSES) i++;
 	
 	/* TODO: Should introduce handling too many processes. */
 	
@@ -194,7 +203,8 @@ int add_background_process(pid_t process)
 {
 	int i = 0;
 	pid_t *proc;
-	while(*(proc = &(running_background_processes[i])) > 0 && i < SHELL_MAX_PROCESSES) i++;
+	while(*(proc = &(running_background_processes[i])) > 0 
+		&& i < SHELL_MAX_PROCESSES) i++;
 	
 	/* TODO: Should introduce handling too many processes. */
 	
@@ -255,7 +265,8 @@ void int_handler(int sig)
 	int i;
 	pid_t *process;
 	
-	for (i = 0; *(process = &running_foreground_processes[i]) > 0 && i < SHELL_MAX_PROCESSES; i++) 
+	for (i = 0; *(process = &running_foreground_processes[i]) > 0
+		 && i < SHELL_MAX_PROCESSES; i++) 
 	{
 		kill(*process, SIGINT);
 		*process = 0;
