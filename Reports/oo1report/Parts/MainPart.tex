@@ -7,15 +7,13 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 Når vi tilbage på processen, føler vi, at der er et par ting, vi kunne have gjort anderledes.
 \begin{my_itemize}
 \item Gjort det muligt at få en liste af baggrundsprocesser. (fx via en "jobs" kommando)
-\item Gjort det muligt at hente baggrundsprocesser frem til forgrund
+\item Gjort det muligt at hente baggrundsprocesser frem til forgrund.
 \item Delt implementationen ud i flere dele (istedet for en lang bosh.c fil)
-\item 
 \end{my_itemize}
-Hvad ville vi have gjort anderledes / yderligere funktionalitet?
 
-Del om Ulrik?
+Vi har fået en del hjælp til pipes, redirect af stdin/out og "cd" kommandoen af Ulrik Damm (ulfd@itu.dk). Hans GitHub repository er https://github.com/ulrikdamm/progsh .
 
-Parser håndtering af mellemrum i argumenter
+Der er en "bug" i parseren, som gør, at den ikke er i stand til at læse argumenter med mellemrum. Fx vil kommandoen 'mkdir "mappe med mellemrum" ' ikke lave en mappe ved navn "mappe med mellemrum", men derimod lave tre mapper med navnene '"mappe', 'med' 'mellemrum"'.
 
 \section{Funktionalitet}
 Krav til funktionalitet:
