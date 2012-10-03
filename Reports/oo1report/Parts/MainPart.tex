@@ -109,7 +109,7 @@ Test: Vi starter med at køre kommandoen ls i shellen, og derefter prøver vi at
 \label{D7}
 Første iteration af denne delopgave terminerede bare bosh (med exit(0)), men dette ændrede vi, da vi følte det gav bedre mening, hvis vi lod main-funktionen afslutte.
 \\'executeshellcmd' checker om den sidste kommando er "exit". Hvis den er, returner vi 1 til main-funktionen, som så afslutter.
-\\Se linje 58 i bosh.c.
+\\Se linje 58-60 i bosh.c.
 \subsubsection{Tests}
 Vi starter shellen og kører exit kommandoen.
 \\Forventet resultat: Shellen afsluttes.
@@ -119,7 +119,7 @@ Vi starter shellen og kører exit kommandoen.
 \label{D8}
 Vores første implementation af Ctrl+C funktionaliteten stoppede alle processer (både forgrunds- og baggrundsprocesser). Dette lavede vi dog om, så det matchede måden, som Bash håndterer Cntrl+C signals. Vi har ikke implementeret en mulighed for at hente baggrundsprocesser frem i forgrunden, hvilket gør, at vi ikke kan afslutte baggrundsprocesser, medmindre de selv terminerer. Sådan funktionalitet bør være højt på dagsordenen, hvis man udvider funktionaliteten af BoSh.
 \\I begyndelsen af vores main-metode, kalder vi 'signal(SIGINT, int\_handler)'. Dette betyder, at 'int\_handler' bliver kørt, hver gang bosh programmet modtager en interupt. 'int\_handler' er vores interupt handler, som lukker alle forgrundsprocesser. 
-\\Se linje 210 samt 252-263 i bosh.c.
+\\Se linje 220 samt 262-274 i bosh.c.
 \subsubsection{Tests}
 Vi kører kommandoen wc uden parameter og trykker ctrl-c for at se om processen afsluttes.
 \\Forventet resultat: wc stoppes efter ctrl-c er blevet tastet.
@@ -139,7 +139,7 @@ Vi starter shellen for at se om der vises det directory der i øjeblikket arbejd
 \label{E2}
 Som nævnt i \textbf{\ref{E1}}, så ville vi gøre det muligt at både se og skifte directory, hvilket var grundlaget for at implementere dette.
 \\I vores 'executeshellcmd' tjekker vi om kommandoen er "cd" om den har mere end et argument. I så fald så kalder vi chdir på det første argument til "cd" kommandoen. Hvis det giver en error, printer vi det og returner 0.
-\\Se linje 62-79 i bosh.c.
+\\Se linje 62-87 i bosh.c.
 \subsubsection{Tests}
 Vi går ind i vores shell og prøver derefter at skifte til andet directory end det der arbejdes i.
 \\Forventet resultat: Se billede \ref{Test10} på side \pageref{Test10}.
