@@ -1,10 +1,10 @@
 \chapter{Opgavebesvarelse}
 \section{Forord}
-I denne rapport dokumenterer vi vores valg i forhold til implementation af BOSC shell (bosh). 
+I denne rapport dokumenterer vi vores valg i forhold til implementationen af BOSC shell (bosh). 
 \\Vores implementation kan findes i "Source Code/bosh.c". Vi har bygget videre på den implementation, som blev lagt op på bloggen\footnote{https://blog.itu.dk/BOSC-E2012/files/2012/09/oo1.zip}. Vi har dog erstattet "parser.c" med v2 af  "parser.c"\footnote{ https://blog.itu.dk/BOSC-E2012/files/2012/09/parserc.zip}.
 
 Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}. Vores git repository kan findes på https://github.com/esfdk/BOSC .
-Når vi tilbage på processen, føler vi, at der er et par ting, vi kunne have gjort anderledes.
+Når vi ser tilbage på processen, føler vi, at der er et par ting, vi kunne have gjort anderledes.
 \begin{my_itemize}
 \item Gjort det muligt at få en liste af baggrundsprocesser. (fx via en "jobs" kommando)
 \item Gjort det muligt at hente baggrundsprocesser frem til forgrund.
@@ -53,7 +53,7 @@ Vi tjekker om vores shell viser det samme navn, som terminalen gør.
 
 \subsection{Delopgave 3: Kør programmer}
 \label{D3}
-Vi bruger execvp() til at køre programmer i vores shell. execvp() leder efter et program i \$PATH. Hvis den finder det, bliver programmet kørt og resten af det program, som execvp blev kørt fra, bliver termineret. 
+Vi bruger execvp() til at køre programmer i vores shell. execvp() leder efter et program i \$PATH. Hvis den finder det, bliver programmet kørt, og resten af det program, som execvp blev kørt fra, bliver termineret. 
 \\Se linje 141 i bosh.c.
 \subsubsection{Tests}
 \paragraph{Test3.1}
@@ -107,7 +107,7 @@ Test: Vi starter med at køre kommandoen ls i shellen, og derefter prøver vi at
 
 \subsection{Delopgave 7: Exit}
 \label{D7}
-Første iteration af denne delopgave terminerede bare bosh (med exit(0)), men dette ændrede vi, da følte det gav bedre mening, hvis vi lod main-funktionen afslutte.
+Første iteration af denne delopgave terminerede bare bosh (med exit(0)), men dette ændrede vi, da vi følte det gav bedre mening, hvis vi lod main-funktionen afslutte.
 \\'executeshellcmd' checker om den sidste kommando er "exit". Hvis den er, returner vi 1 til main-funktionen, som så afslutter.
 \\Se linje 58 i bosh.c.
 \subsubsection{Tests}
@@ -127,7 +127,7 @@ Vi kører kommandoen wc uden parameter og trykker ctrl-c for at se om processen 
 
 \subsection{Ekstra funktionalitet 1: Display current working directory}
 \label{E1}
-Som nævnt i \textbf{\ref{D2}} har vi haft et ønske om at få vores shell til at ligne Bash, så deres ville vi gøre det muligt at både se og skifte directory.
+Som nævnt i \textbf{\ref{D2}} har vi haft et ønske om at få vores shell til at ligne Bash, så derfor ville vi gøre det muligt at både se og skifte directory.
 \\Vi bruger en funktion 'getcwd' til at finde current working directory. Dette har vi implementeret i 'getcurrentdir'.
 \\Se linje (47-53) i bosh.c.
 \subsubsection{Tests}
