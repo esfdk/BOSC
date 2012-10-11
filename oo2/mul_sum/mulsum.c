@@ -15,16 +15,15 @@ struct calc_struct {
 void *TaskCode(void *argument)
 {
 	// Calculation
-	calc c = *((calc *) argument)
+	calc *c = ((calc *) argument);
 	float n;
 	float sum = 0;
 	
-	for(n = c->minimum_number; n < c->maximum_number; ++n)
+	for(n = c->minimum_number; n < (c->maximum_number + 1); ++n)
 	{
 		 sum = sum + sqrt(n);
 	}
 	
-	printf("%f \n", sum);
 	c->sumsqrt = sum;
 	
 	pthread_exit(0);
@@ -50,7 +49,6 @@ int main(int argc, char *argv[])
 		calc_result[n].minimum_number = minnum;
 		calc_result[n].maximum_number = maxnum;
 		calc_result[n].sumsqrt = 0;	
-		printf("min %f max %f \n", calc_result[n].minimum_number, calc_result[n].maximum_number);
 	}
 
 	int rc, i;
@@ -60,6 +58,15 @@ int main(int argc, char *argv[])
 		rc = pthread_create(&threads[i], NULL, TaskCode, (void *) &calc_result[i]);
 		assert(0 == rc);
 	}
+	
+	float sumtotal = 0;
+	int p;
+
+	for(p = 0; p < number_of_threads; p++)
+	{
+		sumtotal = sumtotal + calc_result[p].sumsqrt;
+	}
+	printf("Total amount: %f \n", sumtotal);
 
 	/* wait for all threads to complete */
 	for (i=0; i<number_of_threads; ++i) {
