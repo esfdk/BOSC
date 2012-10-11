@@ -7,17 +7,17 @@
 typedef struct calc_struct calc;
 
 struct calc_struct {
-	float minimum_number;
-	float maximum_number;
-	float sumsqrt;
+	double minimum_number;
+	double maximum_number;
+	double sumsqrt;
 };
 
 void *TaskCode(void *argument)
 {
 	// Calculation
 	calc *c = ((calc *) argument);
-	float n;
-	float sum = 0;
+	double n;
+	double sum = 0;
 	
 	for(n = c->minimum_number; n < (c->maximum_number + 1); ++n)
 	{
@@ -37,15 +37,15 @@ int main(int argc, char *argv[])
 	calc calc_result[number_of_threads];
 	pthread_t threads[number_of_threads];
 
-	float input_float = (float) input_integer;
-	float work = input_float / (float) number_of_threads;	
+	double input_double = (double) input_integer;
+	double work = input_double / (double) number_of_threads;	
 
 	int n;
 	for(n = 0; n < number_of_threads; ++n)
 	{
 		
-		float minnum = floor(work * n) + 1;
-		float maxnum = floor(work * (n + 1));
+		double minnum = floor(work * n) + 1;
+		double maxnum = floor(work * (n + 1));
 		calc_result[n].minimum_number = minnum;
 		calc_result[n].maximum_number = maxnum;
 		calc_result[n].sumsqrt = 0;	
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 		assert(0 == rc);
 	}
 
-	float sumtotal = 0;
+	double sumtotal = 0;
 	int p;
 
 	for(p = 0; p < number_of_threads; p++)
