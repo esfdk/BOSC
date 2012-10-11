@@ -59,6 +59,12 @@ int main(int argc, char *argv[])
 		assert(0 == rc);
 	}
 	
+	/* wait for all threads to complete */
+	for (i=0; i<number_of_threads; ++i) {
+		rc = pthread_join(threads[i], NULL);
+		assert(0 == rc);
+	}
+
 	float sumtotal = 0;
 	int p;
 
@@ -67,12 +73,6 @@ int main(int argc, char *argv[])
 		sumtotal = sumtotal + calc_result[p].sumsqrt;
 	}
 	printf("Total amount: %f \n", sumtotal);
-
-	/* wait for all threads to complete */
-	for (i=0; i<number_of_threads; ++i) {
-		rc = pthread_join(threads[i], NULL);
-		assert(0 == rc);
-	}
-
+	
 	exit(EXIT_SUCCESS);
 }
