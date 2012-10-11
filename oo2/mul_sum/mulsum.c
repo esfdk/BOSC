@@ -15,16 +15,17 @@ struct calc_struct {
 void *TaskCode(void *argument)
 {
 	// Calculation
+	calc c = *((calc *) argument)
 	float n;
 	float sum = 0;
 	
-	for(n = argument->minimum_number; n < argument->maximum_number; ++n)
+	for(n = c->minimum_number; n < c->maximum_number; ++n)
 	{
 		 sum = sum + sqrt(n);
 	}
 	
 	printf("%f \n", sum);
-	argument->sumsqrt = sum;
+	c->sumsqrt = sum;
 	
 	pthread_exit(0);
 }
