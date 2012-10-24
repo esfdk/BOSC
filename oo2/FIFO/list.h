@@ -10,14 +10,14 @@
 
 /* structures */
 typedef struct node {
-  void *elm; /* use void type for generality; we cast the element's type to void type */
-  struct node *next;
+	void *elm; /* use void type for generality; we cast the element's type to void type */
+	struct node *next;
 } Node;
 
 typedef struct list {
-  int len;
-  Node *first;
-  Node *last;
+	int len;
+	Node *first;
+	Node *last;
 } List;
 
 /* functions */
