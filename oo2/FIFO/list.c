@@ -38,7 +38,7 @@ Node *list_remove(List *l)
 {
 	Node *n;
 	n = l->first;
-	l->first = l->first->next
+	l->first = l->first->next;
 	return n;
 }
 

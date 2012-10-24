@@ -7,3 +7,4 @@ bosh
 *.synctex.gz
 *.log
 mulsum
+fifo

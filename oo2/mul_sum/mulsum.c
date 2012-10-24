@@ -31,7 +31,7 @@ void *TaskCode(void *argument)
 
 int main(int argc, char *argv[])
 {
-	int number_of_threads = 8;
+	int number_of_threads = atoi(argv[3]);
 	int input_integer = atoi(argv[2]);
 
 	calc calc_result[number_of_threads];
