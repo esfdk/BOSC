@@ -37,8 +37,8 @@ void list_add(List *l, Node *n)
 Node *list_remove(List *l)
 {
 	Node *n;
-	n = l->first;
-	l->first = l->first->next
+	n = l->first->next;
+	l->first->next = l->first->next->next
 	return n;
 }
 
