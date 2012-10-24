@@ -40,7 +40,7 @@ Node *list_remove(List *l)
 	Node *n;
 	
 	n = l->first->next;	
-	l->first->next = l->first->next->next
+	l->first->next = l->first->next->next;
 	l->last = f->last->previous;
 	
 	return n;
