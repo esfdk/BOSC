@@ -29,6 +29,7 @@ List *list_new(void)
 /* list_add: add node n to list l as the last element */
 void list_add(List *l, Node *n)
 {
+	n->previous = l->last;
 	l->last->next = n;
 	l->last = l->last->next;
 }
@@ -37,8 +38,11 @@ void list_add(List *l, Node *n)
 Node *list_remove(List *l)
 {
 	Node *n;
-	n = l->first->next;
+	
+	n = l->first->next;	
 	l->first->next = l->first->next->next
+	l->last = f->last->previous;
+	
 	return n;
 }
 
@@ -49,6 +53,7 @@ Node *node_new(void)
 	n = (Node *) malloc(sizeof(Node));
 	n->elm = NULL;
 	n->next = NULL;
+	n->previous = NULL;
 	return n;
 }
 
@@ -60,5 +65,6 @@ Node *node_new_str(char *s)
 	n->elm = (void *) malloc((strlen(s)+1) * sizeof(char));
 	strcpy((char *) n->elm, s);
 	n->next = NULL;
+	n->previous = NULL;
 	return n;
 }

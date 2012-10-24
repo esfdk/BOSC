@@ -12,6 +12,7 @@
 typedef struct node {
 	void *elm; /* use void type for generality; we cast the element's type to void type */
 	struct node *next;
+	struct node *previous;
 } Node;
 
 typedef struct list {
