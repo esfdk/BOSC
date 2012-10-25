@@ -8,15 +8,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include "test.h"
+#include "list.h"
 
 int main(int argc, char* argv[])
 {
-	// Tests if the list even works.
-	nonThreadTest();
+    // FIFO list;
+	List *fifo = list_new();
 
-	// Tests how the list works with multiple threads.
-	threadTest();
+    list_add(fifo, node_new_str("s1"));
+    list_add(fifo, node_new_str("s2"));
+
+    Node *n1 = list_remove(fifo);
+    if (n1 == NULL) { printf("Error no elements in list\n"); exit(-1);}
+    Node *n2 = list_remove(fifo);
+    if (n2 == NULL) { printf("Error no elements in list\n"); exit(-1);}
+
+    char *n1elm = (char *)n1->elm;
+    char *n2elm = (char *)n2->elm;
+
+    printf("%s\n%s\n", n1elm, n2elm);
 
 	return 0;
 }
