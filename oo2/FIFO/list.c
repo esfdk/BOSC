@@ -19,7 +19,7 @@ List *list_new(void)
 	l = (List *) malloc(sizeof(List));
 	l->len = 0;
 
-	if (pthread_mutex_init(l->&lock, NULL) != 0)
+	if (pthread_mutex_init(&l->lock, NULL) != 0)
     {
         printf("\n mutex init failed\n");
     }
@@ -34,23 +34,24 @@ List *list_new(void)
 /* list_add: add node n to list l as the last element */
 void list_add(List *l, Node *n)
 {
-	pthread_mutex_lock(l->&lock);
+	pthread_mutex_lock(&l->lock);
 	n->previous = l->last;
 	l->last->next = n;
 	l->last = l->last->next;
+	pthread_mutex_unlock(&l->lock);
 }
 
 /* list_remove: remove and return the first (non-root) element from list l */
 Node *list_remove(List *l)
 {
-	pthread_mutex_lock(l->&lock);
+	pthread_mutex_lock(&l->lock);
 	Node *n;
 	
 	n = l->first->next;	
 	l->first->next = l->first->next->next;
 	l->last = l->last->previous;
 	
-	pthread_mutex_unlock(&lock);
+	pthread_mutex_unlock(&l->lock);
 	
 	return n;
 }
