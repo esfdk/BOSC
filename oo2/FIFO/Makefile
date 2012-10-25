@@ -1,13 +1,13 @@
-all: fifo fifoThread
+all: fifoTestNoThreads fifoTestThreads
 
 OBJS = list.o
 LIBS = -lm -lpthread
 
-fifo: main.o ${OBJS}
-	gcc -o $@ main.o ${OBJS} ${LIBS}
+fifoTestNoThreads: testNoThreads.o ${OBJS}
+	gcc -o $@ testNoThreads.o ${OBJS} ${LIBS}
 
-fifoThread: test.o ${OBJS}
-	gcc -o $@ test.o ${OBJS} ${LIBS}
+fifoTestThreads: testThreads.o ${OBJS}
+	gcc -o $@ testThreads.o ${OBJS} ${LIBS}
 
 clean:
 	rm -rf *o fifo
