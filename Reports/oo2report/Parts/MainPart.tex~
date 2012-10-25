@@ -16,14 +16,21 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 
 \subsubsection{Del 2}
 \label{O1_2}
+I opgave 1.2 bliver vi bedt om at tjekke vores multitrådet sum funktion vha. en speedup graf.
+En speedup graf visser hvor hurtigere en funktion bliver når man tildeler den flere tråde. 
+indæst speedup funktion her\n\n
+Speedup udregnes ved at tage kørselstiden ved 1 tråd og dividere det med kørselstiden med n tråde i vores tilfælde 1-2-4-6-8. Det optimalle resultat ville være linær speedup hvor speedupen er lige antallet af tråde funktionen er blevet kørt med.
+indsæt ideal speedup graf
 
 \paragraph{Valg af maskine til speedupgraf}
-Til test af vores multitrådet sum funktion valgte vi at bruge en laptop med 4 processor. Det gjorde vi fordi vi mente, at det var hvad en standart computer ville have og vi derfor ville få nogle generelle resultater. Til at teste vores multitrådet sum funktion brugte vi en speedup graf.
+Til test af vores multitrådet sum funktion havde vi valgte mellem en to,fire eller otte processors computer. Vi valgte at bruge computeren med fire processor. Det gjorde vi fordi det var medianen og vi mente, at det var hvad en standart computer ville have og vi derfor ville få nogle generelle resultater. 
+
+Til at teste vores multitrådet sum funktion brugte vi en speedup graf.
 En speedup graf visser hvor hurtigere en funktion bliver når man tildeler den flere tråde. Speedup udregnes ved at tage kørselstiden ved 1 tråd og dividere det med kørselstiden med n tråde i vores tilfælde 1-2-4-6-8. Det optimalle resultat ville være linær speedup hvor speedupen er lige antallet af tråde funktionen er blevet kørt med.
 
 \subparagraph{Uventet resultat ved kørsel med fire tråde}
 indsæt speedup graf her \n\n
-Som vi kan se udfra vores speedup graf er der næsten en ideal speedup fra en tråd til to tråde, men ved fire tråde bliver den kun en smule hurtigere end ved en tråd. Dette resultat synes vi er fovirrende da der også burde være mulighed for en fordobling i speedup. Vi havde forventet at få problemer på ved 6 og 8 da vi ikke har mulighed for at tildele hver tråd en processer og det derfor bliver mere besværligt at oprette og styre dem. 
+Som vi kan se udfra vores speedup graf er der næsten en ideal speedup fra en tråd til to tråde, men ved fire tråde bliver den kun en smule hurtigere end ved en tråd. Dette resultat synes vi er fovirrende da der også burde være mulighed for en fordobling i speedup. Vi havde forventet at få problemer ved 6 og 8 da vi ikke har mulighed for at tildele hver tråd en processer og det derfor bliver mere besværligt at oprette og styre dem. 
 indsæt melnyk speedup graf her \n\n
 Vi har kort testet vores funktion på en laptop med 4 processor og hyperthreading hvor vi havde en normal speedup optil fire tråde hvilket er forståligt da 4 processor med hyperthreading kun 'simulere' 8 processor, og derfor sikkert ikke arbejder ligeså optimalt som 8 konkrete processor.
 
