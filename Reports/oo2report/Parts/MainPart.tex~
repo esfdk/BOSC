@@ -23,7 +23,7 @@ En speedup graf visser hvor hurtigere en funktion bliver når man tildeler den f
 
 \subparagraph{Uventet resultat ved kørsel med fire tråde}
 indsæt speedup graf her \n\n
-Som vi kan se udfra vores speedup graf er der næsten en ideal speedup fra en tråd til to tråde, men ved fire tråde bliver den kun en smule hurtigere end ved en tråd. Dette resultat synes vi er fovirrende da der også burde være mulighed for en fordobling i speedup. Vi havde forventet at få problemer ved 6 og 8 da vi ikke har mulighed for at tildele hver tråd en processer og det derfor bliver mere besværligt at oprette og styre dem. 
+Som vi kan se udfra vores speedup graf er der næsten en ideal speedup fra en tråd til to tråde, men ved fire tråde bliver den kun en smule hurtigere end ved en tråd. Dette resultat synes vi er fovirrende da der også burde være mulighed for en fordobling i speedup. Vi havde forventet at få problemer på ved 6 og 8 da vi ikke har mulighed for at tildele hver tråd en processer og det derfor bliver mere besværligt at oprette og styre dem. 
 indsæt melnyk speedup graf her \n\n
 Vi har kort testet vores funktion på en laptop med 4 processor og hyperthreading hvor vi havde en normal speedup optil fire tråde hvilket er forståligt da 4 processor med hyperthreading kun 'simulere' 8 processor, og derfor sikkert ikke arbejder ligeså optimalt som 8 konkrete processor.
 
