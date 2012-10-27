@@ -44,6 +44,9 @@ Vi har kort testet vores funktion på en laptop med 4 processor og hyperthreadin
 
 \subsubsection{Del 2}
 \label{O2_2}
+Det mest åbenlyse problem er, at flere tråde kan editere listen på samme tid. For eksempel: To tråde tilgør listen på samme tid og finder frem til det sidste element ('last'). Begge tråde prøver at tilføje et element til listen, hvilket betyder at de begge prøver at tilføje et element til 'last' på samme tid. Tråd #1 tilføjer sit element til 'last', hvorefter tråd #2 tilføjer sit element til 'last' (det element som #1 lige har tilføjet sit element til), hvilket ødelægger linket mellem 'last' og tråd #1s element.
+\\En anden udgave af problemet ovenover er, hvis to forskellige tråde vil remove på samme tid. Tråd #1 går ind og læser 'first's 'next' element (da det skal blive first efter removal). Samtidig går tråd #2 ind og kører hele removal, hvorefter #1 prøver at fjerne det element der lige er blevet fjernet. Derved er kun et element blevet fjernet, hvor to elementer burde have været fjernet. Den omvendte situation kan også opstå, hvor to elementer bliver fjernet, men hver tråd tror kun at et element er blevet fjernet.
+\\Alt efter størrelsen af listen kan der også opstå problemet. Hvis listen kun er et element langt og en tråd prøver at adde mens en anden prøver at remove, kan der opstå forkerte resultater. Sker de samtidig, kan elementet blive addet (hvilket gør at listen er to elementer lang), på samme tid som det første (og eneste) element bliver removet. Risikoen er, at det nye element bliver appendet på det element der lige er blevet removet, hvorved ingen af elementerne er i listen.
 
 \subsubsection{Del 3}
 \label{O2_3}

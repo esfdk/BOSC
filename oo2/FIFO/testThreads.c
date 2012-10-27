@@ -7,12 +7,15 @@
 List *fifo;
 int number_of_elements_per_thread;
 
-
+// The code for the threads.
 void *TaskCode(void *argument)
 {
+    // Converts the parameter to an integer that holds the number
+    // of the thread.
     int *threadNo = (int *) argument;
 
     int i;
+    // Adds elements to the list.
     for (i = 0; i < number_of_elements_per_thread; ++i)
     {
         char x[250];
@@ -21,6 +24,7 @@ void *TaskCode(void *argument)
         list_add(fifo, node_new_str(x));
     }
 
+    // Removes elements from the list.
     for (i = 0; i < number_of_elements_per_thread; ++i)
     {
         Node *node = list_remove(fifo);
@@ -31,6 +35,7 @@ void *TaskCode(void *argument)
     pthread_exit(0);
 }
 
+// Method for testing that the list works with threads.
 int main(int argc, char* argv[])
 {
     int rc, i;
@@ -39,16 +44,14 @@ int main(int argc, char* argv[])
     fifo = list_new();
     pthread_t threads[number_of_threads];
 
-    /* create all threads */
+    // Creates all the threads and makes them do what they are supposed to.
     for (i=0; i<number_of_threads; ++i) 
     {
         rc = pthread_create(&threads[i], NULL, TaskCode, (void *) &number_of_threads);
         assert(0 == rc);
     }
-    
-    printf("dawd\n");
   
-    /* wait for all threads to complete */
+    // Wait for all threads to finish
     for (i=0; i<number_of_threads; ++i) 
     {
         rc = pthread_join(threads[i], NULL);
