@@ -176,7 +176,7 @@ Node *produceProduct()
 
 	// Create node
 	char tmp[250];
-	sprintf(tmp, "ITEM_%d", produced);
+	sprintf(tmp, "ITEM_%d", produced_products);
 	
 	produced_products++; // Increased produced products.
 
