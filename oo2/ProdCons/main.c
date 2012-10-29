@@ -75,13 +75,13 @@ int main(int argc, char* argv[])
 	// Create threads
 	int tn;
 	for (tn = 0; tn < number_of_consumers; tn++){
-        if(pthread_create(&consumer_thread_ids[tn], NULL, &consumer, (void*) tn))
+        if(pthread_create(&consumer_thread_ids[tn], NULL, &consumer, (void*) &tn))
 		{
         	printf("Failed to create consumer number %d \n", tn);
         }
     }
 	for (tn = 0; tn < number_of_producers; tn++){
-        if(pthread_create(&producer_thread_ids[tn], NULL, &producer, (void*) tn))
+        if(pthread_create(&producer_thread_ids[tn], NULL, &producer, (void*) &tn))
 		{
         	printf("Failed to create producer number %d \n", tn);
         }
