@@ -4,6 +4,11 @@
 #include <semaphore.h>
 #include "List/list.h"
 
+// Header
+void producer(void*);
+void consumer(void*);
+Node *produceProduct();
+
 // List
 List *itemList; // The product buffer.
 
@@ -53,12 +58,12 @@ void main(int argc, char* argv[])
 	itemList = list_new();
 	
 	// Initialise locks
-	if (pthread_mutex_init(produced_lock, NULL) != 0)
+	if (pthread_mutex_init(produce_lock, NULL) != 0)
     {
         printf("\n Failed to initialise produce_lock\n");
     }
 	
-	if (pthread_mutex_init(consumed_lock, NULL) != 0)
+	if (pthread_mutex_init(consume_lock, NULL) != 0)
     {
         printf("\n Failed to initialise consumed_lock\n");
     }
