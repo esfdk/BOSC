@@ -114,7 +114,7 @@ void producer(void *argument)
 		{
 			pthread_exit(0);
 		}
-		else if(tw = 0) // There are more products be produced.
+		else if(tw == 0) // There are more products be produced.
 		{	
 			 Node = produceProduct(); // Final product
 		}
@@ -125,8 +125,8 @@ void producer(void *argument)
 		
 		// Add product to buffer
 		sem_wait(&empty); // Wait for room in buffer.
-		list_add(itemlist, node); // Add node to list.
-		sem_post(full); // Signal full so buffer space is decreased by 1.
+		list_add(itemList, node); // Add node to list.
+		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
 		int *products_in_buffer;
 		semt_getvalue(full, products_in_buffer);
