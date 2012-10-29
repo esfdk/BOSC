@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
 }
 
 // Producer code
-void producer(void *argument)
+void *producer(void *argument)
 {
 	int *prodNo = (int *) argument;
 	Node *node;
@@ -138,7 +138,7 @@ void producer(void *argument)
 }
 
 // Consumer code
-void consumer(void *argument)
+void *consumer(void *argument)
 {
 	int *consNo = (int *) argument;
 	Node *node;
