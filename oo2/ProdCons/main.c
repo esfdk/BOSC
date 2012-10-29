@@ -129,7 +129,7 @@ void producer(void *argument)
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
 		int *products_in_buffer;
-		sem_getvalue(full, products_in_buffer);
+		sem_getvalue(full, *products_in_buffer);
 		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d", *prodNo, node->elm, *products_in_buffer, buffer_size);
 		
 		// Sleep for random time - between 0-9 seconds.
@@ -159,7 +159,7 @@ void consumer(void *argument)
 		sem_post(&empty); // Signal empty so buffer space is increased by 1.
 		
 		int *products_in_buffer;
-		sem_getvalue(full, products_in_buffer);
+		sem_getvalue(full, *products_in_buffer);
 		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d", *consNo, node->elm, *products_in_buffer, buffer_size);
 		
 		sleep((random() % 100) / 10);
