@@ -33,7 +33,7 @@ int consumed_products = 0; // Number of consumed products.
 // Buffer size
 int buffer_size;
 
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	// Initialise variables from input arguments
 	number_of_producers = atoi(argv[2]);
@@ -58,12 +58,12 @@ void main(int argc, char* argv[])
 	itemList = list_new();
 	
 	// Initialise locks
-	if (pthread_mutex_init(produce_lock, NULL) != 0)
+	if (pthread_mutex_init(&produce_lock, NULL) != 0)
     {
         printf("\n Failed to initialise produce_lock\n");
     }
 	
-	if (pthread_mutex_init(consume_lock, NULL) != 0)
+	if (pthread_mutex_init(&consume_lock, NULL) != 0)
     {
         printf("\n Failed to initialise consumed_lock\n");
     }
@@ -96,6 +96,8 @@ void main(int argc, char* argv[])
 	{
     	pthread_join(producer_thread_ids[tn], NULL);
     }
+	
+	return 0;
 }
 
 // Producer code
