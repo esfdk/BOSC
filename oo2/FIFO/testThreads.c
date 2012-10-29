@@ -20,7 +20,7 @@ void *TaskCode(void *argument)
     {
         char x[250];
         char *s = "Thread";
-        sprintf(x, "%s #%d, element %d", s, *threadNo, i);
+        sprintf(x, "%s #%d, element %d", s, *threadNo + 1, i);
         list_add(fifo, node_new_str(x));
     }
 
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     // Creates all the threads and makes them do what they are supposed to.
     for (i=0; i<number_of_threads; ++i) 
     {
-        rc = pthread_create(&threads[i], NULL, TaskCode, (void *) &number_of_threads);
+        rc = pthread_create(&threads[i], NULL, TaskCode, (void *) &i);
         assert(0 == rc);
     }
   
