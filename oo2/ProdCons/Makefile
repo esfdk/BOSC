@@ -1,9 +1,9 @@
 all: prodcons
 
 OBJS = List/list.o
-LIBS = -lm -lpthread
+LIBS = -lrt -lpthread
 
-fifoTestNoThreads: main.o ${OBJS}
+prodcons: main.o ${OBJS}
 	gcc -o $@ main.o ${OBJS} ${LIBS}
 	
 clean:
