@@ -116,7 +116,7 @@ void producer(void *argument)
 		}
 		else if(tw == 0) // There are more products be produced.
 		{	
-			 Node = produceProduct(); // Final product
+			 node = produceProduct(); // Final product
 		}
 		else
 		{
