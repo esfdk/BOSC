@@ -5,8 +5,8 @@
 #include "List/list.h"
 
 // Header
-void producer(void*);
-void consumer(void*);
+void *producer(void*);
+void *consumer(void*);
 Node *produceProduct();
 
 // List
@@ -40,6 +40,7 @@ int main(int argc, char* argv[])
 	number_of_consumers = atoi(argv[3]);
 	total_number_of_products = atoi(argv[5]);
 	buffer_size = atoi(argv[4]);
+
 	// Initialise semaphores
 	if(sem_init(&empty, 0, buffer_size) != 0)
 	{
@@ -53,7 +54,7 @@ int main(int argc, char* argv[])
 	{
 		printf("\n Failed to initialise total_number_of_products semaphore\n");
 	}
-	
+
 	// Initialise list
 	itemList = list_new();
 	
@@ -128,12 +129,16 @@ void *producer(void *argument)
 		list_add(itemList, node); // Add node to list.
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
-		int *products_in_buffer;
-		sem_getvalue(full, &products_in_buffer);
-		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d", *prodNo, node->elm, *products_in_buffer, buffer_size);
+		int products_in_buffer;
+		if(sem_getvalue(&full, &products_in_buffer) != 0)
+		{
+			printf("Something went wrong with getvalue");
+		}
+	        printf("Producer %d produced %s. Items in buffer: %d (out of %d) \n", *prodNo, node->elm, products_in_buffer, buffer_size);
 		
 		// Sleep for random time - between 0-9 seconds.
-		sleep((random() % 100) / 10);
+		sleep((random() % 10));
+
 	}
 }
 
@@ -158,11 +163,11 @@ void *consumer(void *argument)
 		pthread_mutex_unlock(&consume_lock); // Unlock consumed_products.
 		sem_post(&empty); // Signal empty so buffer space is increased by 1.
 		
-		int *products_in_buffer;
-		sem_getvalue(full, &products_in_buffer);
-		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d", *consNo, node->elm, *products_in_buffer, buffer_size);
+		/*int *products_in_buffer;
+		sem_getvalue(&full, products_in_buffer);*/
+		printf("Consumer %d consumed %s. Items in buffer: (out of %d) \n", *consNo, node->elm, buffer_size);
 		
-		sleep((random() % 100) / 10);
+		sleep((random() % 10));
 	}
 }
 
