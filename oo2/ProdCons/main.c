@@ -8,6 +8,7 @@
 void *producer(void*);
 void *consumer(void*);
 Node *produceProduct();
+int randomSleepValue(int s);
 
 // List
 List *itemList; // The product buffer.
@@ -15,6 +16,8 @@ List *itemList; // The product buffer.
 // Locks
 pthread_mutex_t produce_lock; // Lock for produced_products.
 pthread_mutex_t consume_lock; // Lock for consumed_products.
+// TODO: Figure out if it is the right solution.
+pthread_mutex_t products_buffer_lock; // Lock for products_in_buffer
 
 // Semaphores
 sem_t empty; // Number of empty slots in the buffer.
@@ -29,12 +32,22 @@ int number_of_consumers; // Number of product consumers.
 int total_number_of_products; // Number of products to be produced in total.
 int produced_products = 0; // Number of produced products.
 int consumed_products = 0; // Number of consumed products.
+// TODO: Figure out if this is right fix
+int products_in_buffer = 0; // Amount of products in the buffer
 
 // Buffer size
 int buffer_size;
 
 int main(int argc, char* argv[])
 {
+	if(atoi(argv[1]) != 5)
+	{
+		printf("Wrong number of input arguments! ProdCons need 5 input arguments.\n");
+		printf("Argument 1: Number of arguments.\n Argument 2: Number of producers.\n Argument 3: Number of consumers.\n");
+		printf("Argument 4: Size of the buffer.\n Argument 5: Total amount of products.\n");
+		exit(EXIT_FAILURE);
+	}
+
 	// Initialise variables from input arguments
 	number_of_producers = atoi(argv[2]);
 	number_of_consumers = atoi(argv[3]);
@@ -59,14 +72,19 @@ int main(int argc, char* argv[])
 	itemList = list_new();
 	
 	// Initialise locks
-	if (pthread_mutex_init(&produce_lock, NULL) != 0)
+	if(pthread_mutex_init(&produce_lock, NULL) != 0)
     {
         printf("\n Failed to initialise produce_lock\n");
     }
 	
-	if (pthread_mutex_init(&consume_lock, NULL) != 0)
+	if(pthread_mutex_init(&consume_lock, NULL) != 0)
     {
         printf("\n Failed to initialise consumed_lock\n");
+    }
+	
+	if(pthread_mutex_init(&products_buffer_lock, NULL) != 0)
+    {
+        printf("\n Failed to initialise products_buffer_lock\n");
     }
 	
 	// Consumer and producer thread arrays
@@ -104,8 +122,8 @@ int main(int argc, char* argv[])
 // Producer code
 void *producer(void *argument)
 {
-	int *prodNo = (int *) argument;
-	Node *node;
+	int *prodNo = (int *) argument; // Producers identifying number
+	Node *node; // Produced node
 	
 	while(1)
 	{
@@ -127,17 +145,24 @@ void *producer(void *argument)
 		// Add product to buffer
 		sem_wait(&empty); // Wait for room in buffer.
 		list_add(itemList, node); // Add node to list.
+		
+		// Increase count of number products in buffer.
+		pthread_mutex_lock(&produce_lock);
+		products_in_buffer++;
+		pthread_mutex_unlock(&produce_lock);
+		
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
-		int products_in_buffer;
+		/*int products_in_buffer;
 		if(sem_getvalue(&full, &products_in_buffer) != 0)
 		{
 			printf("Something went wrong with getvalue");
-		}
-	        printf("Producer %d produced %s. Items in buffer: %d (out of %d) \n", *prodNo, node->elm, products_in_buffer, buffer_size);
+		}*/
+		
+	    printf("Producer %d produced %s. Items in buffer: %d (out of %d) \n", *prodNo, node->elm, products_in_buffer, buffer_size);
 		
 		// Sleep for random time - between 0-9 seconds.
-		sleep((random() % 10));
+		sleep(randomSleepValue(*prodNo));
 
 	}
 }
@@ -145,10 +170,12 @@ void *producer(void *argument)
 // Consumer code
 void *consumer(void *argument)
 {
-	int *consNo = (int *) argument;
-	Node *node;
+	int *consNo = (int *) argument; // Consumers identifying number
+	Node *node; // Consumed node.
+	
 	while(1){
 		pthread_mutex_lock(&consume_lock); // Lock consumed_products.
+		
 		if(consumed_products == total_number_of_products) // If we have consumed all products, exit thread.
 		{
 			pthread_mutex_unlock(&consume_lock); // Release lock on consumed_products.
@@ -156,18 +183,26 @@ void *consumer(void *argument)
 		}
 		
 		sem_wait(&full); // Wait for a product to exist in the buffer.
-		
 		node = list_remove(itemList); // Remove product from buffer.
-		consumed_products++; // Increase amount of consumed products
+
+		// Decrease count of number products in buffer.
+		pthread_mutex_lock(&produce_lock);
+		products_in_buffer--;
+		pthread_mutex_unlock(&produce_lock);
 		
+		consumed_products++; // Increase amount of consumed products
 		pthread_mutex_unlock(&consume_lock); // Unlock consumed_products.
 		sem_post(&empty); // Signal empty so buffer space is increased by 1.
 		
 		/*int *products_in_buffer;
-		sem_getvalue(&full, products_in_buffer);*/
-		printf("Consumer %d consumed %s. Items in buffer: (out of %d) \n", *consNo, node->elm, buffer_size);
+		if(sem_getvalue(&full, &products_in_buffer) != 0)
+		{
+			printf("Something went wrong with getvalue");
+		}*/
 		
-		sleep((random() % 10));
+		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d) \n", *consNo, node->elm, products_in_buffer, buffer_size);
+		
+		sleep(randomSleepValue(*consNo));
 	}
 }
 
@@ -190,4 +225,12 @@ Node *produceProduct()
 	node = node_new_str(tmp); // Initialisation of the new node.
 	
 	return node;
+}
+
+// Produces a seeded random value between ? and ?? for the sleep function.
+int randomSleepValue(int s)
+{
+	int random_value;
+
+	return random_value;
 }
