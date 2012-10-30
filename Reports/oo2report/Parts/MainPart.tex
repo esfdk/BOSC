@@ -41,6 +41,8 @@ Vi har kort testet vores funktion på en laptop med 4 processor og hyperthreadin
 
 \subsubsection{Del 1}
 \label{O2_1}
+Vi har valgt at implementere list_add(List *l, Node *n) på en meget simpel måde (se linje 35 til 41 i list.c). Listens sidste element ('l->last') bliver sat til at pege på den nye node ('l->last->next = n'), hvorefter 'l->last' bliver sat til at være n. På denne måde vil det anden sidste element pege på det nye element, og 'last' peger på det nye element, da det er det sidste i listen.
+\\*list_remove(List *l) implementationen kan ses på linje 44 til 60 i list.c filen. I metoden bliver der lavet en 'Node *n'. Denne node bliver sat til at være det første element i listen, altså 'l->first->next' da 'first' er root elementet og aldrig skal pilles ved. Rodelementets 'next' bliver sat til at pege på n's 'next', hvilket er det andet element i listen. På denne måde er det første element blevet "fjernet" fra listen. Metoden tjekker derefter om 'first->next' er null, for hvis den er, skal 'last' pege på først, ligesom da listen lige var blevet lavet. Til slut retuneres n.
 
 \subsubsection{Del 2}
 \label{O2_2}
@@ -50,10 +52,15 @@ Det mest åbenlyse problem er, at flere tråde kan editere listen på samme tid.
 
 \subsubsection{Del 3}
 \label{O2_3}
+Vi har brugt mutex låse i list_add og list_remove metoderne. I list_add er de to linjer logik inde i en mutex lock, da det ikke skal være muligt for flere tråde, at tilføje elementer på samme tid. I list_remove er alt undtagen return-statementet indkapslet af mutex locks af samme årsag som i list_add; det skal ikke være mulgit at fjerne flere elementer samtidig. At 'return n' ikke er i en lock, gør dog ingen skade. Når metoden når til 'return', bruger den ikke listen mere, og det kan derfor køres uden at være i en lock.
+Vi har beskrevet vores test at den flertrådet liste i afsnit \ref{02_Tests}.
 
 \subsubsection{Tests}
 \label{O2_Tests}
-
+Vi har lavet to tests til first-in-first-out listen. En test uden brug af tråde for at se om lsiten overhovedet virker, og en test med tråde, for at sikre at flere tråde kan bruge listen samtidig, uden der opstår problemer.
+\\Testen uden brug at tråde findes i testNoThreads.c. I denne test laver vi en liste, tilføjer to elementer til listen, fjerner to elementer fra listen og printer deres værdier for at sikre os, at de er kommet ud i den rigtige rækkefølge. 
+\\Testen med tråde findes i testThreads.c og er lidt mere omfattende. Testen tager to parametre: Antallet af tråde der skal laves, og antallet af elementer hver tråd skal håndtere. 'main' metoden laver et array med det valgte antal tråde, og sætter dem alle samme til at køre '*TaskCode(void *argument)' metoden. Hver tråd får sit eget nummer i arrayet med, for at man nemmere kan holde styr på hvilken tråd der gør hvad. Hver tråd laver det valgte antal elementer (som er strings med formatet ("Thread \#\%d, element \%d", threadNumber, elementNumber)) og adder dem til listen. Derefter fjerner tråden det antal elementer, som den har addet til listen og printer værdien af disse elementer. 
+\\Det man kan se med testThreads testen er, at trådene går ind og låser listen når de bruger den. Som oftest vil elementerne være i rækkefølge, så det er alle tråd et's elemnter først, så tråd to's, osv.
 
 \subsection{Opgave 3}
 \label{O3}
