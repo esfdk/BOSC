@@ -149,21 +149,13 @@ void *producer(void *argument)
 		// Increase count of number products in buffer.
 		pthread_mutex_lock(&produce_lock);
 		products_in_buffer++;
+		printf("Producer %d produced %s. Items in buffer: %d (out of %d) \n", *prodNo, node->elm, products_in_buffer, buffer_size);
 		pthread_mutex_unlock(&produce_lock);
 		
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
-		/*int products_in_buffer;
-		if(sem_getvalue(&full, &products_in_buffer) != 0)
-		{
-			printf("Something went wrong with getvalue");
-		}*/
-		
-	    printf("Producer %d produced %s. Items in buffer: %d (out of %d) \n", *prodNo, node->elm, products_in_buffer, buffer_size);
-		
 		// Sleep for random time - between 0-9 seconds.
-		sleep(randomSleepValue(*prodNo));
-
+		sleepRandom(1000);
 	}
 }
 
@@ -193,16 +185,10 @@ void *consumer(void *argument)
 		consumed_products++; // Increase amount of consumed products
 		pthread_mutex_unlock(&consume_lock); // Unlock consumed_products.
 		sem_post(&empty); // Signal empty so buffer space is increased by 1.
-		
-		/*int *products_in_buffer;
-		if(sem_getvalue(&full, &products_in_buffer) != 0)
-		{
-			printf("Something went wrong with getvalue");
-		}*/
-		
+
 		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d) \n", *consNo, node->elm, products_in_buffer, buffer_size);
 		
-		sleep(randomSleepValue(*consNo));
+		sleepRandom(1000);
 	}
 }
 
@@ -228,9 +214,8 @@ Node *produceProduct()
 }
 
 // Produces a seeded random value between ? and ?? for the sleep function.
-int randomSleepValue(int s)
+void sleepRandom(float wait_time_ms)
 {
-	int random_value;
-
-	return random_value;
+	wait_time_ms = ((float)rand())*wait_time_ms / (float)RAND_MAX;
+	usleep((int) (wait_time_ms * 1e3f)); // convert from ms to us
 }
