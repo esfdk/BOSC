@@ -155,7 +155,7 @@ void *producer(void *argument)
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
 		// Sleep for random time.
-		sleepRandom(10000 % (*prodNo + 1));
+		sleepRandom(1000));
 	}
 }
 
