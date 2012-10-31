@@ -3,8 +3,8 @@ all: prodcons
 OBJS = List/list.o
 LIBS = -lrt -lpthread
 
-prodcons: main.o ${OBJS}
-	gcc -o $@ main.o ${OBJS} ${LIBS}
+prodcons: prodCons.o ${OBJS}
+	gcc -o $@ prodCons.o ${OBJS} ${LIBS}
 	
 clean:
 	rm -rf *o prodcons

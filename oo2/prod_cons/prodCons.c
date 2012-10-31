@@ -3,12 +3,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include "List/list.h"
-
-// Header
-void *producer(void*);
-void *consumer(void*);
-Node *produceProduct();
-void sleepRandom(float wait_time_ms);
+#include "prodCons.h"
 
 // List
 List *itemList; // The product buffer.

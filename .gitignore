@@ -7,5 +7,5 @@ bosh
 *.synctex.gz
 *.log
 mulsum
-
+fifoTest*
 prodcons
