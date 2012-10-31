@@ -8,7 +8,7 @@
 void *producer(void*);
 void *consumer(void*);
 Node *produceProduct();
-int randomSleepValue(int s);
+void sleepRandom(float wait_time_ms);
 
 // List
 List *itemList; // The product buffer.
@@ -155,7 +155,7 @@ void *producer(void *argument)
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
 		// Sleep for random time - between 0-9 seconds.
-		sleepRandom(1000);
+		sleepRandom(1000.0);
 	}
 }
 
@@ -188,7 +188,7 @@ void *consumer(void *argument)
 
 		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d) \n", *consNo, node->elm, products_in_buffer, buffer_size);
 		
-		sleepRandom(1000);
+		sleepRandom(1000.0);
 	}
 }
 
