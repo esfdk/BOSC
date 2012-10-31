@@ -40,11 +40,11 @@ int buffer_size;
 
 int main(int argc, char* argv[])
 {
-	if(atoi(argv[1]) != 5)
+	if(sizeof(argv) != 6)
 	{
-		printf("Wrong number of input arguments! ProdCons need 5 input arguments.\n");
-		printf("Argument 1: Number of arguments.\n Argument 2: Number of producers.\n Argument 3: Number of consumers.\n");
-		printf("Argument 4: Size of the buffer.\n Argument 5: Total amount of products.\n");
+		printf("Wrong number of input arguments! ProdCons needs 5 input arguments.\n");
+		printf("Argument 1: Number of arguments.\nArgument 2: Number of producers.\nArgument 3: Number of consumers.\n");
+		printf("Argument 4: Size of the buffer.\nArgument 5: Total amount of products.\n");
 		exit(EXIT_FAILURE);
 	}
 
