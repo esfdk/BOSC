@@ -154,8 +154,8 @@ void *producer(void *argument)
 		
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
-		// Sleep for random time - between 0-9 seconds.
-		sleepRandom(1000.0);
+		// Sleep for random time.
+		sleepRandom(10000 % (*prodNo + 1));
 	}
 }
 
@@ -188,7 +188,7 @@ void *consumer(void *argument)
 
 		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d) \n", *consNo, node->elm, products_in_buffer, buffer_size);
 		
-		sleepRandom(1000.0);
+		sleepRandom(10000 % (*consNo + 1));
 	}
 }
 
@@ -213,9 +213,12 @@ Node *produceProduct()
 	return node;
 }
 
-// Produces a seeded random value between ? and ?? for the sleep function.
+//
 void sleepRandom(float wait_time_ms)
 {
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	srand(tv.tv_usec);
 	wait_time_ms = ((float)rand())*wait_time_ms / (float)RAND_MAX;
 	usleep((int) (wait_time_ms * 1e3f)); // convert from ms to us
 }
