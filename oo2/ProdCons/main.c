@@ -93,12 +93,12 @@ int main(int argc, char* argv[])
 	
 	// Create threads
 	int tn;
-	for (tn = 0; tn < number_of_consumers; tn++){
+/*	for (tn = 0; tn < number_of_consumers; tn++){
         if(pthread_create(&consumer_thread_ids[tn], NULL, &consumer, (void*) &tn))
 		{
         	printf("Failed to create consumer number %d \n", tn);
         }
-    }
+    }*/
 	for (tn = 0; tn < number_of_producers; tn++){
         if(pthread_create(&producer_thread_ids[tn], NULL, &producer, (void*) &tn))
 		{
@@ -107,10 +107,10 @@ int main(int argc, char* argv[])
     }
 	
 	// Join threads
-	for (tn = 0; tn < number_of_consumers; tn++)
+/*	for (tn = 0; tn < number_of_consumers; tn++)
 	{
     	pthread_join(consumer_thread_ids[tn], NULL);
-    }
+    }*/
 	for (tn = 0; tn < number_of_producers; tn++)
 	{
     	pthread_join(producer_thread_ids[tn], NULL);
@@ -123,6 +123,7 @@ int main(int argc, char* argv[])
 void *producer(void *argument)
 {
 	int *prodNo = (int *) argument; // Producers identifying number
+	int correctProdNo = *prodNo;
 	Node *node; // Produced node
 	
 	while(1)
@@ -149,13 +150,13 @@ void *producer(void *argument)
 		// Increase count of number products in buffer.
 		pthread_mutex_lock(&produce_lock);
 		products_in_buffer++;
-		printf("Producer %d produced %s. Items in buffer: %d (out of %d) \n", *prodNo, node->elm, products_in_buffer, buffer_size);
+		printf("Producer %d produced %s. Items in buffer: %d (out of %d) \n", correctProdNo, node->elm, products_in_buffer, buffer_size);
 		pthread_mutex_unlock(&produce_lock);
 		
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
 		
 		// Sleep for random time.
-		sleepRandom(1000));
+		sleep(5);
 	}
 }
 
@@ -188,7 +189,7 @@ void *consumer(void *argument)
 
 		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d) \n", *consNo, node->elm, products_in_buffer, buffer_size);
 		
-		sleepRandom(10000 % (*consNo + 1));
+		sleep(5);
 	}
 }
 

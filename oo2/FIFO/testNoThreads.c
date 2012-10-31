@@ -14,7 +14,7 @@ Testign that the FIFO list actually works as we want it to.
 int main(int argc, char* argv[])
 {
     // Creates a FIFO list;
-	List *fifo = list_new();
+    List *fifo = list_new();
 
     // Adds two elements to the list.
     list_add(fifo, node_new_str("s1"));
@@ -34,5 +34,5 @@ int main(int argc, char* argv[])
     // Prints the two elements.
     printf("%s\n%s\n", n1elm, n2elm);
 
-	return 0;
+    return 0;
 }
