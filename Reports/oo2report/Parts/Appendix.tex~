@@ -73,8 +73,8 @@
 
 \begin{figure}[h!]
 \centering
-\caption{Speedup output for input 500.000.000}
-\includegraphics{Images/oo2-1.2-SU500000000}
+\caption{Speedup output for}
+\includegraphics{Images/oo2-1.2-}
 \label{Test3_1}
 \end{figure}
 
