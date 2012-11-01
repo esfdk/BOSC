@@ -280,11 +280,12 @@ int main(int argc, char* argv[])
 
   if(safety_check())
   {
-	printf("State was safe. \n");
+    printf("State was safe. \n");
   }
   else
   {
-	printf("State was not safe. \n");
+	fprintf(stderr, "State was not safe. \n",);
+	return 1;
   }
 
   /* Seed the random number generator */
