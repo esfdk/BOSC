@@ -1,7 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
+
 #include<sys/time.h>
 #include<pthread.h>
+#include<math.h>
 
 typedef struct state {
   int *resource;
@@ -164,7 +166,7 @@ void generate_request(int i, int *request)
   int j, sum = 0;
   while (!sum) {
     for (j = 0;j < n; j++) {
-      request[j] = round( (double)s->need[i][j] * ((double)rand())/ (double)RAND_MAX );
+      request[j] = round(s->need[i][j] * ((double)rand())/ (double)RAND_MAX);
       sum += request[j];
     }
   }
