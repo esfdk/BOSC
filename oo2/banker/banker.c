@@ -179,18 +179,8 @@ int main(int argc, char* argv[])
 	s->allocation[i] = malloc(sizeof(int) * n);
 	s->need[i] = malloc(sizeof(int) * n);
   }
-
   
-  if(safety_check())
-  {
-	printf("State was safe. \n");
-  }
-  else
-  {
-	printf("State was not safe. \n");
-  }
-  
-  /* Get current state as input 
+  /* Get current state as input */
   printf("Resource vector: ");
   for(i = 0; i < n; i++)
     scanf("%d", &s->resource[i]);
@@ -203,22 +193,22 @@ int main(int argc, char* argv[])
     for(j = 0; j < n; j++) {
       scanf("%d", &s->allocation[i][j]);
     }
-  printf("\n");*/
+  printf("\n");
 
-  /* Calcuate the need matrix 
+  /* Calcuate the need matrix */
   for(i = 0; i < m; i++)
     for(j = 0; j < n; j++)
       s->need[i][j] = s->max[i][j]-s->allocation[i][j];*/
 
-  /* Calcuate the availability vector 
+  /* Calcuate the availability vector */
   for(j = 0; j < n; j++) {
     int sum = 0;
     for(i = 0; i < m; i++)
       sum += s->allocation[i][j];
     s->available[j] = s->resource[j] - sum;
-  }*/
+  }
 
-  /* Output need matrix and availability vector 
+  /* Output need matrix and availability vector */
   printf("Need matrix:\n");
   for(i = 0; i < n; i++)
     printf("R%d ", i+1);
@@ -236,7 +226,14 @@ int main(int argc, char* argv[])
     printf("%d  ",s->available[j]);
   printf("\n");*/
 
-  /* If initial state is unsafe then terminate with error */
+  if(safety_check())
+  {
+	printf("State was safe. \n");
+  }
+  else
+  {
+	printf("State was not safe. \n");
+  }
 
   /* Seed the random number generator 
   struct timeval tv;
