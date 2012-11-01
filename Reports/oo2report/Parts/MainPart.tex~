@@ -10,9 +10,20 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 \section{Beskrivelse af implementation}
 \subsection{Opgave 1}
 \label{O1}
+Vi skal optimerer en multrådet funktion, der udregner sum-funktioner, således at den faktisk kører hurtigere på en multicore maskine end den ellers ville have gjort uden implementationen af tråde. Og tjekke om vores ændringer gør funktionen hurtigere vha. en speedupgraf
 
 \subsubsection{Del 1}
 \label{O1_1}
+\begin{my_itemize}
+\item Udregning af hvilke tal hver tråde skal arbejde med
+\item Lav tråde med oprettede structs
+\item Udregning af sum af kvadratrødder
+\item Resultat af alle tråde
+\end{my_itemize}
+\paragraph{Arbejde.} Til implementationen af den nye sum funktion, udregner vi først mængden af arbejde for hver tråd ved at dividere antallet af tråde med input. Dette giver os et overblik over hvor meget arbejde hver tråd skal udføre, hvilket gør, at vi er i stand til at tildele hver tråd et start og slut tal i inputtet.
+\paragraph{Oprettelse af tråde.} Når vi har fundet ud af hvor meget hver tråd skal lave, og hvad de skal lave, opretter vi dem med den information.
+\paragraph{Udregning.} Derefter laver vi selve udregningen, hvor vi finder summen af kvadratrødderne. Når en tråd er færdig med sin del bliver der kaldt pthread_exit på den hvilket for den til at terminere.
+\paragraph{Beregning af resultat.} For at finde det samlede resultat går vi så igennem alle de terminerede tråds value_ptr og ligger dem sammen.
 
 \subsubsection{Del 2}
 \label{O1_2}
@@ -23,36 +34,44 @@ Speedup udregnes ved at tage kørselstiden ved 1 tråd og dividere det med kørs
 indsæt ideal speedup graf
 
 \paragraph{Valg af maskine til speedupgraf}
-Til test af vores multitrådet sum funktion havde vi valgte mellem en to,fire eller otte processors computer. Vi valgte at bruge computeren med fire processor. Det gjorde vi fordi det var medianen og vi mente, at det var hvad en standart computer ville have og vi derfor ville få nogle generelle resultater. 
-
-Til at teste vores multitrådet sum funktion brugte vi en speedup graf.
-En speedup graf visser hvor hurtigere en funktion bliver når man tildeler den flere tråde. Speedup udregnes ved at tage kørselstiden ved 1 tråd og dividere det med kørselstiden med n tråde i vores tilfælde 1-2-4-6-8. Det optimalle resultat ville være linær speedup hvor speedupen er lige antallet af tråde funktionen er blevet kørt med.
+Til test af vores multitrådet sum funktion havde vi valgte mellem to,fire eller otte processors computere. Vi valgte at bruge computeren med fire processor. Det gjorde vi fordi det var medianen og vi mente, at det var hvad en standart computer ville have og vi derfor ville få nogle generelle resultater. 
 
 \subparagraph{Uventet resultat ved kørsel med fire tråde}
 indsæt speedup graf her \n\n
-Som vi kan se udfra vores speedup graf er der næsten en ideal speedup fra en tråd til to tråde, men ved fire tråde bliver den kun en smule hurtigere end ved en tråd. Dette resultat synes vi er fovirrende da der også burde være mulighed for en fordobling i speedup. Vi havde forventet at få problemer ved 6 og 8 da vi ikke har mulighed for at tildele hver tråd en processer og det derfor bliver mere besværligt at oprette og styre dem. 
+Som vi kan se udfra vores speedup graf er der næsten en ideal speedup fra en tråd til to tråde, men ved fire tråde bliver den kun en smule hurtigere end ved en tråd. Dette resultat synes vi er fovirrende da det også burde være muligt at få en speedup tilsvarende processoren da computer trods alt har fire realle processor. Vi har ingen forklaring på hvorfor dette er sådan. 
+Vi havde forventet at få problemer ved seks og otte da vi ikke har mulighed for at tildele hver tråd en processer og det derfor bliver mere besværligt at oprette og styre dem. 
 indsæt melnyk speedup graf her \n\n
 Vi har kort testet vores funktion på en laptop med 4 processor og hyperthreading hvor vi havde en normal speedup optil fire tråde hvilket er forståligt da 4 processor med hyperthreading kun 'simulere' 8 processor, og derfor sikkert ikke arbejder ligeså optimalt som 8 konkrete processor.
 
 \subsubsection{Tests}
 \label{O1_Tests}
-
+Til at teste om vores forbedret multitrådet sum funktion faktisk kørte hurtigere med flere tråde brugte vi en speedupgraf.
 
 \subsection{Opgave 2}
-\label{O2}
+\label{O2
 
 \subsubsection{Del 1}
 \label{O2_1}
+Vi har valgt at implementere list_add(List *l, Node *n) på en meget simpel måde (se linje 35 til 41 i list.c). Listens sidste element ('l->last') bliver sat til at pege på den nye node ('l->last->next = n'), hvorefter 'l->last' bliver sat til at være n. På denne måde vil det anden sidste element pege på det nye element, og 'last' peger på det nye element, da det er det sidste i listen.
+\\*list_remove(List *l) implementationen kan ses på linje 44 til 60 i list.c filen. I metoden bliver der lavet en 'Node *n'. Denne node bliver sat til at være det første element i listen, altså 'l->first->next' da 'first' er root elementet og aldrig skal pilles ved. Rodelementets 'next' bliver sat til at pege på n's 'next', hvilket er det andet element i listen. På denne måde er det første element blevet "fjernet" fra listen. Metoden tjekker derefter om 'first->next' er null, for hvis den er, skal 'last' pege på først, ligesom da listen lige var blevet lavet. Til slut retuneres n.
 
 \subsubsection{Del 2}
 \label{O2_2}
+Det mest åbenlyse problem er, at flere tråde kan editere listen på samme tid. For eksempel: To tråde tilgør listen på samme tid og finder frem til det sidste element ('last'). Begge tråde prøver at tilføje et element til listen, hvilket betyder at de begge prøver at tilføje et element til 'last' på samme tid. Tråd #1 tilføjer sit element til 'last', hvorefter tråd #2 tilføjer sit element til 'last' (det element som #1 lige har tilføjet sit element til), hvilket ødelægger linket mellem 'last' og tråd #1s element.
+\\En anden udgave af problemet ovenover er, hvis to forskellige tråde vil remove på samme tid. Tråd #1 går ind og læser 'first's 'next' element (da det skal blive first efter removal). Samtidig går tråd #2 ind og kører hele removal, hvorefter #1 prøver at fjerne det element der lige er blevet fjernet. Derved er kun et element blevet fjernet, hvor to elementer burde have været fjernet. Den omvendte situation kan også opstå, hvor to elementer bliver fjernet, men hver tråd tror kun at et element er blevet fjernet.
+\\Alt efter størrelsen af listen kan der også opstå problemet. Hvis listen kun er et element langt og en tråd prøver at adde mens en anden prøver at remove, kan der opstå forkerte resultater. Sker de samtidig, kan elementet blive addet (hvilket gør at listen er to elementer lang), på samme tid som det første (og eneste) element bliver removet. Risikoen er, at det nye element bliver appendet på det element der lige er blevet removet, hvorved ingen af elementerne er i listen.
 
 \subsubsection{Del 3}
 \label{O2_3}
+Vi har brugt mutex låse i list_add og list_remove metoderne. I list_add er de to linjer logik inde i en mutex lock, da det ikke skal være muligt for flere tråde, at tilføje elementer på samme tid. I list_remove er alt undtagen return-statementet indkapslet af mutex locks af samme årsag som i list_add; det skal ikke være mulgit at fjerne flere elementer samtidig. At 'return n' ikke er i en lock, gør dog ingen skade. Når metoden når til 'return', bruger den ikke listen mere, og det kan derfor køres uden at være i en lock.
+Vi har beskrevet vores test at den flertrådet liste i afsnit \ref{02_Tests}.
 
 \subsubsection{Tests}
 \label{O2_Tests}
-
+Vi har lavet to tests til first-in-first-out listen. En test uden brug af tråde for at se om lsiten overhovedet virker, og en test med tråde, for at sikre at flere tråde kan bruge listen samtidig, uden der opstår problemer.
+\\Testen uden brug at tråde findes i testNoThreads.c. I denne test laver vi en liste, tilføjer to elementer til listen, fjerner to elementer fra listen og printer deres værdier for at sikre os, at de er kommet ud i den rigtige rækkefølge. 
+\\Testen med tråde findes i testThreads.c og er lidt mere omfattende. Testen tager to parametre: Antallet af tråde der skal laves, og antallet af elementer hver tråd skal håndtere. 'main' metoden laver et array med det valgte antal tråde, og sætter dem alle samme til at køre '*TaskCode(void *argument)' metoden. Hver tråd får sit eget nummer i arrayet med, for at man nemmere kan holde styr på hvilken tråd der gør hvad. Hver tråd laver det valgte antal elementer (som er strings med formatet ("Thread \#\%d, element \%d", threadNumber, elementNumber)) og adder dem til listen. Derefter fjerner tråden det antal elementer, som den har addet til listen og printer værdien af disse elementer. 
+\\Det man kan se med testThreads testen er, at trådene går ind og låser listen når de bruger den. Som oftest vil elementerne være i rækkefølge, så det er alle tråd et's elemnter først, så tråd to's, osv.
 
 \subsection{Opgave 3}
 \label{O3}
