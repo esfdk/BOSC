@@ -284,7 +284,7 @@ int main(int argc, char* argv[])
   }
   else
   {
-	fprintf(stderr, "State was not safe. \n",);
+	fprintf(stderr, "State was not safe.\n");
 	return 1;
   }
 
