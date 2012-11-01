@@ -160,26 +160,30 @@ int safety_check()
 /* Generate a request vector */
 void generate_request(int i, int *request)
 {
+  pthread_mutex_lock(&state_mutex);
   int j, sum = 0;
   while (!sum) {
     for (j = 0;j < n; j++) {
-      request[j] = s->need[i][j] * ((double)rand())/ (double)RAND_MAX;
+      request[j] = round( (double)s->need[i][j] * ((double)rand())/ (double)RAND_MAX );
       sum += request[j];
     }
   }
+  pthread_mutex_unlock(&state_mutex);
   printf("Process %d: Requesting resources.\n",i);
 }
 
 /* Generate a release vector */
 void generate_release(int i, int *request)
 {
+  pthread_mutex_lock(&state_mutex);
   int j, sum = 0;
   while (!sum) {
     for (j = 0;j < n; j++) {
-      request[j] = s->allocation[i][j] * ((double)rand())/ (double)RAND_MAX;
+      request[j] = round(s->allocation[i][j] * ((double)rand())/ (double)RAND_MAX);
       sum += request[j];
     }
   }
+  pthread_mutex_unlock(&state_mutex);
   printf("Process %d: Releasing resources.\n",i);
 }
 

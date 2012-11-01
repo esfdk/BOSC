@@ -1,13 +1,16 @@
 \chapter{Forord}
 I denne rapport dokumenterer vi vores valg i forhold til implementationen af opgaverne i Obligatorisk opgave 2.
-\\Vores implementation kan findes i "".
 
-Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}. Vores git repository kan findes på https://github.com/esfdk/BOSC .
+Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}. Vores git repository kan findes på https://github.com/esfdk/BOSC/tree/master/oo2.
+
+Vi ville gerne have lavet mere fyldestgørende test af opgave 4.
 
 \chapter{Beskrivelse af implementation}
 \section{Opgave 1}
 \label{O1}
-Vi skal optimerer en multrådet funktion, der udregner sum-funktioner, således at den faktisk kører hurtigere på en multicore maskine end den ellers ville have gjort uden implementationen af tråde. Og tjekke om vores ændringer gør funktionen hurtigere vha. en speedupgraf.
+Vi skal optimere en sekvensiel funktion, der udregner summen af kvadratrødder, således at den kører hurtigere på en multicore maskine end den ellers ville have gjort. Dette skal gøres ved hjælp af tråde.
+
+Koden til funktionen kan findes i 'mul_sum/mulsum.c'. Den er løst baseret på koden fra Operating System Concepts, 8th edition, side 161.
 
 \subsection{Del 1}
 \label{O1_1}
@@ -63,6 +66,7 @@ bitly.com/U0EYAK
 
 \section{Opgave 2}
 \label{O2}
+Vores løsning af opgave 2 er beskrevet i 'FIFO/list.c' og 'FIFO/list.h'. Testkoden til listen er beskrevet i 'FIFO/testNoThreads.c' og 'FIFO/tetstThreads.c'. 'list.c', 'list.h' og 'testNoThreads.c' er baseret på kode fra 'opg2' zip-filen fra bloggen\footnote{https://blog.itu.dk/BOSC-E2012/files/2012/10/opg2.zip}.
 \subsection{Del 1}
 \label{O2_1}
 Vi har valgt at implementere list\_add(List *l, Node *n) på en meget simpel måde (se linje 35 til 41 i list.c). Listens sidste element ('l-\textgreater last') bliver sat til at pege på den nye node ('l-\textgreater last-\textgreater next = n'), hvorefter 'l-\textgreater last' bliver sat til at være n. På denne måde vil det anden sidste element pege på det nye element, og 'last' peger på det nye element, da det er det sidste i listen.
@@ -88,6 +92,8 @@ Vi har lavet to tests til first-in-first-out listen. En test uden brug af tråde
 
 \section{Opgave 3}
 \label{O3}
+Vores løsning af opgave 3 er beskrevet i 'prod_cons/prodCons.c' samt 'prod_cons/prodCons.h'. 'prod_cons/List' mappen indeholer vores list fra opgave 2, som vi også inkluderer i 'FIFO'-mappen.
+
 I denne opgave har vi brugt 'pthread\_mutex\_t' objekter til at undgå problemer hvor flere tråde ændrer samme element på samme tid. 'pthread\_mutex\_t' er objekter, der kan låses/låses op via 'pthread\_mutex\_lock'-funktions kaldet. Hvis en funktion låser en mutex, forhindre den derved andre funktioner i at køre videre, forudsat at de selv skal bruge mutex'en. De andre funktioner går i stå indtil mutex'en låses op igen, hvilket sørger for at critical kode kun køres af en tråd ad gangen. Bruger man ikke mutex låse i et flertrådet program, risikerer man at løbe ind i situationer hvor flere tråde har modificeret samme element på samme tid, hvilket kan ødelægge programmet.
 \\ Vi har også brugt 'sem\_t' objekter, også kaldet semaphore. Det er objekter, der indeholder en værdi, og som kan bruges af funktioner til synkronisation mellem tråde. De har to interessante funktioner: 'sem\_wait(sem\_t)' og 'sem\_post(sem\_t)'. 'sem\_wait()' kigger på værdien af semaphoren. Hvis værdien er mindre end nul, vil den kaldende funktion pause, og vente på værdien bliver højere end nul. Når det sker, vil den kaldende funktion få lov til at køre videre og 'sem\_wait()' reducerer værdien af semaphoren med en. 'sem\_post()' forøger simpelthen bare værdien af semaphoren med en.
 \\ Både 'phtread\_mutex\_t' og 'sem\_t' objekter virker som låse, omend på forskellige måder. 'pthread\_mutex\_t' virker som en ja/nej, og vil kun lade en tråd udføre sit arbejde ad gangen. 'sem\_t' lader gerne flere tråde arbejde på samme tid, så længe semaphorens værdi er over nul.
@@ -105,7 +111,20 @@ I denne opgave har vi brugt 'pthread\_mutex\_t' objekter til at undgå problemer
 
 \section{Opgave 4}
 \label{O4}
-
+Vores løsning af opgave 4 er beskrevet i 'banker/banker.c' samt i appendix. Den er baseret på den ufuldstændige banker.c fra zip-filen\footnote{https://blog.itu.dk/BOSC-E2012/files/2012/10/banker.zip} på kursusbloggen.
+\subsection{Opfyldelse af punkter}
+note omkring m & n
+\label{O4_Punkter}
+\paragraph{Punkt 1} - Vi allokerer memory til state dynamisk ved bruge af malloc. Dette gør vi efter at antallet af processer og resurser er blevet læst ind. Vi var nødt til at inkludere et for-loop, da 'max', 'allocation' og 'need' er "arrays of pointers to arrays".  (Se linje 225-237).
+\\I slutningen af main() funktionen frigiver det memory, som vi har allocated til state. Vi gør dette i omvendt rækkefølge, da vi er nødt til at tilgå resurse arrays'ne før vi kan frigive processer arrays'ne. (Se linje 310-321).
+\paragraph{Punkt 2} - Vi har implementeret safety algoritmen som beskrevet på side 299 i Operating System Concepts, 8th Edition. Vi initialiserer 'work' og 'finish' som beskrevet. Derefter har vi et while-loop, som kører step 2 og 3 af algoritmen indtil der er en iteration, hvor der ikke er en process, hvis 'finish' status skifter til true(1). Dette gør vi, fordi det er ligegyldigt, i hvilken rækkefølge processerne bliver færdig i forhold til safe eller unsafe state. (Se linje 94-158).
+\\I hvert kald til 'resource\_request(int i, int *request)' låser vi 'state\_mutex' således at state ikke tilgås af mere end en process. Herefter udfører vi første step af 'resource-request' algoritmen\footnote{Beskrevet på side 299 i Operating System Concepts, 8th edition.}. Hvis dette step fejler, så crasher vi. Ellers går vi videre til step 2, hvor vi unlocker låsen og return 0, hvis requesten ikke kan opfyldes. 
+\\Hvis requesten måske kan opfyldes, laver vi ændringerne til state og kalder vores safety\_check() funktion. Hvis safety\_check() er false, så laver vi rollback på state, releaser lock og returner 0. Ellers unlocker vi låsen, beholder vores ændringer til state og returner 1. (Se linje 31-77).
+\paragraph{Punkt 3} - I resource\_release(int i, int *request)  låser vi state\_mutex, så andre tråde ikke kan tilgå state og gør det modsatte af step 3 af 'resource-request' algoritmen. Herefter unlocker vi låsen og funktionen afslutter. (Se linje 80-91).
+\paragraph{Punkt 4} - Efter state er blevet oprettet i 'main(int argc, char* argv[])', kalder vi safety\_check(). Hvis det returner false, crasher vi, ellers forsætter. (Se linje 285-293).
+\paragraph{Punkt 5} - Da vi locker state\_mutex i resource\_request(int i, int *request), resource\_release(int i, int *request), 'generate\_request(int i, int *request)' og 'generate\_release(int i, int *request)' er der ikke flere tråde, som kan tilgå state på samme tid. 'safety\_check()' tilgår state, men den bliver kun kaldt inde i en block kode, hvor 'state\_mutex' er låst og i 'main(int argc, char* argv[])' før trådene bliver oprettet.
 
 \subsection{Tests}
 \label{O4_Tests}
+Programmet kører og rapporterer, at begge de to eksempel input filer fra zip-filen fra kursusbloggen\footnote{https://blog.itu.dk/BOSC-E2012/files/2012/10/banker.zip} er safe. Hvis den første linje i 'allocation matrix' (matrix nr. 2 i  input filen) ændres fra '1 0 1' til '2 0 1', bliver den unsafe og dette rapporteres også korrekt.
+\\Ellers har vi testet og set, at det ikke lader til, at programmet går i 'deadlock' eller lignende.
