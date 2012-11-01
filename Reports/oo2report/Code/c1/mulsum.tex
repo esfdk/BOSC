@@ -57,7 +57,8 @@ int main(int argc, char *argv[])
 
 	/* create all threads */
 	for (i=0; i<number_of_threads; ++i) {
-		rc = pthread_create(&threads[i], NULL, TaskCode, \\(void *) &calc_result[i]);
+		rc = pthread_create(&threads[i], NULL, TaskCode, 
+		(void *) &calc_result[i]);
 		assert(0 == rc);
 	}
 	

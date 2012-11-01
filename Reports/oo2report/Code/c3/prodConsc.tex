@@ -37,9 +37,12 @@ int main(int argc, char* argv[])
 {
 	if(atoi(argv[1]) != 5)
 	{
-		printf("Wrong number of input arguments! ProdCons needs 5 input \\arguments.\n");
-		printf("Argument 1: Number of arguments.\nArgument 2: Number \\of producers.\nArgument 3: Number of consumers.\n");
-		printf("Argument 4: Size of the buffer.\nArgument 5: Total amount \\of products.\n");
+		printf("Wrong number of input arguments! ProdCons needs 5 input 
+		arguments.\n");
+		printf("Argument 1: Number of arguments.\nArgument 2: Number 
+		of producers.\nArgument 3: Number of consumers.\n");
+		printf("Argument 4: Size of the buffer.\nArgument 5: Total amount 
+		of products.\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -138,7 +141,8 @@ void *producer(void *argument)
 		}
 		else
 		{
-			printf("Some error occured when trying to wait on \\products_remaining semaphore");
+			printf("Some error occured when trying to wait on
+			 products_remaining semaphore");
 		}
 		
 		// Add product to buffer
@@ -148,7 +152,8 @@ void *producer(void *argument)
 		// Increase count of number products in buffer.
 		pthread_mutex_lock(&products_buffer_lock);
 		products_in_buffer++;
-		printf("Producer %d produced %s. Items in buffer: %d (out of %d) \\\n", *prodNo, node->elm, products_in_buffer, buffer_size);
+		printf("Producer %d produced %s. Items in buffer: %d (out of %d) 
+		\n", *prodNo, node->elm, products_in_buffer, buffer_size);
 		pthread_mutex_unlock(&products_buffer_lock);
 		
 		sem_post(&full); // Signal full so buffer space is decreased by 1.
@@ -167,9 +172,11 @@ void *consumer(void *argument)
 	while(1){
 		pthread_mutex_lock(&consume_lock); // Lock consumed_products.
 		
-		if(consumed_products == total_number_of_products) // If we \\have consumed all products, exit thread.
+		if(consumed_products == total_number_of_products) // If we 
+		have consumed all products, exit thread.
 		{
-			pthread_mutex_unlock(&consume_lock); // Release lock on \\consumed_products.
+			pthread_mutex_unlock(&consume_lock); // Release lock on 
+			consumed_products.
 			pthread_exit(0); // Exit thread.
 		}
 		
@@ -185,7 +192,8 @@ void *consumer(void *argument)
 		pthread_mutex_unlock(&consume_lock); // Unlock consumed_products.
 		sem_post(&empty); // Signal empty so buffer space is increased by 1.
 
-		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d)\\ \n", *consNo, node->elm, products_in_buffer, buffer_size);
+		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d)
+		 \n", *consNo, node->elm, products_in_buffer, buffer_size);
 		
 		sleepRandom(10000);
 	}
