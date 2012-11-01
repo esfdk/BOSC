@@ -280,11 +280,12 @@ int main(int argc, char* argv[])
 
   if(safety_check())
   {
-	printf("State was safe. \n");
+    printf("State was safe. \n");
   }
   else
   {
-	printf("State was not safe. \n");
+	fprintf(stderr, "State was not safe.\n");
+	return 1;
   }
 
   /* Seed the random number generator */
@@ -302,4 +303,16 @@ int main(int argc, char* argv[])
   free(tid);
 
   /* Free state memory */
+  	for (i = 0; i < m; i++) {
+		free(s->max[i]);
+		free(s->allocation[i]);
+		free(s->need[i]);
+	}
+
+	free(s->resource);
+	free(s->available);
+	free(s->max);
+	free(s->allocation);
+	free(s->need);
+	free(s);
 }
