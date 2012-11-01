@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+
 #include<sys/time.h>
 #include<pthread.h>
 #include<math.h>
@@ -162,7 +163,6 @@ int safety_check()
 void generate_request(int i, int *request)
 {
   pthread_mutex_lock(&state_mutex);
-  printf("Started generating request for process %d \n", i);
   int j, sum = 0;
   while (!sum) {
     for (j = 0;j < n; j++) {
@@ -178,7 +178,6 @@ void generate_request(int i, int *request)
 void generate_release(int i, int *request)
 {
   pthread_mutex_lock(&state_mutex);
-  printf("started generating release for process %d \n", i);
   int j, sum = 0;
   while (!sum) {
     for (j = 0;j < n; j++) {
