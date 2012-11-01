@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include <sys/time.h>
-#include <pthread.h>
+#include<sys/time.h>
+#include<pthread.h>
 
 typedef struct state {
   int *resource;
@@ -44,7 +44,7 @@ int resource_request(int i, int *request)
   
   for(j = 0; j < n; j++)
   {
-	if(request[j] > s->available[i][j])
+	if(request[j] > s->available[j])
 	{
 		pthread_mutex_unlock(&state_mutex);
 		return 0;
@@ -53,7 +53,7 @@ int resource_request(int i, int *request)
   
   for(j = 0; j < n; j++)
   {
-	s->available[i][j] = s->available[i][j] - request[j];
+	s->available[j] = s->available[j] - request[j];
 	s->allocation[i][j] = s->allocation[i][j] + request[j];
 	s->need[i][j] = s->need[i][j] - request[j];
   }
@@ -62,7 +62,7 @@ int resource_request(int i, int *request)
   {
 	for(j = 0; j < n; j++)
 	{
-		s->available[i][j] = s->available[i][j] + request[j];
+		s->available[j] = s->available[j] + request[j];
 		s->allocation[i][j] = s->allocation[i][j] - request[j];
 		s->need[i][j] = s->need[i][j] + request[j];
 	}
@@ -83,7 +83,7 @@ void resource_release(int i, int *request)
   int j;
   for(j = 0; j < n; j++)
   {
-		s->available[i][j] = s->available[i][j] + request[j];
+		s->available[j] = s->available[j] + request[j];
 		s->allocation[i][j] = s->allocation[i][j] - request[j];
 		s->need[i][j] = s->need[i][j] + request[j];
   }
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
   /* Create m threads */
   pthread_t *tid = malloc(m*sizeof(pthread_t));
   for (i = 0; i < m; i++)
-    pthread_create(&tid[i], NULL, process_thread, (void *) (long) i);*/
+    pthread_create(&tid[i], NULL, process_thread, (void *) (long) i);
   
   /* Wait for threads to finish */
   pthread_exit(0);
