@@ -98,20 +98,6 @@ int safety_check()
 	return 1;
 }
 
-int compare_vectors(int length, int *fv, int *sv)
-{
-	int i;
-	for(i = 0; i < length; i++)
-	{
-		if(fv[i] > s[i])
-		{
-			return -1;
-		}
-	}
-	
-	return 0;
-}
-
 /* Generate a request vector */
 void generate_request(int i, int *request)
 {
@@ -166,9 +152,9 @@ int main(int argc, char* argv[])
 {
   /* Get size of current state as input */
   int i, j;
-  printf("Number of processes: ");
+  printf("Number of processes: \n");
   scanf("%d", &m);
-  printf("Number of resources: ");
+  printf("Number of resources: \n");
   scanf("%d", &n);
 
   /* Allocate memory for state */
@@ -177,22 +163,23 @@ int main(int argc, char* argv[])
   s->available = malloc(sizeof(int) * n);
   s->max = malloc(sizeof(int *) * m);
   s->allocation = malloc(sizeof(int *) * m);
-  s->max = malloc(sizeof(int *) * m);
-  
+  s->need = malloc(sizeof(int *) * m);
+
   for(i = 0; i < m; i++)
   {
 	s->max[i] = malloc(sizeof(int) * n);
 	s->allocation[i] = malloc(sizeof(int) * n);
 	s->need[i] = malloc(sizeof(int) * n);
   }
+
   
   if(safety_check)
   {
-	printf("State was safe.");
+	printf("State was safe. \n");
   }
   else
   {
-	printf("State was not safe");
+	printf("State was not safe. \n");
   }
   
   /* Get current state as input 
