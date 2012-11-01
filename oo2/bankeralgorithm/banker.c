@@ -164,7 +164,7 @@ void generate_request(int i, int *request)
   int j, sum = 0;
   while (!sum) {
     for (j = 0;j < n; j++) {
-      request[j] = round( (double)s->need[i][j] * ((double)rand())/ (double)RAND_MAX );
+      request[j] = (double)s->need[i][j] * ((double)rand())/ (double)RAND_MAX;
       sum += request[j];
     }
   }
@@ -179,7 +179,7 @@ void generate_release(int i, int *request)
   int j, sum = 0;
   while (!sum) {
     for (j = 0;j < n; j++) {
-      request[j] = round(s->allocation[i][j] * ((double)rand())/ (double)RAND_MAX);
+      request[j] = s->allocation[i][j] * ((double)rand())/ (double)RAND_MAX;
       sum += request[j];
     }
   }

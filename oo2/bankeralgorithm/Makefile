@@ -1,7 +1,7 @@
 all: banker
-LIBS= -lpthread
+LIBS= -lpthread -lm
 CC = gcc
-mulsum: banker.o
+banker: banker.o
 	${CC} -o $@ banker.o ${LIBS}
 clean:
 	rm -rf *o banker
