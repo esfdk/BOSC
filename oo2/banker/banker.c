@@ -197,6 +197,7 @@ void *process_thread(void *param)
       /* Wait */
       Sleep(100);
     }
+    
     /* Generate release */
     generate_release(i, request);
     /* Release resources */
