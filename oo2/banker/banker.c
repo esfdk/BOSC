@@ -35,13 +35,13 @@ int resource_request(int i, int *request)
 
 /* Release the resources in request for process i */
 void resource_release(int i, int *request)
-{
+{ 
 	
 }
 
 // Safety algorithm
 int safety_check()
-{
+{ 
 	// Variables
 	int i, j, lt;
 	int work[n], finish[m];
@@ -59,28 +59,36 @@ int safety_check()
 		finish[i] = 0;
 	}
 	
-	// Step 2
-	for(i = 0; i < m; i++)
+	int tryagain = 1;
+	
+	while(tryagain)
 	{
-		if(finish[i] == 0)
+		tryagain = 0;
+		// Step 2
+		for(i = 0; i < m; i++)
 		{
-			int j, comparison = 0;
-			for(j = 0; j < n; i++)
+			if(finish[i] != 1)
 			{
-				if(s->need[i][j] > work[j])
+				int j, comparison = 0;
+				for(j = 0; j < n; j++)
 				{
-					comparison = -1;
-					break;
+					if(s->need[i][j] > work[j])
+					{
+						comparison = -1;
+						break;
+					}
 				}
-			}
-			
-			// Step 3
-			if(comparison != -1)
-			{
-				int k;
-				for(k = 0; k < n; k++)
+				
+				// Step 3
+				if(comparison != -1)
 				{
-					work[k] = work[k] + s->allocation[i][k];
+					int k;
+					for(k = 0; k < n; k++)
+					{
+						work[k] = work[k] + s->allocation[i][k];
+					}
+					finish[i] = 1;
+					tryagain = 1;
 				}
 			}
 		}
@@ -96,20 +104,6 @@ int safety_check()
 	}
 	
 	return 1;
-}
-
-int compare_vectors(int length, int *fv, int *sv)
-{
-	int i;
-	for(i = 0; i < length; i++)
-	{
-		if(fv[i] > s[i])
-		{
-			return -1;
-		}
-	}
-	
-	return 0;
 }
 
 /* Generate a request vector */
@@ -166,9 +160,9 @@ int main(int argc, char* argv[])
 {
   /* Get size of current state as input */
   int i, j;
-  printf("Number of processes: ");
+  printf("Number of processes: \n");
   scanf("%d", &m);
-  printf("Number of resources: ");
+  printf("Number of resources: \n");
   scanf("%d", &n);
 
   /* Allocate memory for state */
@@ -177,8 +171,8 @@ int main(int argc, char* argv[])
   s->available = malloc(sizeof(int) * n);
   s->max = malloc(sizeof(int *) * m);
   s->allocation = malloc(sizeof(int *) * m);
-  s->max = malloc(sizeof(int *) * m);
-  
+  s->need = malloc(sizeof(int *) * m);
+
   for(i = 0; i < m; i++)
   {
 	s->max[i] = malloc(sizeof(int) * n);
@@ -186,44 +180,35 @@ int main(int argc, char* argv[])
 	s->need[i] = malloc(sizeof(int) * n);
   }
   
-  if(safety_check)
-  {
-	printf("State was safe.");
-  }
-  else
-  {
-	printf("State was not safe");
-  }
-  
-  /* Get current state as input 
-  printf("Resource vector: ");
+  /* Get current state as input */
+  printf("Resource vector: \n");
   for(i = 0; i < n; i++)
     scanf("%d", &s->resource[i]);
-  printf("Enter max matrix: ");
+  printf("Enter max matrix: \n");
   for(i = 0;i < m; i++)
     for(j = 0;j < n; j++)
       scanf("%d", &s->max[i][j]);
-  printf("Enter allocation matrix: ");
+  printf("Enter allocation matrix:");
   for(i = 0; i < m; i++)
     for(j = 0; j < n; j++) {
       scanf("%d", &s->allocation[i][j]);
     }
-  printf("\n");*/
+  printf("\n");
 
-  /* Calcuate the need matrix 
+  /* Calcuate the need matrix */
   for(i = 0; i < m; i++)
     for(j = 0; j < n; j++)
-      s->need[i][j] = s->max[i][j]-s->allocation[i][j];*/
+      s->need[i][j] = s->max[i][j]-s->allocation[i][j];
 
-  /* Calcuate the availability vector 
+  /* Calcuate the availability vector */
   for(j = 0; j < n; j++) {
     int sum = 0;
     for(i = 0; i < m; i++)
       sum += s->allocation[i][j];
     s->available[j] = s->resource[j] - sum;
-  }*/
+  }
 
-  /* Output need matrix and availability vector 
+  /* Output need matrix and availability vector */
   printf("Need matrix:\n");
   for(i = 0; i < n; i++)
     printf("R%d ", i+1);
@@ -239,9 +224,16 @@ int main(int argc, char* argv[])
   printf("\n");
   for(j = 0; j < n; j++)
     printf("%d  ",s->available[j]);
-  printf("\n");*/
+  printf("\n");
 
-  /* If initial state is unsafe then terminate with error */
+  if(safety_check())
+  {
+	printf("State was safe. \n");
+  }
+  else
+  {
+	printf("State was not safe. \n");
+  }
 
   /* Seed the random number generator 
   struct timeval tv;
