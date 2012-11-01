@@ -10,47 +10,47 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 \section{Beskrivelse af implementation}
 \subsection{Opgave 1}
 \label{O1}
-Vi skal optimerer en multrådet funktion, der udregner sum-funktioner, således at den faktisk kører hurtigere på en multicore maskine end den ellers ville have gjort uden implementationen af tråde. Og tjekke om vores ændringer gør funktionen hurtigere vha. en speedupgraf
+Vi skal optimerer en multrådet funktion, der udregner sum-funktioner, således at den faktisk kører hurtigere på en multicore maskine end den ellers ville have gjort uden implementationen af tråde. Og tjekke om vores ændringer gør funktionen hurtigere vha. en speedupgraf.
 
 \subsubsection{Del 1}
 \label{O1_1}
 \begin{my_itemize}
-\item Udregning af hvilke tal hver tråde skal arbejde med
-\item Lav tråde med oprettede structs
-\item Udregning af sum af kvadratrødder
-\item Resultat af alle tråde
+\item Udregning af hvilke tal hver tråd skal arbejde med.
+\item Lav tråde med oprettede structs.
+\item Udregning af sum af kvadratrødder.
+\item Resultat af alle tråde.
 \end{my_itemize}
-\paragraph{Arbejde.} Til implementationen af den nye sum funktion, udregner vi først mængden af arbejde for hver tråd ved at dividere antallet af tråde med input. Dette giver os et overblik over hvor meget arbejde hver tråd skal udføre, hvilket gør, at vi er i stand til at tildele hver tråd et start og slut tal i inputtet.
-\paragraph{Oprettelse af tråde.} Når vi har fundet ud af hvor meget hver tråd skal lave, og hvad de skal lave, opretter vi dem med den information.
-\paragraph{Udregning.} Derefter laver vi selve udregningen, hvor vi finder summen af kvadratrødderne. Når en tråd er færdig med sin del bliver der kaldt pthread_exit på den hvilket for den til at terminere.
-\paragraph{Beregning af resultat.} For at finde det samlede resultat går vi så igennem alle de terminerede tråds value_ptr og ligger dem sammen.
+\paragraph{Arbejde} Før vi opretter vores tråde, udregner vi hvor mange tal hver tråd skal arbejde med. Derefter laver vi en beregning til at finde de laveste og højeste tal. Det gør vi blandet andet ved "double minnum = floor(work * n) + 1;". Vi bruger floor, da vi kun er intersseret i heltal. Når det er gjort, opretter vi struct og placerer dem i arrays såsom "calc_result[n].minimum_number = minnum;". 
+\paragraph{Oprettelse af tråde} Når vi har fundet ud af hvilket arbejdet hver tråd skal udføre, opretter vi dem. Hver tråd bliver sat til at køre TaskCode med et struct fra punkt 1 som parameter.
+\paragraph{Udregning} Derefter laver vi selve udregningen, hvor vi finder summen af kvadratrødderne. Når en tråd er færdig med sin del, bliver der kaldt pthread_exit på den, hvilket får den til at terminere.
+\paragraph{Beregning af resultat} For at finde det samlede resultat går vi igennem arrayet af structs og tilgår deres sumsqrt værdi. Alle disse værdier ligger vi sammen og printer dem ud.
 
 \subsubsection{Del 2}
 \label{O1_2}
-I opgave 1.2 bliver vi bedt om at tjekke vores multitrådet sum funktion vha. en speedup graf.
-En speedup graf visser hvor hurtigere en funktion bliver når man tildeler den flere tråde. 
-indæst speedup funktion her\n\n
-Speedup udregnes ved at tage kørselstiden ved 1 tråd og dividere det med kørselstiden med n tråde i vores tilfælde 1-2-4-6-8. Det optimalle resultat ville være linær speedup hvor speedupen er lige antallet af tråde funktionen er blevet kørt med.
+I opgave 1.2 bliver vi bedt om at tjekke vores multitrådet sum-funktion vha. en speedup graf.
+En speedup graf viser hvor meget hurtigere en funktion bliver, når man tildeler den flere tråde. 
+indsæt speedup funktion her\n\n
+Speedup udregnes ved at tage kørselstiden ved 1 tråd og dividere det med kørselstiden med n tråde, som i vores tilfælde er 1-2-4-6-8. Det optimale resultat ville være en linær speedup, hvor speedupen er lig antallet af tråde, som funktionen er blevet kørt med.
 indsæt ideal speedup graf
 
 \paragraph{Valg af maskine til speedupgraf}
-Til test af vores multitrådet sum funktion havde vi valgte mellem to,fire eller otte processors computere. Vi valgte at bruge computeren med fire processor. Det gjorde vi fordi det var medianen og vi mente, at det var hvad en standart computer ville have og vi derfor ville få nogle generelle resultater. 
+Til test af vores multitrådet sum-funktion havde vi valget mellem to, fire eller otte processors computere. Vi valgte at bruge computeren med fire processor. Det gjorde vi fordi det var medianen og vi mente, at det var hvad en standard computer ville have og derfor ville vi få nogle generelle resultater. 
 
 \subparagraph{Uventet resultat ved kørsel med fire tråde}
 indsæt speedup graf her \n\n
-Som vi kan se udfra vores speedup graf er der næsten en ideal speedup fra en tråd til to tråde, men ved fire tråde bliver den kun en smule hurtigere end ved en tråd. Dette resultat synes vi er fovirrende da det også burde være muligt at få en speedup tilsvarende processoren da computer trods alt har fire realle processor. Vi har ingen forklaring på hvorfor dette er sådan. 
-Vi havde forventet at få problemer ved seks og otte da vi ikke har mulighed for at tildele hver tråd en processer og det derfor bliver mere besværligt at oprette og styre dem. 
+Som man kan se udfra vores speedup graf, er der næsten en ideal speedup fra en tråd til to tråde. Ved fire tråde bliver den dog kun en smule hurtigere end ved en tråd. Dette resultat synes vi er fovirrende, da det burde være muligt at få en speedup svarende til speeduppen fra en tråd til to tråde. Computeren har trods alt fire realle processor. Vi har ingen forklaring på hvorfor dette er sådan. 
+Vi havde forventet at få problemer ved seks og otte da vi ikke har mulighed for at tildele hver tråd en processer, og det derfor bliver mere besværligt at oprette og styre dem. 
 indsæt melnyk speedup graf her \n\n
-Vi har kort testet vores funktion på en laptop med 4 processor og hyperthreading hvor vi havde en normal speedup optil fire tråde hvilket er forståligt da 4 processor med hyperthreading kun 'simulere' 8 processor, og derfor sikkert ikke arbejder ligeså optimalt som 8 konkrete processor.
+Vi har kort testet vores funktion på en laptop med 4 processor og hyperthreading, hvor vi havde en normal speedup optil fire tråde. Dette er forståligt da fire processor med hyperthreading kun 'simulerer' otte processor, og derfor ikke arbejder ligeså optimalt som otte konkrete processor.
 
 \subsubsection{Tests}
 \label{O1_Tests}
-Til at teste om vores forbedret multitrådet sum funktion faktisk kørte hurtigere med flere tråde brugte vi en speedupgraf. Som nævnt i /ref{O1_2} for at lave en ordenlig speedupgraf lavede vi 10 runs af funktionen ved 1-2-4-6-8 og tråde ved input 10.000 og så input 10 gange højere op til 100.000.000 og fra 50.000 og så input 10 gange højere op til 500.000.000. Dette gjorde at vi havde en stor mængde information til at lave en god gennemsnits graf. 
+Til at teste om vores forbedret multitrådet sum-funktion kørte hurtigere med flere tråde, brugte vi en speedupgraf som nævnt i /ref{O1_2}. For at lave en ordenlig speedupgraf lavede vi 10 runs af funktionen ved 1-2-4-6-8 tråde ved input 10.000. Input blev gjort 10 gange højere op til 100.000.000 samt fra 50.000 og så gjort 10 gange højere op til 500.000.000. Dette gjorde, at vi havde en stor mængde information til at lave en god gennemsnits graf. 
 
 
 !!!!!!!!!!!!!!!!!!!
 bitly.com/U0EYAK
-!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!
 
 
 
