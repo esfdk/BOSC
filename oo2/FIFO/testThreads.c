@@ -31,7 +31,7 @@ void *TaskCode(void *argument)
         char *nodeElem = (char *)node->elm;
         printf("%s\n", nodeElem);
     }
-
+	free(argument);
     pthread_exit(0);
 }
 
@@ -47,7 +47,9 @@ int main(int argc, char* argv[])
     // Creates all the threads and makes them do what they are supposed to.
     for (i=0; i<number_of_threads; ++i) 
     {
-        rc = pthread_create(&threads[i], NULL, TaskCode, (void *) &i);
+		int *r = malloc(sizeof(int));
+		*r = i;
+        rc = pthread_create(&threads[i], NULL, TaskCode, (void *) r);
         assert(0 == rc);
     }
   
