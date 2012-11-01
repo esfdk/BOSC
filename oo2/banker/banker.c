@@ -67,10 +67,10 @@ int safety_check()
 		// Step 2
 		for(i = 0; i < m; i++)
 		{
-			if(finish[i] == 0)
+			if(finish[i] != 1)
 			{
 				int j, comparison = 0;
-				for(j = 0; j < n; i++)
+				for(j = 0; j < n; j++)
 				{
 					if(s->need[i][j] > work[j])
 					{
@@ -226,14 +226,14 @@ int main(int argc, char* argv[])
     printf("%d  ",s->available[j]);
   printf("\n");
 
-/*  if(safety_check())
+  if(safety_check())
   {
 	printf("State was safe. \n");
   }
   else
   {
 	printf("State was not safe. \n");
-  }*/
+  }
 
   /* Seed the random number generator 
   struct timeval tv;
