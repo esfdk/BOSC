@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
   }
 
   
-  if(safety_check)
+  if(safety_check())
   {
 	printf("State was safe. \n");
   }
