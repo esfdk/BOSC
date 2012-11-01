@@ -35,13 +35,13 @@ int resource_request(int i, int *request)
 
 /* Release the resources in request for process i */
 void resource_release(int i, int *request)
-{
+{ 
 	
 }
 
 // Safety algorithm
 int safety_check()
-{
+{ 
 	// Variables
 	int i, j, lt;
 	int work[n], finish[m];
@@ -82,6 +82,7 @@ int safety_check()
 				{
 					work[k] = work[k] + s->allocation[i][k];
 				}
+				finish[i] = 1;
 			}
 		}
 	}
