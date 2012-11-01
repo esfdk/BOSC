@@ -1,0 +1,224 @@
+\subsection{prodcons.c}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include "List/list.h"
+#include "prodCons.h"
+
+// List
+List *itemList; // The product buffer.
+
+// Locks
+pthread_mutex_t produce_lock; // Lock for produced_products.
+pthread_mutex_t consume_lock; // Lock for consumed_products.
+pthread_mutex_t products_buffer_lock; // Lock for products_in_buffer
+
+// Semaphores
+sem_t empty; // Number of empty slots in the buffer.
+sem_t full; // Number of filled slots in the buffer.
+sem_t products_remaining; // Number of products still to be produced.
+
+// Consumer and producer variables
+int number_of_producers; // Number of product producers.
+int number_of_consumers; // Number of product consumers.
+
+// Product variables
+int total_number_of_products; // Number of products to be produced in total.
+int produced_products = 0; // Number of produced products.
+int consumed_products = 0; // Number of consumed products.
+int products_in_buffer = 0; // Amount of products in the buffer
+
+// Buffer size
+int buffer_size;
+
+int main(int argc, char* argv[])
+{
+	if(atoi(argv[1]) != 5)
+	{
+		printf("Wrong number of input arguments! ProdCons needs 5 input arguments.\n");
+		printf("Argument 1: Number of arguments.\nArgument 2: Number of producers.\nArgument 3: Number of consumers.\n");
+		printf("Argument 4: Size of the buffer.\nArgument 5: Total amount of products.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	// Initialise variables from input arguments
+	number_of_producers = atoi(argv[2]);
+	number_of_consumers = atoi(argv[3]);
+	total_number_of_products = atoi(argv[5]);
+	buffer_size = atoi(argv[4]);
+
+	// Initialise semaphores
+	if(sem_init(&empty, 0, buffer_size) != 0)
+	{
+		printf("\n Failed to initialise empty semaphore\n");
+	}
+	if(sem_init(&full, 0, 0) != 0)
+	{
+		printf("\n Failed to initialise full semaphore\n");
+	}
+	if(sem_init(&products_remaining, 0, total_number_of_products) != 0)
+	{
+		printf("\n Failed to initialise total_number_of_products semaphore\n");
+	}
+
+	// Initialise list
+	itemList = list_new();
+	
+	// Initialise locks
+	if(pthread_mutex_init(&produce_lock, NULL) != 0)
+    {
+        printf("\n Failed to initialise produce_lock\n");
+    }
+	
+	if(pthread_mutex_init(&consume_lock, NULL) != 0)
+    {
+        printf("\n Failed to initialise consumed_lock\n");
+    }
+	
+	if(pthread_mutex_init(&products_buffer_lock, NULL) != 0)
+    {
+        printf("\n Failed to initialise products_buffer_lock\n");
+    }
+	
+	// Consumer and producer thread arrays
+	pthread_t consumer_thread_ids[number_of_consumers];
+	pthread_t producer_thread_ids[number_of_producers];
+	
+	// Create threads
+	int tn;
+	for (tn = 0; tn < number_of_consumers; tn++){
+		int *cn = malloc(sizeof(int));
+		*cn = tn;
+        if(pthread_create(&consumer_thread_ids[tn], NULL, &consumer, (void*) cn))
+		{
+        	printf("Failed to create consumer number %d \n", tn);
+        }
+    }
+	for (tn = 0; tn < number_of_producers; tn++){
+        int *pn = malloc(sizeof(int));
+		*pn = tn;
+		if(pthread_create(&producer_thread_ids[tn], NULL, &producer, (void*) pn))
+		{
+        	printf("Failed to create producer number %d \n", tn);
+        }
+    }
+	
+	// Join threads
+	for (tn = 0; tn < number_of_consumers; tn++)
+	{
+    	pthread_join(consumer_thread_ids[tn], NULL);
+    }
+	for (tn = 0; tn < number_of_producers; tn++)
+	{
+    	pthread_join(producer_thread_ids[tn], NULL);
+    }
+	
+	return 0;
+}
+
+// Producer code
+void *producer(void *argument)
+{
+	int *prodNo = (int *) argument; // Producers identifying number
+	Node *node; // Produced node
+	
+	while(1)
+	{
+		// Produce or stop
+		int tw = sem_trywait(&products_remaining);
+		if(tw == -1) // If there are no more products to be produced, end thread.
+		{
+			pthread_exit(0);
+		}
+		else if(tw == 0) // There are more products be produced.
+		{	
+			 node = produceProduct(); // Final product
+		}
+		else
+		{
+			printf("Some error occured when trying to wait on products_remaining semaphore");
+		}
+		
+		// Add product to buffer
+		sem_wait(&empty); // Wait for room in buffer.
+		list_add(itemList, node); // Add node to list.
+		
+		// Increase count of number products in buffer.
+		pthread_mutex_lock(&products_buffer_lock);
+		products_in_buffer++;
+		printf("Producer %d produced %s. Items in buffer: %d (out of %d) \n", *prodNo, node->elm, products_in_buffer, buffer_size);
+		pthread_mutex_unlock(&products_buffer_lock);
+		
+		sem_post(&full); // Signal full so buffer space is decreased by 1.
+		
+		// Sleep for random time.
+		sleepRandom(10000);
+	}
+}
+
+// Consumer code
+void *consumer(void *argument)
+{
+	int *consNo = (int *) argument; // Consumers identifying number
+	Node *node; // Consumed node.
+	
+	while(1){
+		pthread_mutex_lock(&consume_lock); // Lock consumed_products.
+		
+		if(consumed_products == total_number_of_products) // If we have consumed all products, exit thread.
+		{
+			pthread_mutex_unlock(&consume_lock); // Release lock on consumed_products.
+			pthread_exit(0); // Exit thread.
+		}
+		
+		sem_wait(&full); // Wait for a product to exist in the buffer.
+		node = list_remove(itemList); // Remove product from buffer.
+
+		// Decrease count of number products in buffer.
+		pthread_mutex_lock(&products_buffer_lock);
+		products_in_buffer--;
+		pthread_mutex_unlock(&products_buffer_lock);
+		
+		consumed_products++; // Increase amount of consumed products
+		pthread_mutex_unlock(&consume_lock); // Unlock consumed_products.
+		sem_post(&empty); // Signal empty so buffer space is increased by 1.
+
+		printf("Consumer %d consumed %s. Items in buffer: %d (out of %d) \n", *consNo, node->elm, products_in_buffer, buffer_size);
+		
+		sleepRandom(10000);
+	}
+}
+
+// Produces a new node.
+Node *produceProduct()
+{
+	Node* node;
+	
+	// Lock produced_products
+	pthread_mutex_lock(&produce_lock);
+
+	// Create node
+	char tmp[250];
+	sprintf(tmp, "ITEM_%d", produced_products);
+	
+	produced_products++; // Increased produced products.
+
+	pthread_mutex_unlock(&produce_lock); // Unlocked produced_products.
+	
+	node = node_new_str(tmp); // Initialisation of the new node.
+	
+	return node;
+}
+
+// Code taken from assignment description v2
+void sleepRandom(float wait_time_ms)
+{
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	srand(tv.tv_usec);
+	wait_time_ms = ((float)rand())*wait_time_ms / (float)RAND_MAX;
+	usleep((int) (wait_time_ms * 1e3f)); // convert from ms to us
+}
+\end{lstlisting}
