@@ -302,4 +302,16 @@ int main(int argc, char* argv[])
   free(tid);
 
   /* Free state memory */
+  	for (i = 0; i < m; i++) {
+		free(s->max[i]);
+		free(s->allocation[i]);
+		free(s->need[i]);
+	}
+
+	free(s->resource);
+	free(s->available);
+	free(s->max);
+	free(s->allocation);
+	free(s->need);
+	free(s);
 }
