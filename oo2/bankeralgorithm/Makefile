@@ -1,0 +1,7 @@
+all: banker
+LIBS= -lpthread
+CC = gcc
+mulsum: banker.o
+	${CC} -o $@ banker.o ${LIBS}
+clean:
+	rm -rf *o banker
