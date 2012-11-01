@@ -59,30 +59,37 @@ int safety_check()
 		finish[i] = 0;
 	}
 	
-	// Step 2
-	for(i = 0; i < m; i++)
+	int tryagain = 1;
+	
+	while(tryagain)
 	{
-		if(finish[i] == 0)
+		tryagain = 0;
+		// Step 2
+		for(i = 0; i < m; i++)
 		{
-			int j, comparison = 0;
-			for(j = 0; j < n; i++)
+			if(finish[i] == 0)
 			{
-				if(s->need[i][j] > work[j])
+				int j, comparison = 0;
+				for(j = 0; j < n; i++)
 				{
-					comparison = -1;
-					break;
+					if(s->need[i][j] > work[j])
+					{
+						comparison = -1;
+						break;
+					}
 				}
-			}
-			
-			// Step 3
-			if(comparison != -1)
-			{
-				int k;
-				for(k = 0; k < n; k++)
+				
+				// Step 3
+				if(comparison != -1)
 				{
-					work[k] = work[k] + s->allocation[i][k];
+					int k;
+					for(k = 0; k < n; k++)
+					{
+						work[k] = work[k] + s->allocation[i][k];
+					}
+					finish[i] = 1;
+					tryagain = 1;
 				}
-				finish[i] = 1;
 			}
 		}
 	}
