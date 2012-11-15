@@ -405,9 +405,22 @@ void initheap() {
   freelist = &heap[0];
 }
 
+void mark(word* block){
+  block = (word*) Paint((int)block, Black);
+}
+
 void markPhase(int s[], int sp) {
-  printf("marking ...\n");
-  // TODO: Actually mark something
+  printf("\nmarking ...\n");
+  int i;
+  for(i = 0; i < sp; i++)
+  {
+    printf("\ninner loop i = %d, isInt = %d, sp = %d \n", s[i], IsInt(s[i]), sp);
+	if(!IsInt(s[i]) && (s[i]) != 0)
+	{
+//          printf("\ninner loop once i = %d, sp = %d \n", i, sp);
+	  mark((word*) heap[s[i]]);
+	}
+  }
 }
 
 void sweepPhase() {
