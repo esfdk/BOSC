@@ -1,0 +1,32 @@
+Exercise 1
+
+(i)
+ADD: Add untagger de to øverste elementer på stakken, ligger dem sammen, tagger den nye værdie og ligger den på toppen af stakken.
+
+CSTI I: tager den næste værdi i p[] arrayet og ligger den på toppen af stakken.
+
+NIL: ligger 0 på toppen af stakken. Hvis der kun ligger rent 0 bits betyder det NIL og ikke integer 0. (også derfor vi ikke tagger den)
+
+IFZERO: tager øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int, hvis v er en int untagges v og sammenlignes med 0, ellers sammenlignes v med 0. Hvis det evalures sandt bliver program counter sat til det der står der nu, ellers går den bare videre til næste instruktion.
+
+CONS: laver en cons celle ud af de to øverste elementer på stakken, og decrementere stack pointer med en.
+
+CAR: henter et word for stakken og tjekker om det er NIL, hvis det ikke er NIL tager den første element af cons cellen og ligger det på toppen af stakken i stedet for wordet.
+
+SETCAR: henter det øverste element på stakken og henter et word. Så den sætter den wordets første værdi til at være den udhentede værdi på stakken.
+
+(ii)
+(001111111111111111111111) = 0x003FFFFF
+Length: den laver to rigth shifts hvilket fjerner de to garbage collections bites. Derefter bruger den bitwise AND til at sammenligne length bitsne med 0x003FFFF. hvilket giver os værdien af n bites.
+
+
+Color: Går ind og bruger bitwise AND til at sammenligne farven på cellen med 3(0011) hvorved den finder cellens faktiske farve.
+
+Paint: den gå ind og ændrer gg til den color der er blevet givet med som argument. eks. Paint med argument Blue laver gg om til 11 hvis det selvfølgelig ikke er 11 i forvejen.
+
+(iii)
+allocate bliver kaldt i CONS casen.
+
+
+(iv)
+Når der bliver allocatet og der ikke er noget free space.
