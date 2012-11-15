@@ -1,10 +1,13 @@
 all: listmachine
 
-LIBS=
+LIBS= -m32 -Wall
 CC = gcc
 
-listmachine: listmachine.o -m32
-	${CC} -m32 -Wall -o $@ listmachine.o
+listmachine: listmachine.o
+	${CC} -o $@ listmachine.o ${LIBS}
+
+listmachine.o: listmachine.c
+	${CC} -c listmachine.c ${LIBS}
 
 clean:
-	rm -rf *o listmachine
+	rm -rf *.o listmachine
