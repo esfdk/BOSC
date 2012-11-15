@@ -1,10 +1,10 @@
 all: listmachine
 
-LIBS= -lreadline -ltermcap
+LIBS=
 CC = gcc
 
-listmachine: listmachine.o ${OBJS}
-	${CC} -o $@  ${LIBS} listmachine.o ${OBJS}
+listmachine: listmachine.o -m32
+	${CC} -m32 -Wall -o $@ listmachine.o
 
 clean:
 	rm -rf *o listmachine

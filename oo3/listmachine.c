@@ -465,7 +465,7 @@ void sweepPhase() {
 		  next = &heap[i + extra_space + Length(w) + 1];
 		}
 		
-		if(extra > 0)
+		if(extra_space > 0)
 		{
 		  // Set first block to word length + extra length and paint blue
 		  heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
@@ -477,8 +477,9 @@ void sweepPhase() {
 		}
 		
 		// Add word to freelist
-		w[1] = (int) freelist;
-        freelist = &w[0];
+		word* wo = (word*) &heap[i];
+                wo[1] = (int) freelist;
+                freelist = &wo[0];
 		
 		break;
 		
