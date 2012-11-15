@@ -430,8 +430,8 @@ void markPhase(int s[], int sp) {
   for(i = 0; i < sp; i++)
   {
 	if(!IsInt(s[i]) && (s[i]) != 0)
-	{
-	  mark((word*) heap[s[i]]);
+	{ 
+	  mark((word*) s[i]);
 	}
   }
 }
