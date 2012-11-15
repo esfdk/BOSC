@@ -406,7 +406,22 @@ void initheap() {
 }
 
 void mark(word* block){
-  block = (word*) Paint((int)block, Black);
+  if(Color(block[0]) != White)
+  {
+	// Block is already colored.
+    return;
+  }
+  
+  block[0] = Paint(block[0], Black);
+  
+  int i;
+  for(i = 1; i <= Length(block[0]); i++)
+  {
+    if(!IsInt(block[i]) && block[i] != 0)
+	{
+      mark((word*)block[i]);
+    }
+  }
 }
 
 void markPhase(int s[], int sp) {
@@ -414,10 +429,8 @@ void markPhase(int s[], int sp) {
   int i;
   for(i = 0; i < sp; i++)
   {
-    printf("\ninner loop i = %d, isInt = %d, sp = %d \n", s[i], IsInt(s[i]), sp);
 	if(!IsInt(s[i]) && (s[i]) != 0)
 	{
-//          printf("\ninner loop once i = %d, sp = %d \n", i, sp);
 	  mark((word*) heap[s[i]]);
 	}
   }
@@ -425,7 +438,67 @@ void markPhase(int s[], int sp) {
 
 void sweepPhase() {
   printf("sweeping ...\n");
-  // TODO: Actually sweep
+  int i;
+  word w;
+  
+  for(i = 0; i < HEAPSIZE; i += Length(w) + 1)
+  {
+    w = heap[i];
+	int extra_space;
+	
+	switch(Color(w))
+	{
+	  case White:
+	    extra_space = 0;
+	    word* next = &heap[i + Length(w) + 1];
+		
+		// While adjecent blocks are white, put the together.
+		
+		while(Color(*next) == White && next < afterHeap)
+		{
+		  // Increase length of free space
+		  extra_space += Length(*next) + 1;
+		  
+		  // Set block header to a junk value
+		  *next = Tag(9999);
+		  
+		  next = &heap[i + extra_space + Length(w) + 1];
+		}
+		
+		if(extra > 0)
+		{
+		  // Set first block to word length + extra length and paint blue
+		  heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
+		}
+		else
+		{
+		  // Just paint blue
+		  heap[i] = Paint(w, Blue);
+		}
+		
+		// Add word to freelist
+		w[1] = (int) freelist;
+        freelist = &w[0];
+		
+		break;
+		
+	  case Black:
+	    // Paint black blocks white
+	    w = Paint(w, White);
+	    break;
+		
+	  case Blue:
+	    // Ignore blue blocks
+		
+	  case Grey:
+	    // Should not happen
+		break;
+		
+	  default:
+	    // Should not happen
+		break;
+	}
+  }
 }
 
 void collect(int s[], int sp) {
