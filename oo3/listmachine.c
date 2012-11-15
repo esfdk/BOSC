@@ -406,7 +406,15 @@ void initheap() {
 }
 
 void mark(word* block){
-  block = (word*) Paint((int)block, Black);
+  if(Color((int) block) == 0)
+  {
+    block = (word*) Paint((int)block, Black);
+  }
+  int i;
+  for(i = 1; i < Length((int) block); i++)
+  {
+    if(Color((int) block) == 3) block[i] = Paint((int) block[i], Black);
+  }
 }
 
 void markPhase(int s[], int sp) {
@@ -414,18 +422,23 @@ void markPhase(int s[], int sp) {
   int i;
   for(i = 0; i < sp; i++)
   {
-    printf("\ninner loop i = %d, isInt = %d, sp = %d \n", s[i], IsInt(s[i]), sp);
 	if(!IsInt(s[i]) && (s[i]) != 0)
-	{
-//          printf("\ninner loop once i = %d, sp = %d \n", i, sp);
-	  mark((word*) heap[s[i]]);
+	{ 
+	  mark((word*) s[i]);
 	}
   }
 }
 
 void sweepPhase() {
   printf("sweeping ...\n");
-  // TODO: Actually sweep
+  int i;
+  for(i = 0; i < HEAPSIZE; i++)
+  {
+    if(Color((int) heap[i]) == 0)
+    {
+      heap[i] = Paint(heap[i], Blue);
+  }
+// TODO: Actually sweep
 }
 
 void collect(int s[], int sp) {
