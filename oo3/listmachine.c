@@ -407,7 +407,18 @@ void initheap() {
 
 void markPhase(int s[], int sp) {
   printf("marking ...\n");
-  // TODO: Actually mark something
+  int i;
+  for(i = 0; i < sp; i++)
+  {
+    if(!IsInt(s[i]) & (s[i]) != 0)
+	{
+	  mark((word*) heap(s([i])));
+	}
+  }
+}
+
+void mark(word* block){
+  Paint(block, Black);
 }
 
 void sweepPhase() {
