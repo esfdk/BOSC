@@ -405,56 +405,59 @@ void initheap() {
   freelist = &heap[0];
 }
 
+/* Recursively runs through a block to paint white blocks black. */
 void mark(word* block){
+  
   if(Color(block[0]) != White)
   {
 	// Block is already colored.
     return;
   }
   
-  block[0] = Paint(block[0], Black);
+  block[0] = Paint(block[0], Grey); // 
   
   int i;
-  for(i = 1; i <= Length(block[0]); i++)
+  for(i = 1; i <= Length(block[0]); i++) // Go through every word in the block
   {
-    if(!IsInt(block[i]) && block[i] != 0)
+    if(!IsInt(block[i]) && block[i] != 0) // If word is not an integer and is not nil, then mark the block the word points to
 	{
-      mark((word*)block[i]);
+      mark((word*)block[i]); // Mark a referenced block
     }
   }
 }
 
+/* Marks heap references in the stack */
 void markPhase(int s[], int sp) {
   printf("\nmarking ...\n");
   int i;
   for(i = 0; i < sp; i++)
   {
-	if(!IsInt(s[i]) && (s[i]) != 0)
+	if(!IsInt(s[i]) && (s[i]) != 0) // If item on stack is not an integer and is not nil, convert it to a word reference and mark it
 	{ 
 	  mark((word*) s[i]);
 	}
   }
 }
 
+/* Sweeps the heap and  */
 void sweepPhase() {
   printf("sweeping ...\n");
   int i;
   word w;
   
-  for(i = 0; i < HEAPSIZE; i += Length(w) + 1)
+  for(i = 0; i < HEAPSIZE; i += Length(w) + 1) // Increase i by the length of the previous block + 1.
   {
-    w = heap[i];
-	int extra_space;
+    w = heap[i]; // The word in the heap.
+	int extra_space; // 
 	
 	switch(Color(w))
 	{
 	  case White:
 	    extra_space = 0;
-	    word* next = &heap[i + Length(w) + 1];
+	    word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
 		
-		// While adjecent blocks are white, put the together.
-		
-		while(Color(*next) == White && next < afterHeap)
+		// While adjecent blocks are white, put them together.
+		while(Color(*next) == White && next < afterHeap) // While the colour 
 		{
 		  // Increase length of free space
 		  extra_space += Length(*next) + 1;
@@ -465,7 +468,7 @@ void sweepPhase() {
 		  next = &heap[i + extra_space + Length(w) + 1];
 		}
 		
-		if(extra_space > 0)
+		if(extra_space > 0) // If there are more than one white block in succession.
 		{
 		  // Set first block to word length + extra length and paint blue
 		  heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
