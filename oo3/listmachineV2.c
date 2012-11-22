@@ -417,29 +417,35 @@ void markPhase(int s[], int sp) {
 	  block[0] = Paint(block[0], Grey);
 	}
   }
+
+  
   
   int goAgain = 1;
-  word* w;
+  word* b;
   int j;
   
   while(goAgain)
   {
     goAgain = 0;
-	for(i = 0; i < HEAPSIZE; i += Length(w[0]) + 1)
+	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1)
 	{
-	  w = (word*) heap[i];
-	  if(Color(w[0]) == Grey)
+
+	  b = (word*) &heap[i];
+	  if(Color(b[0]) == Grey)
 	  {
-	    w[0] = Paint(w[0], Black);
-		for(j = 1; j <= Length(w[0]); j++)
+	    b[0] = Paint(b[0], Black);
+		for(j = 1; j <= Length(b[0]); j++)
 		{
-		  if(!IsInt(w[j]) && w[j] != 0)
+		  if(!IsInt(b[j]) && b[j] != 0)
 		  {
-		    w[j] = Paint(w[j], Grey);
+		    word* rblock = (word*) b[j];
+		    if(Color(rblock[0]) == White)
+		    {
+		      rblock[0] = Paint(rblock[0], Grey);
+		      goAgain = 1;
+                    }
 		  }
 		}
-		
-        goAgain = 1;
 	  }
 	}
   }
@@ -513,9 +519,9 @@ void sweepPhase() {
 
 void collect(int s[], int sp) {
   markPhase(s, sp);
-  heapStatistics();
+//  heapStatistics();
   sweepPhase();
-  heapStatistics();
+ // heapStatistics();
 }
 
 word* allocate(unsigned int tag, unsigned int length, int s[], int sp) {
