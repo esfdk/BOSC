@@ -419,7 +419,7 @@ void markPhase(int s[], int sp) {
   }
   
   int goAgain = 1;
-  word w;
+  word* w;
   int j;
   
   while(goAgain)
