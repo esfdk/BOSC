@@ -405,36 +405,42 @@ void initheap() {
   freelist = &heap[0];
 }
 
-/* Recursively runs through a block to paint white blocks black. */
-void mark(word* block){
-  
-  if(Color(block[0]) != White)
-  {
-	// Block is already colored.
-    return;
-  }
-  
-  block[0] = Paint(block[0], Black); // 
-  
-  int i;
-  for(i = 1; i <= Length(block[0]); i++) // Go through every word in the block
-  {
-    if(!IsInt(block[i]) && block[i] != 0) // If word is not an integer and is not nil, then mark the block the word points to
-	{
-      mark((word*)block[i]); // Mark a referenced block
-    }
-  }
-}
-
 /* Marks heap references in the stack */
 void markPhase(int s[], int sp) {
   printf("\nmarking ...\n");
   int i;
-  for(i = 0; i < sp; i++)
+  for(i = 0; i < sp; i++) /* Step A */
   {
 	if(!IsInt(s[i]) && (s[i]) != 0) // If item on stack is not an integer and is not nil, convert it to a word reference and mark it
 	{ 
-	  mark((word*) s[i]);
+	  word* block = ((word*) s[i]);
+	  block[0] = Paint(block[0], Grey);
+	}
+  }
+  
+  int goAgain = 1;
+  word w;
+  int j;
+  
+  while(goAgain)
+  {
+    goAgain = 0;
+	for(i = 0; i < HEAPSIZE; i += Length(w) + 1)
+	{
+	  w = heap[i];
+	  if(Color(w[0]) == Grey)
+	  {
+	    w[0] = Paint(w[0], Black);
+		for(j = 1; j <= Length(w[0]); j++)
+		{
+		  if(!IsInt(w[j]) && w[j] != 0)
+		  {
+		    w[j] = Paint(w[j], Grey);
+		  }
+		}
+		
+        goAgain = 1;
+	  }
 	}
   }
 }
@@ -448,7 +454,7 @@ void sweepPhase() {
   for(i = 0; i < HEAPSIZE; i += Length(w) + 1) // Increase i by the length of the previous block + 1.
   {
     w = heap[i]; // The word in the heap.
-	int extra_space; // 
+	int extra_space;
 	
 	switch(Color(w))
 	{
