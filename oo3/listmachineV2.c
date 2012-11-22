@@ -425,9 +425,9 @@ void markPhase(int s[], int sp) {
   while(goAgain)
   {
     goAgain = 0;
-	for(i = 0; i < HEAPSIZE; i += Length(w) + 1)
+	for(i = 0; i < HEAPSIZE; i += Length(w[0]) + 1)
 	{
-	  w = heap[i];
+	  w = (word*) heap[i];
 	  if(Color(w[0]) == Grey)
 	  {
 	    w[0] = Paint(w[0], Black);
