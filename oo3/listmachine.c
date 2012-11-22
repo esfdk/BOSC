@@ -414,7 +414,7 @@ void mark(word* block){
     return;
   }
   
-  block[0] = Paint(block[0], Grey); // 
+  block[0] = Paint(block[0], Black); // 
   
   int i;
   for(i = 1; i <= Length(block[0]); i++) // Go through every word in the block
