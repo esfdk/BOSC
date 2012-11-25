@@ -79,8 +79,10 @@ typedef unsigned int word;
 
 #define HEAPSIZE 1000
 
-word* heap;
-word* afterHeap;
+word* heapTo;
+word* heapFrom;
+word* afterFrom;
+word* afterTo
 word *freelist;
 
 // These numeric instruction codes must agree with ListC/Machine.fs:
@@ -397,112 +399,21 @@ void heapStatistics() {
 }
 
 void initheap() {
-  heap = (word*)malloc(sizeof(word)*HEAPSIZE);
-  afterHeap = &heap[HEAPSIZE];
+  heapFrom = (word*)malloc(sizeof(word)*HEAPSIZE);
+  heapTo = (word*)malloc(sizeof(word)*HEAPSIZE);
+  afterFrom = &heapFrom[HEAPSIZE];
+  afterTo = &heapTo[HEAPSIZE];
   // Initially, entire heap is one block on the freelist:
-  heap[0] = mkheader(0, HEAPSIZE-1, Blue);
-  heap[1] = (word)0;
-  freelist = &heap[0];
+  heapFrom[0] = mkheader(0, HEAPSIZE-1, Blue);
+  heapFrom[1] = (word)0;
+  heapTo[0] = mkheader(0, HEAPSIZE-1, Blue);
+  heapTo[1] = (word)0;
+  freelist = &heapFrom[0];
 }
 
-/* Recursively runs through a block to paint white blocks black. */
-void mark(word* block){
-  
-  if(Color(block[0]) != White)
-  {
-	// Block is already colored.
-    return;
-  }
-  
-  block[0] = Paint(block[0], Black); // 
-  
-  int i;
-  for(i = 1; i <= Length(block[0]); i++) // Go through every word in the block
-  {
-    if(!IsInt(block[i]) && block[i] != 0) // If word is not an integer and is not nil, then mark the block the word points to
-	{
-      mark((word*)block[i]); // Mark a referenced block
-    }
-  }
-}
-
-/* Marks heap references in the stack */
-void markPhase(int s[], int sp) {
-  printf("\nmarking ...\n");
-  int i;
-  for(i = 0; i < sp; i++)
-  {
-	if(!IsInt(s[i]) && (s[i]) != 0) // If item on stack is not an integer and is not nil, convert it to a word reference and mark it
-	{ 
-	  mark((word*) s[i]);
-	}
-  }
-}
-
-/* Sweeps the heap and  */
-void sweepPhase() {
-  printf("sweeping ...\n");
-  int i;
-  word w;
-  
-  for(i = 0; i < HEAPSIZE; i += Length(w) + 1) // Increase i by the length of the previous block + 1.
-  {
-    w = heap[i]; // The word in the heap.
-	int extra_space; // 
+void copyFromTo(int[] s, int sp)
+{
 	
-	switch(Color(w))
-	{
-	  case White:
-	    extra_space = 0;
-	    word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
-		
-		// While adjecent blocks are white, put them together.
-		while(Color(*next) == White && next < afterHeap) // While the colour 
-		{
-		  // Increase length of free space
-		  extra_space += Length(*next) + 1;
-		  
-		  // Set block header to a junk value
-		  *next = Tag(9999);
-		  
-		  next = &heap[i + extra_space + Length(w) + 1];
-		}
-		
-		if(extra_space > 0) // If there are more than one white block in succession.
-		{
-		  // Set first block to word length + extra length and paint blue
-		  heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
-		}
-		else
-		{
-		  // Just paint blue
-		  heap[i] = Paint(w, Blue);
-		}
-		
-		// Add word to freelist
-		word* wo = (word*) &heap[i];
-                wo[1] = (int) freelist;
-                freelist = &wo[0];
-		
-		break;
-		
-	  case Black:
-	    // Paint black blocks white
-	    w = Paint(w, White);
-	    break;
-		
-	  case Blue:
-	    // Ignore blue blocks
-		
-	  case Grey:
-	    // Should not happen
-		break;
-		
-	  default:
-	    // Should not happen
-		break;
-	}
-  }
 }
 
 void collect(int s[], int sp) {
@@ -512,36 +423,26 @@ void collect(int s[], int sp) {
   heapStatistics();
 }
 
-word* allocate(unsigned int tag, unsigned int length, int s[], int sp) {
-  int attempt = 1;
-  do {
-    word* free = freelist;
-    word** prev = &freelist;
-    while (free != 0) {
-      int rest = Length(free[0]) - length;
-      if (rest >= 0)  {
-        if (rest == 0) // Exact fit with free block
-          *prev = (word*)free[1];
-        else if (rest == 1) { // Create orphan (unusable) block
-          *prev = (word*)free[1];
-          free[length+1] = mkheader(0, rest-1, Blue);
-        } else { // Make previous free block point to rest of this block
-          *prev = &free[length+1];
-          free[length+1] = mkheader(0, rest-1, Blue);
-          free[length+2] = free[1];
-        }
-        free[0] = mkheader(tag, length, White);
-        return free;
-      }
-      prev = (word**)&free[1];
-      free = (word*)free[1];
-    }
-    // No free space, do a garbage collection and try again
-    if (attempt==1)
-      collect(s, sp);
-  } while (attempt++ == 1);
-  printf("Out of memory\n");
-  exit(1);
+word* allocate(unsigned int tag, unsigned int length, int s[], int sp)
+{
+	int attempt = 1;
+	do 
+	{
+		word* newBlock = freelist;
+		freelist += length + 1;
+		if (freelist <= afterFrom) 
+		{
+			newBlock[0] = mkheader(tag, length, White);
+			return newBlock;
+		}
+		// No free space, do a garbage collection and try again
+		if (attempt==1)
+		{
+			collect(s, sp);
+		}
+	} while (attempt++ == 1);
+	printf("Out of memory\n");
+	exit(1);
 }
 
 // Read code from file and execute it
