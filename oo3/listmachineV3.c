@@ -355,47 +355,8 @@ word mkheader(unsigned int tag, unsigned int length, unsigned int color) {
   return (tag << 24) | (length << 2) | color;
 }
 
-int inHeap(word* p) {
-  return heap <= p && p < afterHeap;
-}
-
-// Call this after a GC to get heap statistics:
-
-void heapStatistics() {
-  int blocks = 0, free = 0, orphans = 0, 
-    blocksSize = 0, freeSize = 0, largestFree = 0;
-  word* heapPtr = heap;
-  while (heapPtr < afterHeap) {
-    if (Length(heapPtr[0]) > 0) {
-      blocks++;
-      blocksSize += Length(heapPtr[0]);
-    } else 
-      orphans++;
-    word* nextBlock = heapPtr + Length(heapPtr[0]) + 1;
-    if (nextBlock > afterHeap) {
-      printf("HEAP ERROR: block at heap[%d] extends beyond heap\n", 
-	     heapPtr-heap);
-      exit(-1);
-    }
-    heapPtr = nextBlock;
-  }
-  word* freePtr = freelist;
-  while (freePtr != 0) {
-    free++; 
-    int length = Length(freePtr[0]);
-    if (freePtr < heap || afterHeap < freePtr+length+1) {
-      printf("HEAP ERROR: freelist item %d (at heap[%d], length %d) is outside heap\n", 
-	     free, freePtr-heap, length);
-      exit(-1);
-    }
-    freeSize += length;
-    largestFree = length > largestFree ? length : largestFree;
-    if (Color(freePtr[0])!=Blue)
-      printf("Non-blue block at heap[%d] on freelist\n", (int)freePtr);
-    freePtr = (word*)freePtr[1];
-  }
-  printf("Heap: %d blocks (%d words); of which %d free (%d words, largest %d words); %d orphans\n", 
-	 blocks, blocksSize, free, freeSize, largestFree, orphans);
+int inToHeap(word* p) {
+  // TODO: Implement check
 }
 
 void initheap() {
@@ -411,15 +372,44 @@ void initheap() {
   freelist = &heapFrom[0];
 }
 
-void copyFromTo(int[] s, int sp)
+// Copies a block and returns the new to-space address
+word* copy(word* oldBlock)
 {
+	// If block is already copied
+	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(oldBlock[1]))
+	{
+		// TODO: Return forwarding address
+	}
+	
+	//TODO: Implement copy block
 	
 }
 
+void copyFromTo(int[] s, int sp)
+{
+	int i;
+	for(i = 0; i < sp; i++)
+	{
+		if(!IsInt(s[i]) && (s[i]) != 0) 
+		{ 
+			word* block = ((word*) s[i]);
+			s[i] = copy(block);
+		}
+	}
+	
+	word* heapTemp = heapTo;
+	heapTo = heapFrom;
+	heapFrom = heapTemp;
+	
+	word* afterTemp = afterTo;
+	afterTo = afterFrom;
+	afterFrom = afterTemp;
+	
+	// TODO: Set freelist pointer
+]
+
 void collect(int s[], int sp) {
-  markPhase(s, sp);
-  heapStatistics();
-  sweepPhase();
+  copyFromTo(s, sp);
   heapStatistics();
 }
 
