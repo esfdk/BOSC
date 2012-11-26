@@ -486,9 +486,9 @@ void heapStatistics() {
 }
 
 void collect(int s[], int sp) {
-  heapStatistics();
+//  heapStatistics();
   copyFromTo(s, sp);
-  heapStatistics();
+  //heapStatistics();
 }
 
 word* allocate(unsigned int tag, unsigned int length, int s[], int sp)
