@@ -378,11 +378,15 @@ word* copy(word* oldBlock)
 	// If block is already copied
 	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(oldBlock[1]))
 	{
+		return oldBlock[1];
 		// TODO: Return forwarding address
 	}
 	
-	//TODO: Implement copy block
+	int i;
+	for(i = 0; i < (Length(oldBlock) + 1); i++
 	
+	//TODO: Implement copy block
+	//TODO: Set freelist pointer
 }
 
 void copyFromTo(int[] s, int sp)
@@ -404,8 +408,6 @@ void copyFromTo(int[] s, int sp)
 	word* afterTemp = afterTo;
 	afterTo = afterFrom;
 	afterFrom = afterTemp;
-	
-	// TODO: Set freelist pointer
 ]
 
 void collect(int s[], int sp) {
