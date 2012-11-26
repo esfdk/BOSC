@@ -375,27 +375,49 @@ void initheap() {
 // Copies a block and returns the new to-space address
 word* copy(word* oldBlock)
 {
-	// If block is already copied
-	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(oldBlock[1]))
+	// If block is already copied, return forwarding pointer
+	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(oldBlock[1])) 
 	{
-		// TODO: Return forwarding address
+		return oldBlock[1];
 	}
 	
-	//TODO: Implement copy block
+	word* toBlock = freelist;
 	
+	int length = Length(oldBlock[0]);
+	freelist += length + 1;
+	
+	int i;
+	for(i = 0; i <= length; i++)
+	{
+		if(oldBlock[i] != 0 && !IsInt(oldBlock[i])) //TODO: Implement -- If a heap reference
+		{
+			word* p = copy((word*) &oldBlock[i]);
+			toBlock[i] = p[0];
+		}
+		else
+		{
+			toBlock[i] = oldBlock[i];
+		}	
+	}
+	
+	oldBlock[1] = toBlock[0];
+	return toBlock;
 }
 
 void copyFromTo(int[] s, int sp)
 {
+	freelist = &heapTo[0];
 	int i;
 	for(i = 0; i < sp; i++)
 	{
 		if(!IsInt(s[i]) && (s[i]) != 0) 
 		{ 
 			word* block = ((word*) s[i]);
-			s[i] = copy(block);
+			s[i] = (int) copy(block);
 		}
 	}
+	
+	//TODO: Implement -- Check references thingy 
 	
 	word* heapTemp = heapTo;
 	heapTo = heapFrom;
@@ -404,8 +426,6 @@ void copyFromTo(int[] s, int sp)
 	word* afterTemp = afterTo;
 	afterTo = afterFrom;
 	afterFrom = afterTemp;
-	
-	// TODO: Set freelist pointer
 ]
 
 void collect(int s[], int sp) {
