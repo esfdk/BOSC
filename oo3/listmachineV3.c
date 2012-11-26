@@ -356,7 +356,10 @@ word mkheader(unsigned int tag, unsigned int length, unsigned int color) {
 }
 
 int inToHeap(word* p) {
-  // TODO: Implement check
+  return heapTo <= p && p < afterTo;
+}
+int inFromHeap(word* p) {
+  return heapFrom <= p && p < afterFrom;
 }
 
 void initheap() {
@@ -389,10 +392,10 @@ word* copy(word* oldBlock)
 	int i;
 	for(i = 0; i <= length; i++)
 	{
-		if(oldBlock[i] != 0 && !IsInt(oldBlock[i])) //TODO: Implement -- If a heap reference
+		if(oldBlock[i] != 0 && !IsInt(oldBlock[i])) //If a heap reference
 		{
 			word* p = copy((word*) &oldBlock[i]);
-			toBlock[i] = p[0];
+			toBlock[i] = &p;
 		}
 		else
 		{
@@ -400,7 +403,7 @@ word* copy(word* oldBlock)
 		}	
 	}
 	
-	oldBlock[1] = toBlock[0];
+	oldBlock[1] = &toBlock;
 	return toBlock;
 }
 
@@ -417,7 +420,24 @@ void copyFromTo(int[] s, int sp)
 		}
 	}
 	
-	//TODO: Implement -- Check references thingy 
+	word* b;
+	int j;
+	
+	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1)
+	{
+		b = (word*) &heapTo[i];
+		for(j = 1; j <= Length(b[0]); j++)
+		{
+			if(!IsInt(b[j]) && b[j] != 0)
+			{
+				word* rblock = (word*) b[j];
+				if(inFromHeap(rblock))
+				{
+					b[j] = rblock[1];
+				}
+			}
+		}
+	}
 	
 	word* heapTemp = heapTo;
 	heapTo = heapFrom;
@@ -428,7 +448,45 @@ void copyFromTo(int[] s, int sp)
 	afterFrom = afterTemp;
 ]
 
+void heapStatistics() {
+  int blocks = 0, free = 0, orphans = 0, 
+    blocksSize = 0, freeSize = 0, largestFree = 0;
+  word* heapPtr = heapFrom;
+  while (heapPtr < afterFrom) {
+    if (Length(heapPtr[0]) > 0) {
+      blocks++;
+      blocksSize += Length(heapPtr[0]);
+    } else 
+      orphans++;
+    word* nextBlock = heapPtr + Length(heapPtr[0]) + 1;
+    if (nextBlock > afterFrom) {
+      printf("HEAP ERROR: block at heap[%d] extends beyond heap\n", 
+	     heapPtr-heapFrom);
+      exit(-1);
+    }
+    heapPtr = nextBlock;
+  }
+  word* freePtr = freelist;
+  while (freePtr != 0) {
+    free++; 
+    int length = Length(freePtr[0]);
+    if (freePtr < heapFrom || afterFrom < freePtr+length+1) {
+      printf("HEAP ERROR: freelist item %d (at heap[%d], length %d) is outside heap\n", 
+	     free, freePtr-heapFrom, length);
+      exit(-1);
+    }
+    freeSize += length;
+    largestFree = length > largestFree ? length : largestFree;
+    if (Color(freePtr[0])!=Blue)
+      printf("Non-blue block at heap[%d] on freelist\n", (int)freePtr);
+    freePtr = (word*)freePtr[1];
+  }
+  printf("Heap: %d blocks (%d words); of which %d free (%d words, largest %d words); %d orphans\n", 
+	 blocks, blocksSize, free, freeSize, largestFree, orphans);
+}
+
 void collect(int s[], int sp) {
+  heapStatistics();
   copyFromTo(s, sp);
   heapStatistics();
 }
