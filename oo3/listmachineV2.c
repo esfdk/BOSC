@@ -443,7 +443,7 @@ void markPhase(int s[], int sp) {
 		    {
 		      rblock[0] = Paint(rblock[0], Grey);
 		      goAgain = 1;
-                    }
+           }
 		  }
 		}
 	  }
@@ -493,8 +493,8 @@ void sweepPhase() {
 		
 		// Add word to freelist
 		word* wo = (word*) &heap[i];
-                wo[1] = (int) freelist;
-                freelist = &wo[0];
+		wo[1] = (int) freelist;
+		freelist = &wo[0];
 		
 		break;
 		
