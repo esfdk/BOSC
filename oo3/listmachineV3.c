@@ -82,7 +82,7 @@ typedef unsigned int word;
 word* heapTo;
 word* heapFrom;
 word* afterFrom;
-word* afterTo
+word* afterTo;
 word *freelist;
 
 // These numeric instruction codes must agree with ListC/Machine.fs:
@@ -379,9 +379,9 @@ void initheap() {
 word* copy(word* oldBlock)
 {
 	// If block is already copied, return forwarding pointer
-	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(oldBlock[1])) 
+	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(&oldBlock[1])) 
 	{
-		return oldBlock[1];
+		return &oldBlock[1];
 	}
 	
 	word* toBlock = freelist;
@@ -395,7 +395,7 @@ word* copy(word* oldBlock)
 		if(oldBlock[i] != 0 && !IsInt(oldBlock[i])) //If a heap reference
 		{
 			word* p = copy((word*) &oldBlock[i]);
-			toBlock[i] = &p;
+			toBlock[i] = p[0];
 		}
 		else
 		{
@@ -403,11 +403,11 @@ word* copy(word* oldBlock)
 		}	
 	}
 	
-	oldBlock[1] = &toBlock;
+	oldBlock[1] = toBlock[0];
 	return toBlock;
 }
 
-void copyFromTo(int[] s, int sp)
+void copyFromTo(int s[], int sp)
 {
 	freelist = &heapTo[0];
 	int i;
@@ -446,7 +446,7 @@ void copyFromTo(int[] s, int sp)
 	word* afterTemp = afterTo;
 	afterTo = afterFrom;
 	afterFrom = afterTemp;
-]
+}
 
 void heapStatistics() {
   int blocks = 0, free = 0, orphans = 0, 
