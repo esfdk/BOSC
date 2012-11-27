@@ -378,6 +378,7 @@ void initheap() {
 // Copies a block and returns the new to-space address
 word* copy(word* oldBlock)
 {
+	printf("\nStarting copy function\n");
 	// If block is already copied, return forwarding pointer
 	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(&oldBlock[1])) 
 	{
@@ -409,6 +410,7 @@ word* copy(word* oldBlock)
 
 void copyFromTo(int s[], int sp)
 {
+	printf("\nStarting copyFromTo");
 	freelist = &heapTo[0];
 	int i;
 	for(i = 0; i < sp; i++)
@@ -422,7 +424,7 @@ void copyFromTo(int s[], int sp)
 	
 	word* b;
 	int j;
-	
+	printf("\n Starting heap check\n");
 	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1)
 	{
 		b = (word*) &heapTo[i];
@@ -486,9 +488,11 @@ void heapStatistics() {
 }
 
 void collect(int s[], int sp) {
+	printf("\n Starting collect \n");
 //  heapStatistics();
-  copyFromTo(s, sp);
+	copyFromTo(s, sp);
   //heapStatistics();
+	printf("\n Ending collect \n");
 }
 
 word* allocate(unsigned int tag, unsigned int length, int s[], int sp)
