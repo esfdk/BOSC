@@ -378,7 +378,7 @@ void initheap() {
 // Copies a block and returns the new to-space address
 word* copy(word* oldBlock)
 {
-	printf("\nStarting copy function\n");
+//	printf("\nStarting copy function\n");
 	// If block is already copied, return forwarding pointer
 	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(&oldBlock[1])) 
 	{
@@ -393,8 +393,8 @@ word* copy(word* oldBlock)
 	int i;
 	for(i = 0; i <= length; i++)
 	{
-		if(oldBlock[i] != 0 && !IsInt(oldBlock[i])) //If a heap reference
-		{
+		if(oldBlock[i] != 0 && !IsInt(oldBlock[i]) && i != 0) //If a heap reference
+		{printf("\nRecursive call to copy\n");
 			word* p = copy((word*) &oldBlock[i]);
 			toBlock[i] = p[0];
 		}
@@ -405,6 +405,7 @@ word* copy(word* oldBlock)
 	}
 	
 	oldBlock[1] = toBlock[0];
+printf("\nending copy function\n");
 	return toBlock;
 }
 
