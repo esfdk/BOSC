@@ -388,12 +388,13 @@ word* copy(word* oldBlock)
 	
 	int length = Length(oldBlock[0]);
 	freelist += (length + 1);
-	
+
 	int i;
 	for(i = 0; i <= length; i++)
 	{
 		if(oldBlock[i] != 0 && !IsInt(oldBlock[i]) && i != 0) //If a heap reference
 		{
+			printf("\nRecursive call on address %d, i = %d, block = %d\n", oldBlock[i], i, (int) oldBlock);
 			word* p = copy((word *) oldBlock[i]);
 			toBlock[i] = (word) p;
 		}
@@ -401,9 +402,12 @@ word* copy(word* oldBlock)
 		{
 			toBlock[i] = oldBlock[i];
 		}	
+		if(i == 1)
+		{
+			oldBlock[1] = (word) &toBlock[0];
+		}
 	}
-	
-	oldBlock[1] = (word) toBlock;
+
 	return toBlock;
 }
 
