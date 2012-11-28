@@ -378,25 +378,24 @@ void initheap() {
 // Copies a block and returns the new to-space address
 word* copy(word* oldBlock)
 {
-//	printf("\nStarting copy function\n");
 	// If block is already copied, return forwarding pointer
-	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap(&oldBlock[1])) 
+	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap((word*)oldBlock[1])) 
 	{
-		return &oldBlock[1];
+		return (word*) oldBlock[1];
 	}
-	
+
 	word* toBlock = freelist;
 	
 	int length = Length(oldBlock[0]);
-	freelist += length + 1;
+	freelist += (length + 1);
 	
 	int i;
 	for(i = 0; i <= length; i++)
 	{
 		if(oldBlock[i] != 0 && !IsInt(oldBlock[i]) && i != 0) //If a heap reference
-		{printf("\nRecursive call to copy\n");
-			word* p = copy((word*) &oldBlock[i]);
-			toBlock[i] = p[0];
+		{
+			word* p = copy((word *) oldBlock[i]);
+			toBlock[i] = (word) p;
 		}
 		else
 		{
@@ -404,14 +403,12 @@ word* copy(word* oldBlock)
 		}	
 	}
 	
-	oldBlock[1] = toBlock[0];
-printf("\nending copy function\n");
+	oldBlock[1] = (word) toBlock;
 	return toBlock;
 }
 
 void copyFromTo(int s[], int sp)
 {
-	printf("\nStarting copyFromTo");
 	freelist = &heapTo[0];
 	int i;
 	for(i = 0; i < sp; i++)
@@ -422,10 +419,9 @@ void copyFromTo(int s[], int sp)
 			s[i] = (int) copy(block);
 		}
 	}
-	
 	word* b;
 	int j;
-	printf("\n Starting heap check\n");
+
 	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1)
 	{
 		b = (word*) &heapTo[i];
@@ -441,7 +437,7 @@ void copyFromTo(int s[], int sp)
 			}
 		}
 	}
-	
+
 	word* heapTemp = heapTo;
 	heapTo = heapFrom;
 	heapFrom = heapTemp;
@@ -489,11 +485,9 @@ void heapStatistics() {
 }
 
 void collect(int s[], int sp) {
-	printf("\n Starting collect \n");
-//  heapStatistics();
-	copyFromTo(s, sp);
   //heapStatistics();
-	printf("\n Ending collect \n");
+  copyFromTo(s, sp);
+  //heapStatistics();
 }
 
 word* allocate(unsigned int tag, unsigned int length, int s[], int sp)
