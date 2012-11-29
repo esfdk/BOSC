@@ -408,8 +408,10 @@ void initheap() {
 /* Marks heap references in the stack */
 void markPhase(int s[], int sp) {
   printf("\nmarking ...\n");
+  
+  /* Step A */
   int i;
-  for(i = 0; i < sp; i++) /* Step A */
+  for(i = 0; i < sp; i++) 
   {
 	if(!IsInt(s[i]) && (s[i]) != 0) // If item on stack is not an integer and is not nil, convert it to a word reference and mark it
 	{ 
@@ -418,6 +420,8 @@ void markPhase(int s[], int sp) {
 	}
   }
 
+  
+  /* Step B */
   int goAgain = 1;
   word* b;
   int j;
@@ -427,7 +431,6 @@ void markPhase(int s[], int sp) {
     goAgain = 0;
 	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1) // To iterate over all the blocks in the heap we increment i by length of b + 1.
 	{
-
 	  b = (word*) &heap[i]; // Get address of the block in the heap
 	  if(Color(b[0]) == Grey)
 	  {
@@ -452,6 +455,8 @@ void markPhase(int s[], int sp) {
 /* Sweeps the heap and  */
 void sweepPhase() {
   printf("sweeping ...\n");
+  
+  /* Step C */
   int i;
   word w;
   

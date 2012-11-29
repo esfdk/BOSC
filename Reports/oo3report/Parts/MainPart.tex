@@ -3,6 +3,8 @@ I denne rapport dokumenterer vi vores valg i forhold til implementationen af opg
 
 Når vi refererer til "Programming Language Concepts", mener vi "Peter Sestoft, Programming Language Concepts, ISBN 978-1-4471-4156-3 (eBook)".
 
+Vi har testet vores tre implementationer af garbage collection algoritmer på eksemplerne "ex30.lc", "ex35.lc" og "ex36.lc", som beskrevet i opgaven. Disse fulgte med "listc.zip"\footnote{https://blog.itu.dk/BOSC-E2012/files/2012/11/listc.zip} mappen, som blev givet med opgaven. 
+
 Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}. Vores git repository kan findes på https://github.com/esfdk/BOSC/tree/master/oo3.
 
 \chapter{Beskrivelse af implementation}
@@ -70,7 +72,20 @@ Måden vi har implementeret 'sweepPhase()' på, gør at den kan slå flere døde
 
 \section{Opgave 5}
 \label{O5}
-For at implementere den ikke rekursive version af Mark and Sweep\footnote{"Programming Language Concepts", side 192-193}
+For at implementere den ikke-rekursive version af Mark and Sweep\footnote{"Programming Language Concepts", side 192-193}, har vi fjernet vores "mark" funktion og udvidet "markPhase" funktionen. "sweepPhase" er den samme som i \ref{O2}.
+
+Vores kode kan findes i "oo3/listmachineV2.c" samt på side \pageref{Code_V2} i appendix. "markPhase" funktionen er på linje 409-453 og "sweepPhase" funktionen er på linje 456-521.
+
+\begin{my_description}
+\item[Step A] Mal alle blokke, som kan nås fra stakken, grå.
+\item[Step B] Løb heap igennem og marker alle grå blokke sort. 
+	\begin{my_description}
+	\item[Step B.1] Hvis en grå blok pegede på en hvid blok, males den hvide blok grå. Hvis der er grå blokke i heap, gentag step B, ellers gå til step C.
+	\end{my_description}
+\item[Step C] Sweep på samme måde som i opgave 2.
+\end{my_description}
+
+
 
 \section{Opgave 6}
 \label{O6}
