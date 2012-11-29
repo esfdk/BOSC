@@ -9,53 +9,52 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 
 \subsection{Del 1}
 \label{O1_1}
-\begin{my_itemize}
-	\item[ADD] untagger de to øverste elementer på stakken, ligger dem sammen, tagger den nye værdi og ligger den på toppen af stakken.
-	\item[CSTI I] tager den næste værdi i p[ ] arrayet og ligger den på toppen af stakken.
-	\item[NIL] Ligger 0 på toppen af stakken. Hvis der kun ligger rent 0 bits betyder det NIL og ikke integer 0.
-	\item[IFZERO] tager det øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int. Hvis v er en int udtagges v og sammenlignes med nul , ellers sammenlignes v med NIL. Hvis sammenligning er sand i tilfældet med nul bliver program counter sat til den nuværende værdi på (......) ellers bliver næste instruktion udført.
-	\item[CONS] laver en cons celle ud af de to øverste elementer på stakken, og decrementere så stack pointeren med en.
-	\item[CAR] henter et word fra stakken og tjekker om det er NIL, hvis det ikke er NIL tages det første element af cons cellen og ligges på toppen af stakken i stedet for det hentede word.
-	\item[SETCAR] henter det øverste element på stakken og et word. Den tager wordets første værdi til at være den udhentede værdi på stakken.
-\end{my_itemize}
+	\paragraph{ADD} untagger de to øverste elementer på stakken, ligger dem sammen, tagger den nye værdi og ligger den på toppen af stakken.
+	\paragraph{CSTI I} tager den næste værdi i p[ ] arrayet og ligger den på toppen af stakken.
+	\paragraph{NIL} Ligger 0 på toppen af stakken. Hvis der kun ligger nul bits betyder det NIL og ikke integer nul.
+	\paragraph{IFZERO} tager det øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int. Hvis v er en int udtagges v og sammenlignes med nul , ellers sammenlignes v med NIL. Hvis sammenligning er sand i tilfældet med nul bliver program counter sat til den nuværende værdi på p[pc] ellers bliver næste instruktion udført.
+	\paragraph{CONS} laver en cons celle ud af de to øverste elementer på stakken, og decrementere så stack pointeren med en.
+	\paragraph{CAR} henter et word fra stakken og tjekker om det er NIL, hvis det ikke er NIL tages det første element af cons cellen og ligges på toppen af stakken i stedet for det hentede word.
+	\paragraph{SETCAR} henter det øverste element på stakken og et word. Den sætter wordets første værdi til at være den udhentede værdi på stakken.
 
 \subsection{Del 2}
 \label{O1_2}
-\begin{my_itemize}
-	\item[Length] laver to right shifts, hvilket fjerner de to garbage collection bites. Derefter bruger den bitwise AND til at sammenligne length bitsne med 0x003FFFF. Dette giver os værdien af n bitsne.
-	\item[Color] går ind og bruger bitwise AND til at sammenligne farven på cellen med 0011 hvorved den finder cellens faktiske farve.
-	\item[Paint] går ind og ændrer gg til den color der er blevet givet med som argument. eksempelvis laver Paint med arguemnt BLUE gg om til 11.
-\end{my_itemize}
+	\paragraph{Length} laver to right shifts, hvilket fjerner de to garbage collection bites. Derefter bruger den bitwise AND til at sammenligne length bitsne med 0x003FFFF. Dette giver os værdien af n bitsne.
+	\paragraph{Color} går ind og bruger bitwise AND til at sammenligne farven på cellen med 0011 hvorved den finder cellens faktiske farve.
+	\paragraph{Paint} går ind og ændrer gg til den color der er blevet givet med som argument. eksempelvis laver Paint med arguemnt BLUE gg om til 11.
 
 \subsection{Del 3}
 \label{O1_3}
-allocate( ) bliver kun kaldt i CONS casen.  (umiddelbart ikke andre stedder ind i interpretation loopet)
+allocate( ) bliver kun kaldet i CONS casen.  (umiddelbart ikke andre stedder end i interpretation loopet)
 
 \subsection{Del 4}
 \label{O1_4}
-Når der bliver allokeret og der ikke er noget free space.
+Collect() bliver kaldet når der bliver allokeret og der ikke er noget free space.
 
 \section{Opgave 2, 3 og 4}
 \label{O2}
-
-\subsection{Opgave 2}
-\label{O2_2}
-
-\subsection{Opgave 3}
-\label{O2_3}
-
-\subsection{Opgave 4}
-\label{O2_4}
-
 Igennem opgaverne har vi skulle lave tre forskellige implementationer af garbage collection. En mark-sweep med rekursive funktions kald, en mark-sweep uden rekursive funktions kald og en stop-and-copy med rekursive funktions kald. For at undgå at en fil indeholdte flere implementationer med nogle af dem udkommenteret, valgte vi at dele dem ud i flere filer. Opgave 2, 3 og 4 findes i listmachineV1.c, opgave 5 i listmachineV2.c og opgave 6 i listmachineV3.c.
 
 Vi har valgt at beskrive vores implementation af opgave 2, 3 og 4 i samme afsnit, da 3 og 4 går ud på at forbedre algoritmen vi implementerede i opgave 2.
 
 Vores implementation of mark-sweep algoritmen består af tre dele; en mark()-funktion, en markPhase()-funktion og en sweepPhase()-funktion. 
 
+\subsection{Opgave 2}
+\label{O2_2}
+I opgave 2 implementerede vi vores første udgave af en simpel mark-sweep garbage collector. Som indholdte mark(word*block), markPhase(int s[], intsp) og sweepPhase().
 'mark(word* block)'-funktionen bruges til at farve hvide blokke sorte. Funktionen tjekker først om blokken er farvet (linje 412-416). Er den det, retunerer funktionen, da der ikke skal ske mere. Er den ikke farvet, bliver den farvet sort, hvorefter hvert word der kan nås fra blokken bliver gennemløbet. Hvis wordet ikke er en int og ikke er nil, kaldes mark()-funktionen på wordet (linje 419-428).
 
 'markPhase(int s[], int sp)'-funktionen starter markeringen af blokke. Funktionen looper igennem alle elementer på stacken, og hvis elementet ikke er en int og ikke er nil, castes det til et word og 'mark()' kaldes med wordet some parameter. Disse to funktioner udgør tilsammen mark fasen af algoritmen.
+
+sweepPhase() går igennem heapen og putter alle hvide bloks over i freelisten(linje 485-487) og maler sorte blocks hvide(linje 491-493).
+
+\subsection{Opgave 3}
+\label{O2_3}
+I opgave 3 bliver vi bedt om at forbedre sweepPhase() så den kan slå tilstødende hvide blokke sammen. Det gør vi ved at tjekke om den næste blok er hvid og den næsten blok stadig er i heapen. Mens det er sandt øge vi længden af "free space"  og sætter block headeren til en junk value(linje 462-471).
+ 
+\subsection{Opgave 4}
+\label{O2_4}
+
 
 'sweepPhase()'-funktionen er den funktion, som fjerner alt det fundne garbage (linje 445-509). Den looper igennem hele heapen, og tjekker hvilken farve de forskellige words har. Hvis de er grå eller blå, sker der ingenting. Hvis de er sorte bliver de farvet hvide. Hvis de er hvide sker følgende:
 \begin{my_enumerate}
