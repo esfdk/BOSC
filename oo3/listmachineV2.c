@@ -418,8 +418,6 @@ void markPhase(int s[], int sp) {
 	}
   }
 
-  
-  
   int goAgain = 1;
   word* b;
   int j;
@@ -427,22 +425,22 @@ void markPhase(int s[], int sp) {
   while(goAgain)
   {
     goAgain = 0;
-	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1) // To iterate over all the blocks in the heap we increment i by lenght of b + 1.
+	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1) // To iterate over all the blocks in the heap we increment i by length of b + 1.
 	{
 
-	  b = (word*) &heap[i]; // to be able to color the words in the block we need to specify the specific address in the heap and cast it to a word pointer.
-	  if(Color(b[0]) == Grey) //if the color of b is grey ....
+	  b = (word*) &heap[i]; // Get address of the block in the heap
+	  if(Color(b[0]) == Grey)
 	  {
-	    b[0] = Paint(b[0], Black); // paint b black
-		for(j = 1; j <= Length(b[0]); j++) // go through all words in block b
+	    b[0] = Paint(b[0], Black);
+		for(j = 1; j <= Length(b[0]); j++) // Go through all words in the block b
 		{
 		  if(!IsInt(b[j]) && b[j] != 0)
 		  {
-		    word* rblock = (word*) b[j]; // since a block behaves as a word but isn't one, we need to cast it to a word pointer to be able to color it.
+		    word* rblock = (word*) b[j]; // We need to get the word pointer to be able to colour the header
 		    if(Color(rblock[0]) == White)
 		    {
 		      rblock[0] = Paint(rblock[0], Grey);
-		      goAgain = 1; // as long as there are grey blocks in the heap we set goAgain to 1 to make sure that all children gets marked. 
+		      goAgain = 1; // Every time we paint a block grey, we need to check recheck heap for grey blocks.
            }
 		  }
 		}
@@ -469,7 +467,7 @@ void sweepPhase() {
 	    word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
 		
 		// While adjecent blocks are white, put them together.
-		while(Color(*next) == White && next < afterHeap) // While the colour 
+		while(Color(*next) == White && next < afterHeap) // While the colour of the next block is white and the next block is still in the heap
 		{
 		  // Increase length of free space
 		  extra_space += Length(*next) + 1;
@@ -519,9 +517,9 @@ void sweepPhase() {
 
 void collect(int s[], int sp) {
   markPhase(s, sp);
-//  heapStatistics();
+  heapStatistics();
   sweepPhase();
- // heapStatistics();
+  heapStatistics();
 }
 
 word* allocate(unsigned int tag, unsigned int length, int s[], int sp) {
