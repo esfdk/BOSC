@@ -28,7 +28,9 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 
 \subsection{Del 3}
 \label{O1_3}
-allocate( ) bliver kun kaldet i CONS casen.  (umiddelbart ikke andre stedder end i interpretation loopet)
+"allocate" funktionen bliver kun kaldet i CONS casen i "execcode" funktionen.  
+
+Der er direkte interaktion mellem abstract machinen og garbage collectoren, da abstract machinen har en stack hvor garbage collectoren skal gå inde og opdater heap referencer. Hvis det ikke bliver gjort vil casene CAR,CDR,SETCAR og SETCDR i "execcode" måske ikke virke da deres referencer være forældet og muligvis pege et forkert sted i heapen. 
 
 \subsection{Del 4}
 \label{O1_4}
@@ -45,6 +47,7 @@ Vores implementation of mark-sweep algoritmen består af tre dele; en mark()-fun
 \subsection{Opgave 2}
 \label{O2_2}
 I opgave 2 implementerede vi vores første udgave af en simpel mark-sweep garbage collector. Som indholdte mark(word*block), markPhase(int s[], intsp) og sweepPhase().
+
 'mark(word* block)'-funktionen bruges til at farve hvide blokke sorte. Funktionen tjekker først om blokken er farvet (linje 412-416). Er den det, retunerer funktionen, da der ikke skal ske mere. Er den ikke farvet, bliver den farvet sort, hvorefter hvert word der kan nås fra blokken bliver gennemløbet. Hvis wordet ikke er en int og ikke er nil, kaldes mark()-funktionen på wordet (linje 419-428).
 
 'markPhase(int s[], int sp)'-funktionen starter markeringen af blokke. Funktionen looper igennem alle elementer på stacken, og hvis elementet ikke er en int og ikke er nil, castes det til et word og 'mark()' kaldes med wordet some parameter. Disse to funktioner udgør tilsammen mark fasen af algoritmen.
@@ -57,6 +60,13 @@ I opgave 3 bliver vi bedt om at forbedre sweepPhase() så den kan slå tilstøde
  
 \subsection{Opgave 4}
 \label{O2_4}
+I opgave 4 bliver vi igen bedt om at forbedre sweepPhase() så den kan så den slå et hvilket som helst antalle hvide blokke sammen. Det gør vi ved at lave de samme tjekkes som i opgave 3 og derefter tjekke om der er flere hvid blokken i træk. Hvis det
+sandt tager vi længden af blokken og længden af vores "extra_length" slå det sammen til en stor blok og maler den blå(linje 462-477).
+
+
+
+
+
 
 
 'sweepPhase()'-funktionen er den funktion, som fjerner alt det fundne garbage (linje 445-509). Den looper igennem hele heapen, og tjekker hvilken farve de forskellige words har. Hvis de er grå eller blå, sker der ingenting. Hvis de er sorte bliver de farvet hvide. Hvis de er hvide sker følgende:
@@ -69,6 +79,13 @@ I opgave 3 bliver vi bedt om at forbedre sweepPhase() så den kan slå tilstøde
 \end{my_enumerate}
 
 Måden vi har implementeret 'sweepPhase()' på, gør at den kan slå flere døde blokke sammen til en død blok, hvorved vi undgår fragmentation.
+
+
+
+
+
+
+
 
 \section{Opgave 5}
 \label{O5}
