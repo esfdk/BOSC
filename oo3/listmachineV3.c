@@ -410,7 +410,8 @@ word* copy(word* oldBlock)
 			oldBlock[1] = (word) &toBlock[0]; // Set first word in old block to be a reference to the newly copied block.
 		}
 	}
-
+	
+	/*Step B.4*/
 	return toBlock; // Return reference to this block.
 }
 

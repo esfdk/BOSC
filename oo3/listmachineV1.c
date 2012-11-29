@@ -459,7 +459,7 @@ void sweepPhase() {
   	    word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
     		
     		// While adjecent blocks are white, put them together.
-    		while(Color(*next) == White && next < afterHeap) // While the colour 
+    		while(Color(*next) == White && next < afterHeap) // While the colour of the next block is white and the next block is still in the heap
     		{
     		  // Increase length of free space
     		  extra_space += Length(*next) + 1;

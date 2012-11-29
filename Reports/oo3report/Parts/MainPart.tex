@@ -6,7 +6,6 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 \chapter{Beskrivelse af implementation}
 \section{Opgave 1}
 \label{O1}
-
 \subsection{Del 1}
 \label{O1_1}
 \begin{my_itemize}
@@ -73,3 +72,37 @@ Måden vi har implementeret 'sweepPhase()' på, gør at den kan slå flere døde
 
 \section{Opgave 6}
 \label{O6}
+Vi har implementeret algoritmen til opgave 6 (two-space stop and copy) som en række steps. Algoritmen er forklaret i "Programming Language Concepts"\footnote{Peter Sestoft, Programming Language Concepts, ISBN 978-1-4471-4156-3 (eBook), s. 181-182}. Vores implementation kan findes i "oo3/listmachineV3.c" samt på side \pageref{Code_V3} i appendix.
+
+Vi har delt algoritmen op i følgende steps:
+\begin{my_description}
+\item[Step A] Peg freelisten på starten af heapTo.
+\item[Step B] Iteration over stacken for at finde heap referencer.
+	\begin{my_description}
+	\item[Step B.1] Undersøg om blokken er flyttet allerede.
+	\item[Step B.2] Lav en ny blok og flyt freelist pointeren.
+	\item[Step B.3] Kør blokken igennem og kopier ord fra blokken.
+	\item[Step B.4] Returner pointer til den nye blok i heapTo.
+	\end{my_description}
+\item[Step C] Iteration over heapTo for at finde eventuelle referencer til heapFrom.
+\item[Step D] Ombytning af heapFrom og heapTo.
+\end{my_description}
+
+De to steps er delt ud på to funktioner, som foreslået i opgavebeskrivelsen. "void copyFromTo(int s[], int sp)" (linje 418-461) og "word* copy(word* oldBlock)" (linje 379-415).
+
+Vi har valgt kun at beskrive step B, B.1, B.3 og C i detaljer, da vi føler, at de andre er beskrevet grundigt nok i listen over steps.
+\subsection{Step B}
+Step B er algoritmens mest komplekse step. Derfor har vi delt det op i fire mindre steps.
+
+Step B løber stacken igennem og undersøger, om den indeholder nogen heap referencer. Hvis der er, bliver de kopieret og stacken bliver opdateret med addresserne på de kopierede blokke.
+\paragraph{Step B.1}
+Hvis en blok allerede er kopieret, returnerer vi bare "to-heap" addressen på blokken. 
+\\Vi ved, at en blok er kopieret, hvis det holder sandt at "(oldBlock[1] != 0 \&\& !IsInt(oldBlock[1]) \&\& inToHeap((word*) oldBlock[1]))". 
+\\Vi bruger det første ord efter headeren i "from-heap" til at holde en "forwarding pointer" til blokken i "to-heap".
+\paragraph{Step B.3}
+Step B.3 løber ordene i blokken fra "from-heap" igennem og kopierer dem til "to-heap". 
+\\Hvis et ord er en heap reference, bliver "copy()" kaldt rekursivt, så vi kan få referencen til den blokken i "to-heap".
+\\Hvis det ikke er en heap reference, bliver indholdet af ordet bare kopieret.
+\\ Vi kontrollerer desuden om det første ord efter headeren er kopieret - hvis den er, så sætter vi "forwarding pointeren" i "from-heap"s "oldBlock[1]" til addressen på den nyligt kopierede blok.
+\paragraph{Step C}
+I step C løber vi heap'en igennem og ser, om der er blokke, som indeholder ord, der peger i "from-heap". Hvis der er, så opdaterer vi referencen ved at hente forwarding pointeren.
