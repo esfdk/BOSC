@@ -458,31 +458,31 @@ void sweepPhase() {
   	    extra_space = 0;
   	    word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
     		
-    		// While adjecent blocks are white, put them together.
-    		while(Color(*next) == White && next < afterHeap) // While the colour of the next block is white and the next block is still in the heap
-    		{
-    		  // Increase length of free space
-    		  extra_space += Length(*next) + 1;
-    		  
-    		  // Set block header to a junk value
-    		  *next = Tag(9999);
-    		  
-    		  next = &heap[i + extra_space + Length(w) + 1];
-    		}
-    		
-    		if(extra_space > 0) // If there are more than one white block in succession.
-    		{
-    		  // Set first block to word length + extra length and paint blue
-    		  heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
-    		}
-    		else
-    		{
-    		  // Just paint blue
-    		  heap[i] = Paint(w, Blue);
-    		}
-    		
-    		// Add word to freelist
-    		word* wo = (word*) &heap[i];
+		// While adjecent blocks are white, put them together.
+		while(Color(*next) == White && next < afterHeap) // While the colour of the next block is white and the next block is still in the heap
+		{
+		  // Increase length of free space
+		  extra_space += Length(*next) + 1;
+		  
+		  // Set block header to a junk value
+		  *next = Tag(9999);
+		  
+		  next = &heap[i + extra_space + Length(w) + 1];
+		}
+		
+		if(extra_space > 0) // If there are more than one white block in succession.
+		{
+		  // Set first block to block length + extra length and paint blue
+		  heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
+		}
+		else
+		{
+		  // Just paint blue
+		  heap[i] = Paint(w, Blue);
+		}
+		
+		// Add word to freelist
+		word* wo = (word*) &heap[i];
         wo[1] = (int) freelist;
         freelist = &wo[0];
   		
@@ -491,11 +491,11 @@ void sweepPhase() {
   	  case Black:
   	    // Paint black blocks white
   	    w = Paint(w, White);
-  	  break;
+		break;
   		
   	  case Blue:
   	    // Ignore blue blocks
-      break;
+		break;
   		
   	  case Grey:
   	    // Should not happen
