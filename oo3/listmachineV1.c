@@ -414,7 +414,7 @@ void mark(word* block){
 	  // ... return to stop the function.
     return;
   }
-  
+  /*Step B*/
   // Paint the block black
   block[0] = Paint(block[0], Black);
   
@@ -431,6 +431,7 @@ void mark(word* block){
 /* Marks heap references in the stack */
 void markPhase(int s[], int sp) {
   printf("\nmarking ...\n");
+  /*Step A*/
   int i;
   for(i = 0; i < sp; i++)
   {
@@ -444,6 +445,8 @@ void markPhase(int s[], int sp) {
 /* Sweeps the heap and  */
 void sweepPhase() {
   printf("sweeping ...\n");
+  
+  /*Step C*/
   int i;
   word w;
   
@@ -455,6 +458,7 @@ void sweepPhase() {
   	switch(Color(w))
   	{
   	  case White:
+	    /*Step C.1*/
   	    extra_space = 0;
   	    word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
     		
@@ -489,6 +493,7 @@ void sweepPhase() {
   		break;
   		
   	  case Black:
+	    /*Step C.2*/
   	    // Paint black blocks white
   	    w = Paint(w, White);
 		break;

@@ -5,93 +5,78 @@ Når vi refererer til "Programming Language Concepts", mener vi "Peter Sestoft, 
 
 Vi har testet vores tre implementationer af garbage collection algoritmer på eksemplerne "ex30.lc", "ex35.lc" og "ex36.lc", som beskrevet i opgaven. Disse fulgte med "listc.zip"\footnote{https://blog.itu.dk/BOSC-E2012/files/2012/11/listc.zip} mappen, som blev givet med opgaven. 
 
+For at skære ned på størrelsen af appendix, har vi kun vedlagt kode, som vi selv har ændret i / lavet.
+
 Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}. Vores git repository kan findes på https://github.com/esfdk/BOSC/tree/master/oo3.
 
 \chapter{Beskrivelse af implementation}
 \section{Opgave 1}
 \label{O1}
+I dette afsnit vil vi nævne "tagging" ofte. Med det mener vi, at "Tag" og "Untag" funktionerne er blevet anvendt på tallene. Et tal bliver tagget for at sørge for, at det ikke misforstås for en heap-reference.
 \subsection{Del 1}
 \label{O1_1}
-	\paragraph{ADD} untagger de to øverste elementer på stakken, ligger dem sammen, tagger den nye værdi og ligger den på toppen af stakken.
-	\paragraph{CSTI I} tager den næste værdi i p[ ] arrayet og ligger den på toppen af stakken.
-	\paragraph{NIL} Ligger 0 på toppen af stakken. Hvis der kun ligger nul bits betyder det NIL og ikke integer nul.
-	\paragraph{IFZERO} tager det øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int. Hvis v er en int udtagges v og sammenlignes med nul , ellers sammenlignes v med NIL. Hvis sammenligning er sand i tilfældet med nul bliver program counter sat til den nuværende værdi på p[pc] ellers bliver næste instruktion udført.
-	\paragraph{CONS} laver en cons celle ud af de to øverste elementer på stakken, og decrementere så stack pointeren med en.
-	\paragraph{CAR} henter et word fra stakken og tjekker om det er NIL, hvis det ikke er NIL tages det første element af cons cellen og ligges på toppen af stakken i stedet for det hentede word.
-	\paragraph{SETCAR} henter det øverste element på stakken og et word. Den sætter wordets første værdi til at være den udhentede værdi på stakken.
+\paragraph{ADD} untagger de to øverste elementer på stakken, ligger dem sammen, tagger den nye værdi og ligger den på toppen af stakken.
+\paragraph{CSTI I} tager den næste værdi i p[ ] arrayet og ligger den på toppen af stakken.
+\paragraph{NIL} Ligger 0 på toppen af stakken. Da nullet ikke bliver tagget, betyder det nil og ikke nul.
+\paragraph{IFZERO} tager det øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int. Hvis v er en int, untagges v og sammenlignes med nul, ellers sammenlignes v med NIL. Hvis sammenligningen er sand i tilfældet med nul bliver program counter sat til den nuværende værdi på p[pc] ellers bliver næste instruktion udført.
+\paragraph{CONS} laver en cons celle ud af de to øverste elementer på stakken, og decrementere så stack pointeren med en.
+\paragraph{CAR} henter et word fra stakken og tjekker om det er NIL, hvis det ikke er NIL tages det første element af cons cellen og ligges på toppen af stakken i stedet for det hentede word.
+\paragraph{SETCAR} henter det øverste element på stakken og et word. Den sætter wordets første værdi til at være den udhentede værdi på stakken.
 
 \subsection{Del 2}
 \label{O1_2}
-	\paragraph{Length} laver to right shifts, hvilket fjerner de to garbage collection bites. Derefter bruger den bitwise AND til at sammenligne length bitsne med 0x003FFFF. Dette giver os værdien af n bitsne.
-	\paragraph{Color} går ind og bruger bitwise AND til at sammenligne farven på cellen med 0011 hvorved den finder cellens faktiske farve.
-	\paragraph{Paint} går ind og ændrer gg til den color der er blevet givet med som argument. eksempelvis laver Paint med arguemnt BLUE gg om til 11.
+\paragraph{Length} laver to bitwise right shifts, hvilket fjerner de to garbage collection bites. Derefter bruger den bitwise AND til at sammenligne length bitsne med 0x003FFFF. Dette giver os værdien af n bitsne, som er det tal, der repræsentere længden på en blok.
+\paragraph{Color} går ind og bruger bitwise AND til at sammenligne farven på cellen med 11, hvorved den finder cellens faktiske farve.
+\paragraph{Paint} producerer et tal, hvor garbage collection bitsne i inputtet er blevet lavet om til de bits, som svarer til farven, der er givet som input argument.
 
 \subsection{Del 3}
 \label{O1_3}
-"allocate" funktionen bliver kun kaldet i CONS casen i "execcode" funktionen.  
+"allocate" funktionen bliver kun kaldt i CONS casen i "execcode" funktionen.  
 
-Der er direkte interaktion mellem abstract machinen og garbage collectoren, da abstract machinen har en stack hvor garbage collectoren skal gå inde og opdater heap referencer. Hvis det ikke bliver gjort vil casene CAR,CDR,SETCAR og SETCDR i "execcode" måske ikke virke da deres referencer være forældet og muligvis pege et forkert sted i heapen. 
+Der er direkte interaktion mellem abstract machinen og garbage collectoren, da abstract machinen har en stack, hvor garbage collectoren skal gå ind og opdatere heap referencer. Hvis det ikke bliver gjort, vil casene CAR,CDR,SETCAR og SETCDR i "execcode" ikke altid virke, da deres referencer kan være forældet og derfor pege et forkert sted i heapen. 
 
 \subsection{Del 4}
 \label{O1_4}
-Collect() bliver kaldet når der bliver allokeret og der ikke er noget free space.
+Hvis der ikke er nok plads tilbage på "freelist", når "allocate" funktionen bliver kaldt, bliver "collect" funktionen kaldt.
 
 \section{Opgave 2, 3 og 4}
 \label{O2}
-Igennem opgaverne har vi skulle lave tre forskellige implementationer af garbage collection. En mark-sweep med rekursive funktions kald, en mark-sweep uden rekursive funktions kald og en stop-and-copy med rekursive funktions kald. For at undgå at en fil indeholdte flere implementationer med nogle af dem udkommenteret, valgte vi at dele dem ud i flere filer. Opgave 2, 3 og 4 findes i listmachineV1.c, opgave 5 i listmachineV2.c og opgave 6 i listmachineV3.c.
+Igennem opgaverne har vi skulle lave tre forskellige implementationer af garbage collection. En mark-sweep med rekursive funktionskald, en mark-sweep uden rekursive funktions kald og en stop-and-copy med rekursive funktions kald. For at undgå at en fil indeholdte flere implementationer med nogle af dem udkommenteret, valgte vi at dele dem ud i flere filer. Opgave 2, 3 og 4 findes i "oo3/listmachineV1.c" samt side \pageref{Code_V1}, opgave 5 i "oo3/listmachineV2.c" samt side \pageref{Code_V2} og opgave 6 i "oo3/listmachineV3.c" samt side \pageref{Code_V3} i appendix.
 
-Vi har valgt at beskrive vores implementation af opgave 2, 3 og 4 i samme afsnit, da 3 og 4 går ud på at forbedre algoritmen vi implementerede i opgave 2.
+Vi har valgt at beskrive vores implementation af opgave 2, 3 og 4 i samme afsnit, da 3 og 4 går ud på at forbedre algoritmen, vi implementerede i opgave 2. Den version, som findes i "listmachineV1.c", har fået ændringerne fra opgave 3 og 4, så derfor vil der være nogle kodeelementer, som vi først forklarer i \ref{O2_3} og \ref{O2_4}.
 
-Vores implementation of mark-sweep algoritmen består af tre dele; en mark()-funktion, en markPhase()-funktion og en sweepPhase()-funktion. 
+Vores implementation of mark-sweep algoritmen består af tre dele; en "mark" funktion, en "markPhase" funktion og en "sweepPhase" funktion. Algoritmen er beskrevet på side 180-181 i "Programming Language Concepts".
 
 \subsection{Opgave 2}
 \label{O2_2}
-I opgave 2 implementerede vi vores første udgave af en simpel mark-sweep garbage collector. Som indholdte mark(word*block), markPhase(int s[], intsp) og sweepPhase().
+Implementationen af den simple, rekursive "mark-sweep" algoritme har følgende steps:
 
-'mark(word* block)'-funktionen bruges til at farve hvide blokke sorte. Funktionen tjekker først om blokken er farvet (linje 412-416). Er den det, retunerer funktionen, da der ikke skal ske mere. Er den ikke farvet, bliver den farvet sort, hvorefter hvert word der kan nås fra blokken bliver gennemløbet. Hvis wordet ikke er en int og ikke er nil, kaldes mark()-funktionen på wordet (linje 419-428).
+\begin{my_description}
+\item[Step A] Lav step B for alle heap-referencer i stakken, som er hvide
+\item[Step B] Farv heap-referencen sort og udfør step B på alle heap-referencer fra heap-referencen, som er hvide.
+\item[Step C] Løb heap igennem for at "rengøre" den.
+	\begin{my_description}
+	\item[Step C.1] Hvis en block er hvid, mail den blå og add den til freelist.
+	\item[Step C.2] Hvis en block er sort, mal den hvid.
+	\end{my_description}
+\end{my_description}
 
-'markPhase(int s[], int sp)'-funktionen starter markeringen af blokke. Funktionen looper igennem alle elementer på stacken, og hvis elementet ikke er en int og ikke er nil, castes det til et word og 'mark()' kaldes med wordet some parameter. Disse to funktioner udgør tilsammen mark fasen af algoritmen.
-
-sweepPhase() går igennem heapen og putter alle hvide bloks over i freelisten(linje 485-487) og maler sorte blocks hvide(linje 491-493).
+\paragraph{Step C.1}
+For at adde et ord til "freelist", opretter vi en temporary pointer til addressen i heapen, hvor headeren på blokken ligger. Denne temporary pointer anvender vi så som en blok, hvor vi sætter det først ord (efter headeren) til at pege på freelist. Herefter sætter vi freelist til at pege på addressen af headeren af ordet.
 
 \subsection{Opgave 3}
 \label{O2_3}
-I opgave 3 bliver vi bedt om at forbedre sweepPhase() så den kan slå tilstødende hvide blokke sammen. Det gør vi ved at tjekke om den næste blok er hvid og den næsten blok stadig er i heapen. Mens det er sandt øge vi længden af "free space"  og sætter block headeren til en junk value(linje 462-471).
+For at mindske risikoen for, at der opstår mange små blokke i freelisten, kan man slå hvide blokke, som ligger ved siden af hinanden, sammen. Dette gør vi ved at tjekke, om den næste blok er hvid og stadig ligger inden for heapen. Hvis den gør, øger vi længden på den hvide blok, vi arbejder med, sætter headeren på den næste blok til at være en "junk-value" og bruger "mkheader" til at lave en ny blok med den nye længde.
  
 \subsection{Opgave 4}
 \label{O2_4}
-I opgave 4 bliver vi igen bedt om at forbedre sweepPhase() så den kan så den slå et hvilket som helst antalle hvide blokke sammen. Det gør vi ved at lave de samme tjekkes som i opgave 3 og derefter tjekke om der er flere hvid blokken i træk. Hvis det
-sandt tager vi længden af blokken og længden af vores "extra_length" slå det sammen til en stor blok og maler den blå(linje 462-477).
-
-
-
-
-
-
-
-'sweepPhase()'-funktionen er den funktion, som fjerner alt det fundne garbage (linje 445-509). Den looper igennem hele heapen, og tjekker hvilken farve de forskellige words har. Hvis de er grå eller blå, sker der ingenting. Hvis de er sorte bliver de farvet hvide. Hvis de er hvide sker følgende:
-\begin{my_enumerate}
-	\item Det næste word i heapen bliver læst. (linje 459)
-	\item Der tjekkes om det næste words farve er hvid og om (linje 462) % hvad bruges 'next < afterHeap' til?
-	\item Hvis tjekket bestås, fortæller vi programmet, at der skal afsættes ekstra plads, så vi kan slå blokkene sammen. Derefter indlæses det næste word igen. (linje 464-470)
-	\item Det tjekkes om der skal afsættes ekstra plads til at slå flere blokke sammen. Hvis der skal, bliver stedet i heapen sat til resultatet af et kald til 'mkheader' macroen med det originale words tag, længden af det originale word plus den ekstra plads og med farven blå. Hvis ikke, bliver stedet i heapen bare farvet blå. (linje 473-482)
-	\item Til slut bliver wordet lagt over i freelist. (linje 485-487)
-\end{my_enumerate}
-
-Måden vi har implementeret 'sweepPhase()' på, gør at den kan slå flere døde blokke sammen til en død blok, hvorved vi undgår fragmentation.
-
-
-
-
-
-
-
+For at optimere ændringen fra \ref{O2_3} endnu mere, kan man udnytte muligheden for at slå alle hvide blokke, som ligger ved siden af hinanden, sammen. Dette gør vi ved at gøre det samme, som i opgave 3, men i denne version itererer vi bare videre, indtil vi støder på en næste blok, som enten ikke er hvid eller som ligger uden for heapen. Når dette sker, laver vi en ny blok på samme måde som i opgave3 (med mkheader) på længden af den første hvide blok, vi arbejdede med samt alle de hvide blokke, som ligger ved siden af den.
 
 \section{Opgave 5}
 \label{O5}
 For at implementere den ikke-rekursive version af Mark and Sweep\footnote{"Programming Language Concepts", side 192-193}, har vi fjernet vores "mark" funktion og udvidet "markPhase" funktionen. "sweepPhase" er den samme som i \ref{O2}.
 
-Vores kode kan findes i "oo3/listmachineV2.c" samt på side \pageref{Code_V2} i appendix. "markPhase" funktionen er på linje 409-453 og "sweepPhase" funktionen er på linje 456-521.
+Vores kode kan findes i "oo3/listmachineV2.c" samt på side \pageref{Code_V2} i appendix.
 
 \begin{my_description}
 \item[Step A] Mal alle blokke, som kan nås fra stakken, grå.
@@ -101,8 +86,6 @@ Vores kode kan findes i "oo3/listmachineV2.c" samt på side \pageref{Code_V2} i 
 	\end{my_description}
 \item[Step C] Sweep på samme måde som i opgave 2.
 \end{my_description}
-
-
 
 \section{Opgave 6}
 \label{O6}
@@ -122,7 +105,7 @@ Vi har delt algoritmen op i følgende steps:
 \item[Step D] Ombytning af heapFrom og heapTo.
 \end{my_description}
 
-De to steps er delt ud på to funktioner, som foreslået i opgavebeskrivelsen. "void copyFromTo(int s[], int sp)" (linje 418-461) og "word* copy(word* oldBlock)" (linje 379-415).
+De to steps er delt ud på to funktioner, som foreslået i opgavebeskrivelsen. "void copyFromTo(int s[], int sp)" og "word* copy(word* oldBlock)". Desuden har vi ændret i "allocate" funktionen, som foreslået i "Programming Language Concepts" og "initheap" funktionen, hvilket vi var nødt til pga. at vi nu har to heaps.
 
 Vi har valgt kun at beskrive step B, B.1, B.3 og C i detaljer, da vi føler, at de andre er beskrevet grundigt nok i listen over steps.
 \subsection{Step B}
