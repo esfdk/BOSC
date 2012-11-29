@@ -389,7 +389,7 @@ word* copy(word* oldBlock)
 	word* toBlock = freelist; // Create new block at freelist pointer
 	
 	int length = Length(oldBlock[0]);
-	freelist += (length + 1); // increase freelist pointer by the length of the block + 1 such that it points at the first free space in the "to-heap".
+	freelist += (length + 1); // Increase freelist pointer by (block length + 1) such that it points at the first free space in the "to-heap".
 	
 	/*Step B.3*/
 	int i;
@@ -417,7 +417,7 @@ word* copy(word* oldBlock)
 void copyFromTo(int s[], int sp)
 {
 	/*Step A*/
-	freelist = &heapTo[0]; // move the freelist pointer to address 0 of the "to-heap" 
+	freelist = &heapTo[0]; // Move the freelist pointer to address 0 of the "to-heap" 
 	
 	/*Step B*/
 	int i;
@@ -426,13 +426,13 @@ void copyFromTo(int s[], int sp)
 		if(!IsInt(s[i]) && (s[i]) != 0) 
 		{ 
 			word* block = ((word*) s[i]);
-			s[i] = (int) copy(block); // Update reference of i in stack
+			s[i] = (int) copy(block); // Update reference of i in the stack
 		}
 	}
+	
+	/*Step C*/
 	word* b;
 	int j;
-
-	/*Step C*/
 	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1)
 	{
 		b = (word*) &heapTo[i]; // Gets the address of the block header
@@ -441,7 +441,7 @@ void copyFromTo(int s[], int sp)
 			if(!IsInt(b[j]) && b[j] != 0)
 			{
 				word* rblock = (word*) b[j]; //
-				if(inFromHeap(rblock)) // if the word is a reference to the "from-heap" then we need to update the reference to the new address in the "to-heap" 
+				if(inFromHeap(rblock)) // If word is a reference to the "from-heap", then update reference to be address of block in the "to-heap".
 				{
 					b[j] = rblock[1];
 				}
