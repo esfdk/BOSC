@@ -378,70 +378,78 @@ void initheap() {
 // Copies a block and returns the new to-space address
 word* copy(word* oldBlock)
 {
+	/*Step B.1*/
 	// If block is already copied, return forwarding pointer
 	if(oldBlock[1] != 0 && !IsInt(oldBlock[1]) && inToHeap((word*)oldBlock[1])) 
 	{
 		return (word*) oldBlock[1];
 	}
-
-	word* toBlock = freelist;
+	
+	/*Step B.2*/
+	word* toBlock = freelist; // Create new block at freelist pointer
 	
 	int length = Length(oldBlock[0]);
-	freelist += (length + 1);
-
+	freelist += (length + 1); // increase freelist pointer by the length of the block + 1 such that it points at the first free space in the "to-heap".
+	
+	/*Step B.3*/
 	int i;
 	for(i = 0; i <= length; i++)
 	{
 		if(oldBlock[i] != 0 && !IsInt(oldBlock[i]) && i != 0) //If a heap reference
 		{
-			printf("\nRecursive call on address %d, i = %d, block = %d\n", oldBlock[i], i, (int) oldBlock);
-			word* p = copy((word *) oldBlock[i]);
-			toBlock[i] = (word) p;
+			word* p = copy((word *) oldBlock[i]); // Copy the referenced block from the "from-heap" to the "to-heap". 
+			toBlock[i] = (word) p; // Updates the pointer to the copied block in the "to-heap".
 		}
-		else
+		else // If a normal block, just copy.
 		{
 			toBlock[i] = oldBlock[i];
 		}	
-		if(i == 1)
+		
+		if(i == 1) // If first word in block has been copied
 		{
-			oldBlock[1] = (word) &toBlock[0];
+			oldBlock[1] = (word) &toBlock[0]; // Set first word in old block to be a reference to the newly copied block.
 		}
 	}
 
-	return toBlock;
+	return toBlock; // Return reference to this block.
 }
 
 void copyFromTo(int s[], int sp)
 {
-	freelist = &heapTo[0];
+	/*Step A*/
+	freelist = &heapTo[0]; // move the freelist pointer to address 0 of the "to-heap" 
+	
+	/*Step B*/
 	int i;
 	for(i = 0; i < sp; i++)
 	{
 		if(!IsInt(s[i]) && (s[i]) != 0) 
 		{ 
 			word* block = ((word*) s[i]);
-			s[i] = (int) copy(block);
+			s[i] = (int) copy(block); // Update reference of i in stack
 		}
 	}
 	word* b;
 	int j;
 
+	/*Step C*/
 	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1)
 	{
-		b = (word*) &heapTo[i];
+		b = (word*) &heapTo[i]; // Gets the address of the block header
 		for(j = 1; j <= Length(b[0]); j++)
 		{
 			if(!IsInt(b[j]) && b[j] != 0)
 			{
-				word* rblock = (word*) b[j];
-				if(inFromHeap(rblock))
+				word* rblock = (word*) b[j]; //
+				if(inFromHeap(rblock)) // if the word is a reference to the "from-heap" then we need to update the reference to the new address in the "to-heap" 
 				{
 					b[j] = rblock[1];
 				}
 			}
 		}
 	}
-
+	
+	/*Step D*/
 	word* heapTemp = heapTo;
 	heapTo = heapFrom;
 	heapFrom = heapTemp;

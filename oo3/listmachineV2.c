@@ -427,22 +427,22 @@ void markPhase(int s[], int sp) {
   while(goAgain)
   {
     goAgain = 0;
-	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1)
+	for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1) // To iterate over all the blocks in the heap we increment i by lenght of b + 1.
 	{
 
-	  b = (word*) &heap[i];
-	  if(Color(b[0]) == Grey)
+	  b = (word*) &heap[i]; // to be able to color the words in the block we need to specify the specific address in the heap and cast it to a word pointer.
+	  if(Color(b[0]) == Grey) //if the color of b is grey ....
 	  {
-	    b[0] = Paint(b[0], Black);
-		for(j = 1; j <= Length(b[0]); j++)
+	    b[0] = Paint(b[0], Black); // paint b black
+		for(j = 1; j <= Length(b[0]); j++) // go through all words in block b
 		{
 		  if(!IsInt(b[j]) && b[j] != 0)
 		  {
-		    word* rblock = (word*) b[j];
+		    word* rblock = (word*) b[j]; // since a block behaves as a word but isn't one, we need to cast it to a word pointer to be able to color it.
 		    if(Color(rblock[0]) == White)
 		    {
 		      rblock[0] = Paint(rblock[0], Grey);
-		      goAgain = 1;
+		      goAgain = 1; // as long as there are grey blocks in the heap we set goAgain to 1 to make sure that all children gets marked. 
            }
 		  }
 		}
