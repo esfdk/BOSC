@@ -408,19 +408,21 @@ void initheap() {
 /* Recursively runs through a block to paint white blocks black. */
 void mark(word* block){
   
+  // If the block is already colored...
   if(Color(block[0]) != White)
   {
-	// Block is already colored.
+	  // ... return to stop the function.
     return;
   }
   
-  block[0] = Paint(block[0], Black); // 
+  // Paint the block black
+  block[0] = Paint(block[0], Black);
   
   int i;
   for(i = 1; i <= Length(block[0]); i++) // Go through every word in the block
   {
     if(!IsInt(block[i]) && block[i] != 0) // If word is not an integer and is not nil, then mark the block the word points to
-	{
+	  {
       mark((word*)block[i]); // Mark a referenced block
     }
   }
@@ -432,10 +434,10 @@ void markPhase(int s[], int sp) {
   int i;
   for(i = 0; i < sp; i++)
   {
-	if(!IsInt(s[i]) && (s[i]) != 0) // If item on stack is not an integer and is not nil, convert it to a word reference and mark it
-	{ 
-	  mark((word*) s[i]);
-	}
+  	if(!IsInt(s[i]) && (s[i]) != 0) // If item on stack is not an integer and is not nil, convert it to a word reference and mark it
+  	{ 
+  	  mark((word*) s[i]);
+  	}
   }
 }
 
@@ -448,60 +450,61 @@ void sweepPhase() {
   for(i = 0; i < HEAPSIZE; i += Length(w) + 1) // Increase i by the length of the previous block + 1.
   {
     w = heap[i]; // The word in the heap.
-	int extra_space; // 
-	
-	switch(Color(w))
-	{
-	  case White:
-	    extra_space = 0;
-	    word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
-		
-		// While adjecent blocks are white, put them together.
-		while(Color(*next) == White && next < afterHeap) // While the colour 
-		{
-		  // Increase length of free space
-		  extra_space += Length(*next) + 1;
-		  
-		  // Set block header to a junk value
-		  *next = Tag(9999);
-		  
-		  next = &heap[i + extra_space + Length(w) + 1];
-		}
-		
-		if(extra_space > 0) // If there are more than one white block in succession.
-		{
-		  // Set first block to word length + extra length and paint blue
-		  heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
-		}
-		else
-		{
-		  // Just paint blue
-		  heap[i] = Paint(w, Blue);
-		}
-		
-		// Add word to freelist
-		word* wo = (word*) &heap[i];
-                wo[1] = (int) freelist;
-                freelist = &wo[0];
-		
-		break;
-		
-	  case Black:
-	    // Paint black blocks white
-	    w = Paint(w, White);
-	    break;
-		
-	  case Blue:
-	    // Ignore blue blocks
-		
-	  case Grey:
-	    // Should not happen
-		break;
-		
-	  default:
-	    // Should not happen
-		break;
-	}
+  	int extra_space;
+  	
+  	switch(Color(w))
+  	{
+  	  case White:
+  	    extra_space = 0;
+  	    word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
+    		
+    		// While adjecent blocks are white, put them together.
+    		while(Color(*next) == White && next < afterHeap) // While the colour 
+    		{
+    		  // Increase length of free space
+    		  extra_space += Length(*next) + 1;
+    		  
+    		  // Set block header to a junk value
+    		  *next = Tag(9999);
+    		  
+    		  next = &heap[i + extra_space + Length(w) + 1];
+    		}
+    		
+    		if(extra_space > 0) // If there are more than one white block in succession.
+    		{
+    		  // Set first block to word length + extra length and paint blue
+    		  heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
+    		}
+    		else
+    		{
+    		  // Just paint blue
+    		  heap[i] = Paint(w, Blue);
+    		}
+    		
+    		// Add word to freelist
+    		word* wo = (word*) &heap[i];
+        wo[1] = (int) freelist;
+        freelist = &wo[0];
+  		
+  		break;
+  		
+  	  case Black:
+  	    // Paint black blocks white
+  	    w = Paint(w, White);
+  	  break;
+  		
+  	  case Blue:
+  	    // Ignore blue blocks
+      break;
+  		
+  	  case Grey:
+  	    // Should not happen
+  		break;
+  		
+  	  default:
+  	    // Should not happen
+  		break;
+  	}
   }
 }
 

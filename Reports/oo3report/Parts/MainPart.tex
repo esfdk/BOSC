@@ -10,21 +10,21 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 \subsection{Del 1}
 \label{O1_1}
 \begin{my_itemize}
-\item[ADD] untagger de to øverste elementer på stakken, ligger dem sammen, tagger den nye værdi og ligger den på toppen af stakken.
-\item[CSTI I] tager den næste værdi i p[ ] arrayet og ligger den på toppen af stakken.
-\item[NIL] Ligger 0 på toppen af stakken. Hvis der kun ligger rent 0 bits betyder det NIL og ikke integer 0.
-\item[IFZERO] tager det øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int. Hvis v er en int udtagges v og sammenlignes med nul , ellers sammenlignes v med NIL. Hvis sammenligning er sand i tilfældet med nul bliver program counter sat til den nuværende værdi på (......) ellers bliver næste instruktion udført.
-\item[CONS] laver en cons celle ud af de to øverste elementer på stakken, og decrementere så stack pointeren med en.
-\item[CAR] henter et word fra stakken og tjekker om det er NIL, hvis det ikke er NIL tages det første element af cons cellen og ligges på toppen af stakken i stedet for det hentede word.
-\item[SETCAR] henter det øverste element på stakken og et word. Den tager wordets første værdi til at være den udhentede værdi på stakken.
+	\item[ADD] untagger de to øverste elementer på stakken, ligger dem sammen, tagger den nye værdi og ligger den på toppen af stakken.
+	\item[CSTI I] tager den næste værdi i p[ ] arrayet og ligger den på toppen af stakken.
+	\item[NIL] Ligger 0 på toppen af stakken. Hvis der kun ligger rent 0 bits betyder det NIL og ikke integer 0.
+	\item[IFZERO] tager det øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int. Hvis v er en int udtagges v og sammenlignes med nul , ellers sammenlignes v med NIL. Hvis sammenligning er sand i tilfældet med nul bliver program counter sat til den nuværende værdi på (......) ellers bliver næste instruktion udført.
+	\item[CONS] laver en cons celle ud af de to øverste elementer på stakken, og decrementere så stack pointeren med en.
+	\item[CAR] henter et word fra stakken og tjekker om det er NIL, hvis det ikke er NIL tages det første element af cons cellen og ligges på toppen af stakken i stedet for det hentede word.
+	\item[SETCAR] henter det øverste element på stakken og et word. Den tager wordets første værdi til at være den udhentede værdi på stakken.
 \end{my_itemize}
 
 \subsection{Del 2}
 \label{O1_2}
 \begin{my_itemize}
-\item[Length] laver to right shifts, hvilket fjerner de to garbage collection bites. Derefter bruger den bitwise AND til at sammenligne length bitsne med 0x003FFFF. Dette giver os værdien af n bitsne.
-\item[Color] går ind og bruger bitwise AND til at sammenligne farven på cellen med 0011 hvorved den finder cellens faktiske farve.
-\item[Paint] går ind og ændrer gg til den color der er blevet givet med som argument. eksempelvis laver Paint med arguemnt BLUE gg om til 11.
+	\item[Length] laver to right shifts, hvilket fjerner de to garbage collection bites. Derefter bruger den bitwise AND til at sammenligne length bitsne med 0x003FFFF. Dette giver os værdien af n bitsne.
+	\item[Color] går ind og bruger bitwise AND til at sammenligne farven på cellen med 0011 hvorved den finder cellens faktiske farve.
+	\item[Paint] går ind og ændrer gg til den color der er blevet givet med som argument. eksempelvis laver Paint med arguemnt BLUE gg om til 11.
 \end{my_itemize}
 
 \subsection{Del 3}
@@ -37,6 +37,15 @@ Når der bliver allokeret og der ikke er noget free space.
 
 \section{Opgave 2}
 \label{O2}
+Igennem opgaverne har vi skulle lave tre forskellige implementationer af garbage collection. En mark-sweep med rekursive funktions kald, en mark-sweep uden rekursive funktions kald og en stop-and-copy med rekursive funktions kald. For at undgå at en fil indeholdte flere implementationer med nogle af dem udkommenteret, valgte vi at dele dem ud i flere filer. Opgave 2, 3 og 3 findes i listmachineV1.c, opgave 5 i listmachineV2.c og opgave 6 i listmachineV3.c.
+
+Vores implementation of mark-sweep algoritmen består af tre dele; en mark()-funktion, en markPhase()-funktion og en sweepPhase()-funktion. 
+
+'mark(word* block)'-funktionen bruges til at farve hvide blokke sorte. Funktionen tjekker først om blokken er farvet (linje 412-416 i listmachineV1.c). Er den det, retunerer funktionen, da der ikke skal ske mere. Er den ikke farvet, bliver den farvet sort, hvorefter hvert word der kan nås fra blokken bliver gennemløbet. Hvis wordet ikke er en int og ikke er nil, kaldes mark()-funktionen på wordet (linje 419-428 i listmachineV1.c).
+
+'markPhase(int s[], int sp)'-funktionen starter markeringen af blokke. Funktionen looper igennem alle elementer på stacken, og hvis elementet ikke er en int og ikke er nil, castes det til et word og 'mark()' kaldes med wordet some parameter. Disse to funktioner udgør tilsammen mark fasen af algoritmen.
+
+'sweepPhase()'-funktionen er den funktion, som fjerner alt det fundne garbage (linje 445-509). Den looper igennem hele heapen, og tjekker hvilken farve de forskellige words har. Hvis de er grå eller blå, sker der ingenting. Hvis de er sorte bliver de farvet hvide. Hvis de er hvide, %write about garbage collection here
 
 \section{Opgave 3}
 \label{O3}
