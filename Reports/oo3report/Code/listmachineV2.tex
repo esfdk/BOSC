@@ -1,0 +1,123 @@
+\begin{lstlisting}
+/* Marks heap references in the stack */
+void markPhase(int s[], int sp) {
+printf("\nmarking ...\n");
+
+/* Step A */
+int i;
+for(i = 0; i < sp; i++) 
+{
+	if(!IsInt(s[i]) && (s[i]) != 0) /* If item on stack is not an integer 
+					      and is not nil, convert it to a word 
+                                                           reference and mark it */
+	{ 
+		word* block = ((word*) s[i]);
+		block[0] = Paint(block[0], Grey);
+	}
+}
+
+
+/* Step B */
+int goAgain = 1;
+word* b;
+int j;
+
+while(goAgain)
+{
+goAgain = 0;
+// To iterate over all the blocks in the heap we increment i by length of b + 1.
+for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1) 
+{
+	b = (word*) &heap[i]; // Get address of the block in the heap
+	if(Color(b[0]) == Grey)
+	{
+		b[0] = Paint(b[0], Black);
+		for(j = 1; j <= Length(b[0]); j++) // Iterate over words in b
+		{
+			if(!IsInt(b[j]) && b[j] != 0)
+			{
+		// We need to get the word pointer to be able to colour the header
+				word* rblock = (word*) b[j]; 
+				if(Color(rblock[0]) == White)
+				{
+					rblock[0] = Paint(rblock[0], Grey);
+		// Every time we paint a block grey, we need to check recheck heap for grey
+					goAgain = 1;  blocks.
+				}
+			}
+		}
+	}
+}
+}
+}
+
+/* Sweeps the heap and  */
+void sweepPhase() {
+printf("sweeping ...\n");
+
+/* Step C */
+int i;
+word w;
+ // Increase i by the length of the previous block + 1.
+for(i = 0; i < HEAPSIZE; i += Length(w) + 1)
+{
+	w = heap[i]; // The word in the heap.
+	int extra_space;
+
+	switch(Color(w))
+	{
+	case White:
+		extra_space = 0;
+		word* next = &heap[i + Length(w) + 1]; // Get next word from heap.
+
+		// While adjecent blocks are white, put them together.
+// While the colour of the next block is white and the next block is still in the heap
+		while(Color(*next) == White && next < afterHeap) 
+		{
+			// Increase length of free space
+			extra_space += Length(*next) + 1;
+
+			// Set block header to a junk value
+			*next = Tag(9999);
+
+			next = &heap[i + extra_space + Length(w) + 1];
+		}
+
+		if(extra_space > 0) // If there are more than one white block in a row.
+		{
+			// Set first block to word length + extra length and paint blue
+			heap[i] = mkheader(Tag(w), Length(w) + extra_space, Blue);
+		}
+		else
+		{
+			// Just paint blue
+			heap[i] = Paint(w, Blue);
+		}
+
+		// Add word to freelist
+		word* wo = (word*) &heap[i];
+		wo[1] = (int) freelist;
+		freelist = &wo[0];
+
+		break;
+
+	case Black:
+		// Paint black blocks white
+		w = Paint(w, White);
+		break;
+
+	case Blue:
+		// Ignore blue blocks
+		break;
+
+	case Grey:
+		// Should not happen
+		break;
+
+	default:
+		// Should not happen
+		break;
+	}
+}
+}
+\end{lstlisting}

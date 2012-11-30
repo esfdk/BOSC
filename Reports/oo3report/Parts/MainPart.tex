@@ -9,7 +9,7 @@ For at skære ned på størrelsen af appendix, har vi kun vedlagt kode, som vi s
 
 Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}. Vores git repository kan findes på https://github.com/esfdk/BOSC/tree/master/oo3.
 
-\chapter{Beskrivelse af implementation}
+\chapter{Opgavebesvarelse og implementation}
 \section{Opgave 1}
 \label{O1}
 I dette afsnit vil vi nævne "tagging" ofte. Med det mener vi, at "Tag" og "Untag" funktionerne er blevet anvendt på tallene. Et tal bliver tagget for at sørge for, at det ikke misforstås for en heap-reference.
@@ -105,7 +105,7 @@ Vi har delt algoritmen op i følgende steps:
 \item[Step D] Ombytning af heapFrom og heapTo.
 \end{my_description}
 
-De to steps er delt ud på to funktioner, som foreslået i opgavebeskrivelsen. "void copyFromTo(int s[], int sp)" og "word* copy(word* oldBlock)". Desuden har vi ændret i "allocate" funktionen, som foreslået i "Programming Language Concepts" og "initheap" funktionen, hvilket vi var nødt til pga. at vi nu har to heaps.
+De to steps er delt ud på to funktioner, som foreslået i opgavebeskrivelsen. "void copyFromTo(int s[], int sp)" og "word* copy(word* oldBlock)". Desuden har vi ændret i "allocate" funktionen, som foreslået i "Programming Language Concepts" og "initheap" funktionen, hvilket vi var nødt til pga. at vi nu har to heaps. Desuden har vi ændret "inHeap" funktionen til to funktioner - "inFromHeap" og "inToHeap".
 
 Vi har valgt kun at beskrive step B, B.1, B.3 og C i detaljer, da vi føler, at de andre er beskrevet grundigt nok i listen over steps.
 \subsection{Step B}

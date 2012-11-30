@@ -22,4 +22,4 @@ listmachineV3.o: listmachineV3.c
 	${CC} -c listmachineV3.c ${LIBS}
 
 clean:
-	rm -rf *.o listmachineV1 listmachineV2 listmachineV3 lm1 lm2 lm3
+	rm -rf *.o lm1 lm2 lm3

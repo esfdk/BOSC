@@ -398,7 +398,7 @@ word* copy(word* oldBlock)
 		if(oldBlock[i] != 0 && !IsInt(oldBlock[i]) && i != 0) //If a heap reference
 		{
 			word* p = copy((word *) oldBlock[i]); // Copy the referenced block from the "from-heap" to the "to-heap". 
-			toBlock[i] = (word) p; // Updates the pointer to the copied block in the "to-heap".
+			toBlock[i] = (word) p; // Update the pointer to the copied block in the "to-heap".
 		}
 		else // If a normal block, just copy.
 		{
