@@ -41,7 +41,7 @@ Hvis der ikke er nok plads tilbage på "freelist", når "allocate" funktionen bl
 
 \section{Opgave 2, 3 og 4}
 \label{O2}
-Igennem opgaverne har vi skulle lave tre forskellige implementationer af garbage collection. En mark-sweep med rekursive funktionskald, en mark-sweep uden rekursive funktions kald og en stop-and-copy med rekursive funktions kald. For at undgå at en fil indeholdte flere implementationer med nogle af dem udkommenteret, valgte vi at dele dem ud i flere filer. Opgave 2, 3 og 4 findes i "oo3/listmachineV1.c" samt side \pageref{Code_V1}, opgave 5 i "oo3/listmachineV2.c" samt side \pageref{Code_V2} og opgave 6 i "oo3/listmachineV3.c" samt side \pageref{Code_V3} i appendix.
+Igennem opgaverne har vi skulle lave tre forskellige implementationer af garbage collection. En mark-sweep med rekursive funktionskald, en mark-sweep uden rekursive funktions kald og en stop-and-copy med rekursive funktions kald. For at undgå, at en fil indeholdte flere implementationer med nogle af dem udkommenteret, valgte vi at dele dem ud i flere filer. Opgave 2, 3 og 4 findes i "oo3/listmachineV1.c" samt side \pageref{Code_V1}, opgave 5 i "oo3/listmachineV2.c" samt side \pageref{Code_V2} og opgave 6 i "oo3/listmachineV3.c" samt side \pageref{Code_V3} i appendix.
 
 Vi har valgt at beskrive vores implementation af opgave 2, 3 og 4 i samme afsnit, da 3 og 4 går ud på at forbedre algoritmen, vi implementerede i opgave 2. Den version, som findes i "listmachineV1.c", har fået ændringerne fra opgave 3 og 4, så derfor vil der være nogle kodeelementer, som vi først forklarer i \ref{O2_3} og \ref{O2_4}.
 
@@ -56,7 +56,7 @@ Implementationen af den simple, rekursive "mark-sweep" algoritme har følgende s
 \item[Step B] Farv heap-referencen sort og udfør step B på alle heap-referencer fra heap-referencen, som er hvide.
 \item[Step C] Løb heap igennem for at "rengøre" den.
 	\begin{my_description}
-	\item[Step C.1] Hvis en block er hvid, mail den blå og add den til freelist.
+	\item[Step C.1] Hvis en block er hvid, mal den blå og add den til freelist.
 	\item[Step C.2] Hvis en block er sort, mal den hvid.
 	\end{my_description}
 \end{my_description}
@@ -80,9 +80,9 @@ Vores kode kan findes i "oo3/listmachineV2.c" samt på side \pageref{Code_V2} i 
 
 \begin{my_description}
 \item[Step A] Mal alle blokke, som kan nås fra stakken, grå.
-\item[Step B] Løb heap igennem og marker alle grå blokke sort. 
+\item[Step B] Løb heapen igennem og marker alle grå blokke sort. 
 	\begin{my_description}
-	\item[Step B.1] Hvis en grå blok pegede på en hvid blok, males den hvide blok grå. Hvis der er grå blokke i heap, gentag step B, ellers gå til step C.
+	\item[Step B.1] Hvis en grå blok pegede på en hvid blok, males den hvide blok grå. Hvis der er grå blokke i heapen, gentag step B, ellers gå til step C.
 	\end{my_description}
 \item[Step C] Sweep på samme måde som i opgave 2.
 \end{my_description}
@@ -101,7 +101,7 @@ Vi har delt algoritmen op i følgende steps:
 	\item[Step B.3] Kør blokken igennem og kopier ord fra blokken.
 	\item[Step B.4] Returner pointer til den nye blok i heapTo.
 	\end{my_description}
-\item[Step C] Iteration over heapTo for at finde eventuelle referencer til heapFrom.
+\item[Step C] Iterer over heapTo for at finde eventuelle referencer til heapFrom.
 \item[Step D] Ombytning af heapFrom og heapTo.
 \end{my_description}
 
