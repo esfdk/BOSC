@@ -36,12 +36,15 @@ for(i = 0; i < HEAPSIZE; i += Length(b[0]) + 1)
 		{
 			if(!IsInt(b[j]) && b[j] != 0)
 			{
-		// We need to get the word pointer to be able to colour the header
-				word* rblock = (word*) b[j]; 
+				/* We need to get the word pointer to 
+				     be able to colour the header*/
+ 				word* rblock = (word*) b[j]; 
 				if(Color(rblock[0]) == White)
 				{
 					rblock[0] = Paint(rblock[0], Grey);
-		// Every time we paint a block grey, we need to check recheck heap for grey
+					/* Every time we paint a block grey, 
+					    we need to check recheck heap 
+					    for grey*/
 					goAgain = 1;  blocks.
 				}
 			}

@@ -1,7 +1,7 @@
 \chapter{Forord}
 I denne rapport dokumenterer vi vores valg i forhold til implementationen af opgaverne i Obligatorisk opgave 3.
 
-Når vi refererer til "Programming Language Concepts", mener vi "Peter Sestoft, Programming Language Concepts, ISBN 978-1-4471-4156-3 (eBook)".
+Når vi refererer til "Programming Language Concepts", mener vi bogen "Peter Sestoft, Programming Language Concepts, ISBN 978-1-4471-4156-3 (eBook)".
 
 Vi har testet vores tre implementationer af garbage collection algoritmer på eksemplerne "ex30.lc", "ex35.lc" og "ex36.lc", som beskrevet i opgaven. Disse fulgte med "listc.zip"\footnote{https://blog.itu.dk/BOSC-E2012/files/2012/11/listc.zip} mappen, som blev givet med opgaven. 
 
@@ -15,12 +15,12 @@ Kildekode og testdokumentation kan findes i appendix på side \pageref{Appendix}
 I dette afsnit vil vi nævne "tagging" ofte. Med det mener vi, at "Tag" og "Untag" funktionerne er blevet anvendt på tallene. Et tal bliver tagget for at sørge for, at det ikke misforstås for en heap-reference.
 \subsection{Del 1}
 \label{O1_1}
-\paragraph{ADD} untagger de to øverste elementer på stakken, ligger dem sammen, tagger den nye værdi og ligger den på toppen af stakken.
-\paragraph{CSTI I} tager den næste værdi i p[ ] arrayet og ligger den på toppen af stakken.
-\paragraph{NIL} Ligger 0 på toppen af stakken. Da nullet ikke bliver tagget, betyder det nil og ikke nul.
-\paragraph{IFZERO} tager det øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int. Hvis v er en int, untagges v og sammenlignes med nul, ellers sammenlignes v med NIL. Hvis sammenligningen er sand i tilfældet med nul bliver program counter sat til den nuværende værdi på p[pc] ellers bliver næste instruktion udført.
+\paragraph{ADD} untagger de to øverste elementer på stakken, lægger dem sammen, tagger den nye værdi og lægger den på toppen af stakken.
+\paragraph{CSTI I} tager den næste værdi i p[ ] arrayet og lægger den på toppen af stakken.
+\paragraph{NIL} lægger 0 på toppen af stakken. Da nullet ikke bliver tagget, betyder det nil og ikke nul.
+\paragraph{IFZERO} tager det øverste element af stakken og decrementere stackpointeren med en. Den tjekker om v er en int. Hvis v er en int, untagges v og sammenlignes med nul, ellers sammenlignes v med NIL. Hvis sammenligningen er sand i tilfældet med nul, bliver program counter sat til den nuværende værdi på p[pc], ellers bliver næste instruktion udført.
 \paragraph{CONS} laver en cons celle ud af de to øverste elementer på stakken, og decrementere så stack pointeren med en.
-\paragraph{CAR} henter et word fra stakken og tjekker om det er NIL, hvis det ikke er NIL tages det første element af cons cellen og ligges på toppen af stakken i stedet for det hentede word.
+\paragraph{CAR} henter et word fra stakken og tjekker, om det er NIL. Hvis word ikke er NIL, tages det første element af cons cellen og lægges på toppen af stakken i stedet for det hentede word.
 \paragraph{SETCAR} henter det øverste element på stakken og et word. Den sætter wordets første værdi til at være den udhentede værdi på stakken.
 
 \subsection{Del 2}
@@ -70,7 +70,7 @@ For at mindske risikoen for, at der opstår mange små blokke i freelisten, kan 
  
 \subsection{Opgave 4}
 \label{O2_4}
-For at optimere ændringen fra \ref{O2_3} endnu mere, kan man udnytte muligheden for at slå alle hvide blokke, som ligger ved siden af hinanden, sammen. Dette gør vi ved at gøre det samme, som i opgave 3, men i denne version itererer vi bare videre, indtil vi støder på en næste blok, som enten ikke er hvid eller som ligger uden for heapen. Når dette sker, laver vi en ny blok på samme måde som i opgave3 (med mkheader) på længden af den første hvide blok, vi arbejdede med samt alle de hvide blokke, som ligger ved siden af den.
+For at optimere ændringen fra \ref{O2_3} endnu mere, kan man udnytte muligheden for at slå alle hvide blokke, som ligger ved siden af hinanden, sammen. Dette gør vi ved at gøre det samme, som i opgave 3, men i denne version itererer vi bare videre, indtil vi støder på en blok, som enten ikke er hvid eller som ligger uden for heapen. Når dette sker, laver vi en ny blok på samme måde som i opgave3 (med mkheader) på længden af den første hvide blok, vi arbejdede med samt alle de hvide blokke, som ligger ved siden af den.
 
 \section{Opgave 5}
 \label{O5}
@@ -93,16 +93,16 @@ Vi har implementeret algoritmen til opgave 6 (two-space stop and copy) som en r�
 
 Vi har delt algoritmen op i følgende steps:
 \begin{my_description}
-\item[Step A] Peg freelisten på starten af heapTo.
+\item[Step A] Peg freelisten på starten af "to-heap".
 \item[Step B] Iteration over stacken for at finde heap referencer.
 	\begin{my_description}
 	\item[Step B.1] Undersøg om blokken er flyttet allerede.
 	\item[Step B.2] Lav en ny blok og flyt freelist pointeren.
 	\item[Step B.3] Kør blokken igennem og kopier ord fra blokken.
-	\item[Step B.4] Returner pointer til den nye blok i heapTo.
+	\item[Step B.4] Returner pointer til den nye blok i "to-heap".
 	\end{my_description}
-\item[Step C] Iteration over heapTo for at finde eventuelle referencer til heapFrom.
-\item[Step D] Ombytning af heapFrom og heapTo.
+\item[Step C] Iteration over "to-heap" for at finde eventuelle referencer til "from-heap".
+\item[Step D] Ombytning af "from-heap" og "to-heap".
 \end{my_description}
 
 De to steps er delt ud på to funktioner, som foreslået i opgavebeskrivelsen. "void copyFromTo(int s[], int sp)" og "word* copy(word* oldBlock)". Desuden har vi ændret i "allocate" funktionen, som foreslået i "Programming Language Concepts" og "initheap" funktionen, hvilket vi var nødt til pga. at vi nu har to heaps. Desuden har vi ændret "inHeap" funktionen til to funktioner - "inFromHeap" og "inToHeap".
@@ -111,14 +111,14 @@ Vi har valgt kun at beskrive step B, B.1, B.3 og C i detaljer, da vi føler, at 
 \subsection{Step B}
 Step B er algoritmens mest komplekse step. Derfor har vi delt det op i fire mindre steps.
 
-Step B løber stacken igennem og undersøger, om den indeholder nogen heap referencer. Hvis der er, bliver de kopieret og stacken bliver opdateret med addresserne på de kopierede blokke.
+Step B løber stacken igennem og undersøger, om den indeholder nogen heap referencer. Hvis den gør, bliver de kopieret og stacken bliver opdateret med addresserne på de kopierede blokke.
 \paragraph{Step B.1}
 Hvis en blok allerede er kopieret, returnerer vi bare "to-heap" addressen på blokken. 
 \\Vi ved, at en blok er kopieret, hvis det holder sandt at "(oldBlock[1] != 0 \&\& !IsInt(oldBlock[1]) \&\& inToHeap((word*) oldBlock[1]))". 
 \\Vi bruger det første ord efter headeren i "from-heap" til at holde en "forwarding pointer" til blokken i "to-heap".
 \paragraph{Step B.3}
 Step B.3 løber ordene i blokken fra "from-heap" igennem og kopierer dem til "to-heap". 
-\\Hvis et ord er en heap reference, bliver "copy()" kaldt rekursivt, så vi kan få referencen til den blokken i "to-heap".
+\\Hvis et ord er en heap reference, bliver "copy()" kaldt rekursivt, så vi kan få referencen til den blok i "to-heap".
 \\Hvis det ikke er en heap reference, bliver indholdet af ordet bare kopieret.
 \\ Vi kontrollerer desuden om det første ord efter headeren er kopieret - hvis den er, så sætter vi "forwarding pointeren" i "from-heap"s "oldBlock[1]" til addressen på den nyligt kopierede blok.
 \paragraph{Step C}
