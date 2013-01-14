@@ -1,6 +1,9 @@
-all: 4 7 11
+all: 1 4 7 11
 LIBS= -lrt -lpthread -lm
 CC=gcc
+
+1: 1.o
+	${CC} -o $@ 1.o ${LIBS}
 
 11: 11.o
 	${CC} -o $@ 11.o ${LIBS}
